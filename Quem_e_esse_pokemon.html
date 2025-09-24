@@ -20,26 +20,45 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85));
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
       color: var(--cor-texto);
-      text-align: center;
-      padding: 20px;
     }
 
     header {
-      padding: 15px;
-      border-bottom: 2px solid var(--cor-dourado);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       background: rgba(20,20,20,0.9);
+      border-bottom: 2px solid var(--cor-dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      margin-bottom: 20px;
+      z-index: 1000;
     }
 
     header h1 {
-      font-size: 2rem;
+      font-size: 1.8rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
       color: var(--cor-dourado);
     }
+    header h1 img { height: 40px; display: block; }
 
-    /* Área do jogo */
+    .wrap {
+      padding-top: 120px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* --- Área do jogo --- */
     .game-area {
       position: relative;
       display: inline-block;
@@ -54,11 +73,11 @@
 
     #pokemonImg {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 52%;   /* ajuste vertical para caber no espaço da sombra */
+      left: 28%;  /* ajuste horizontal para ficar do lado esquerdo */
       transform: translate(-50%, -50%);
-      max-width: 280px;
-      max-height: 280px;
+      width: 220px;
+      height: auto;
       object-fit: contain;
       filter: brightness(0) saturate(100%); /* deixa só a silhueta preta */
     }
@@ -68,6 +87,7 @@
       font-size: 1.6rem;
       color: var(--cor-dourado);
       display: none;
+      text-align: center;
     }
 
     .botoes {
@@ -93,90 +113,66 @@
       background: #ffcc33;
       transform: scale(1.05);
     }
-
-    /* Área de debug visível */
-    #debug {
-      margin-top: 25px;
-      font-size: 0.9rem;
-      color: #ccc;
-      background: rgba(0,0,0,0.6);
-      padding: 10px;
-      border-radius: 10px;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
-      white-space: pre-wrap;
-    }
   </style>
 </head>
 <body>
   <header>
-    <h1>Quem é esse Pokémon?</h1>
+    <h1>
+      <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+      Quem é esse Pokémon?
+    </h1>
   </header>
 
-  <div class="game-area">
-    <img src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
-    <img id="pokemonImg" alt="Pokémon misterioso">
+  <div class="wrap">
+    <div>
+      <div class="game-area">
+        <img src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
+        <img id="pokemonImg" alt="Pokémon misterioso">
+      </div>
+
+      <div id="pokemonNome"></div>
+
+      <div class="botoes">
+        <button onclick="trocarPokemon()">Trocar Pokémon</button>
+        <button onclick="revelarPokemon()">Revelar</button>
+      </div>
+    </div>
   </div>
-
-  <div id="pokemonNome"></div>
-
-  <div class="botoes">
-    <button onclick="trocarPokemon()">Trocar Pokémon</button>
-    <button onclick="revelarPokemon()">Revelar</button>
-  </div>
-
-  <div id="debug">Carregando pokémons...</div>
 
   <script>
     let pokemons = {};
     let currentPokemon = null;
-
-    function logDebug(msg) {
-      document.getElementById("debug").innerText += "\n" + msg;
-    }
 
     // Carrega o JSON
     fetch("pokemons/pokemon.json")
       .then(res => res.json())
       .then(data => {
         pokemons = data;
-        logDebug("Pokémons carregados: " + Object.keys(pokemons).length);
         trocarPokemon();
       })
-      .catch(err => logDebug("Erro ao carregar JSON: " + err));
+      .catch(err => {
+        alert("Erro ao carregar a lista de Pokémons: " + err);
+      });
 
     function trocarPokemon() {
       const keys = Object.keys(pokemons);
-      if (keys.length === 0) {
-        logDebug("Nenhum Pokémon disponível no JSON.");
-        return;
-      }
-
       const randomKey = keys[Math.floor(Math.random() * keys.length)];
       currentPokemon = { name: randomKey, id: pokemons[randomKey].id };
 
       const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
-      logDebug("Sorteado: " + currentPokemon.name + " | URL: " + imgUrl);
 
       const img = document.getElementById("pokemonImg");
       img.src = imgUrl;
-      img.style.filter = "brightness(0) saturate(100%)"; // deixa silhueta
+      img.style.filter = "brightness(0) saturate(100%)"; // silhueta
 
       document.getElementById("pokemonNome").innerText = currentPokemon.name;
       document.getElementById("pokemonNome").style.display = "none";
     }
 
     function revelarPokemon() {
-      if (!currentPokemon) {
-        logDebug("Nenhum Pokémon carregado para revelar.");
-        return;
-      }
       const img = document.getElementById("pokemonImg");
       img.style.filter = "none"; // revela
       document.getElementById("pokemonNome").style.display = "block";
-      logDebug("Revelado: " + currentPokemon.name);
     }
   </script>
 </body>
