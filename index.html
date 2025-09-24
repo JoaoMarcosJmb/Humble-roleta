@@ -41,7 +41,7 @@
       margin-top: 100px;
       display: flex;
       gap: 28px;
-      justify-content: flex-start; /* roleta mais à esquerda */
+      justify-content: flex-start;
       align-items: flex-start;
       width: 100%;
       max-width: 1200px;
@@ -50,7 +50,7 @@
 
     .roleta-container {
       position: relative;
-      width: 620px;  /* ligeiramente maior que canvas para margem */
+      width: 620px;
       height: 620px;
       margin-right: 10px;
     }
@@ -81,9 +81,8 @@
     }
     .botao:hover { transform: scale(1.05); }
 
-    /* Aqui ajustei apenas a largura (sem mexer na rolagem) */
     .lista {
-      width: 360px;           /* largura ajustada para caber nomes */
+      width: 360px;
       flex-shrink: 0;
       background: var(--cor-card);
       padding: 20px; border-radius: 12px;
@@ -99,7 +98,6 @@
       border-bottom: 1px solid rgba(255,255,255,0.2);
       vertical-align: middle;
     }
-    /* largura das colunas para garantir espaço para o nome */
     .lista table th:nth-child(1), .lista td:nth-child(1) { width: 62%; text-align: left; padding-left:8px; }
     .lista table th:nth-child(2), .lista td:nth-child(2) { width: 28%; }
     .lista table th:nth-child(3), .lista td:nth-child(3) { width: 10%; }
@@ -111,7 +109,6 @@
       background: rgba(255,255,255,0.04);
       color: var(--cor-texto);
     }
-    /* input de % menor para não encolher o nome */
     .lista td:nth-child(2) input { width: 90px; text-align: center; }
 
     .remover {
@@ -131,11 +128,7 @@
     .save-btn { background: #6f42c1; color: white; }
     .save-btn:hover { background: #5a33a8; }
 
-    #bulk-area {
-      display: none;
-      margin-top: 10px;
-      width: 100%;
-    }
+    #bulk-area { display: none; margin-top: 10px; width: 100%; }
     #bulk-text {
       width: 100%; height: 120px;
       border-radius: 8px; padding: 10px;
@@ -149,7 +142,6 @@
     }
     #bulk-confirm:hover { background: #138496; }
 
-    /* Responsividade básica */
     @media (max-width: 1100px) {
       .roleta-container { transform: scale(0.85); transform-origin: left top; width: 525px; height: 525px; }
       canvas { width: 500px; height: 500px; }
@@ -188,7 +180,6 @@
           </tr>
         </tbody>
       </table>
-
       <button class="add-btn" onclick="adicionarLinha()">+ Adicionar Recompensa</button>
       <button class="bulk-btn" onclick="abrirBulk()">📥 Bulk Add</button>
       <button class="save-btn" onclick="salvarLista()">💾 Salvar Lista</button>
@@ -211,13 +202,11 @@
       linhas.forEach(linha => {
         const nome = linha.cells[0].querySelector("input").value.trim();
         const perc = parseFloat(linha.cells[1].querySelector("input").value) || 0;
-        if (nome) itens.push({ nome, perc }); // incluí mesmo se perc = 0 (para visual)
+        if (nome) itens.push({ nome, perc });
       });
       return itens;
     }
 
-    // Distribui percentuais: os itens com valor >0 são tratados como 'fixos'
-    // os itens sem valor (<=0) dividem igualmente o restante.
     function distribuirPercentuais() {
       const linhas = Array.from(document.querySelectorAll("#tabela tbody tr"));
       if (linhas.length === 0) return;
@@ -253,23 +242,11 @@
           fixed.forEach(f => f.inp.value = (f.val * factor).toFixed(2));
         }
       }
-
-      // Ajuste final por causa de arredondamentos: garantir soma = 100.00
-      const inputs = Array.from(document.querySelectorAll("#tabela tbody tr td:nth-child(2) input"));
-      let soma = inputs.reduce((s, inp) => s + (parseFloat(inp.value) || 0), 0);
-      let diff = Math.round((100 - soma) * 100) / 100; // dois decimais
-      if (Math.abs(diff) >= 0.01 && inputs.length > 0) {
-        // aplica diferença ao último elemento (prioriza último que não for zero, senão o último qualquer)
-        let alvo = inputs.slice().reverse().find(i => parseFloat(i.value) !== 0) || inputs[inputs.length - 1];
-        let novo = (parseFloat(alvo.value) || 0) + diff;
-        if (novo < 0) novo = 0;
-        alvo.value = novo.toFixed(2);
-      }
     }
 
     function desenharRoleta() {
       distribuirPercentuais();
-      const itens = getItens().filter(it => it.nome); // pega todos, mesmo com 0% (pode decidir ocultar)
+      const itens = getItens().filter(it => it.nome);
       const total = itens.reduce((s, it) => s + it.perc, 0) || 100;
       let anguloInicio = 0;
 
@@ -279,7 +256,6 @@
       ctx.rotate(anguloAtual);
 
       itens.forEach((item, index) => {
-        // se soma != 100, usamos proporção relativa
         const angulo = ((item.perc) / total) * 2 * Math.PI;
         ctx.beginPath();
         ctx.moveTo(0, 0);
@@ -294,8 +270,7 @@
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
         ctx.font = Math.max(12, Math.round(canvas.width/30)) + "px Arial";
-        // mostra com 2 casas
-        ctx.fillText(`${item.nome} (${(item.perc||0).toFixed(2)}%)`, canvas.width/2 - 16, 10);
+        ctx.fillText(`${item.nome}`, canvas.width/2 - 16, 10);
         ctx.restore();
 
         anguloInicio += angulo;
@@ -304,15 +279,20 @@
       ctx.restore();
     }
 
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
     function girar() {
-      let anguloFinal = anguloAtual + (Math.random() * Math.PI * 4 + Math.PI * 6);
-      let duracao = 3000;
-      let inicio = null;
-      function animar(timestamp) {
-        if (!inicio) inicio = timestamp;
-        let progresso = (timestamp - inicio) / duracao;
+      const voltas = 10;
+      const duracao = 10000; // 10 segundos
+      const anguloInicial = anguloAtual;
+      const anguloFinal = anguloAtual + 2 * Math.PI * voltas + Math.random() * 2 * Math.PI;
+      const inicio = performance.now();
+
+      function animar(time) {
+        const progresso = (time - inicio) / duracao;
         if (progresso < 1) {
-          anguloAtual = anguloFinal * easeOutCubic(progresso);
+          const fator = easeOutCubic(progresso);
+          anguloAtual = anguloInicial + (anguloFinal - anguloInicial) * fator;
           desenharRoleta();
           requestAnimationFrame(animar);
         } else {
@@ -320,10 +300,9 @@
           desenharRoleta();
         }
       }
+
       requestAnimationFrame(animar);
     }
-
-    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
     function removerLinha(btn) {
       btn.closest("tr").remove();
@@ -364,17 +343,15 @@
       linhas.forEach(item => {
         let nome = item;
         let perc = 0;
-
         if (item.includes(";")) {
           const partes = item.split(";");
           nome = partes[0].trim();
           perc = parseFloat(partes[1].replace(",", ".").trim()) || 0;
         }
-
         const nova = document.createElement("tr");
         nova.innerHTML = `
           <td><input value="${nome}"></td>
-          <td><input type="number" value="${(typeof perc === 'number' ? perc.toFixed(2) : perc)}" step="0.01"></td>
+          <td><input type="number" value="${perc.toFixed(2)}" step="0.01"></td>
           <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
         `;
         tbody.appendChild(nova);
@@ -392,38 +369,24 @@
       desenharRoleta();
     }
 
-    // Salvar lista em arquivo .txt (formato: Nome; xx,yy)
     function salvarLista() {
-      distribuirPercentuais(); // garante valores atualizados
-      const rows = document.querySelectorAll("#tabela tbody tr");
-      const lines = [];
-      rows.forEach(r => {
-        const nome = r.cells[0].querySelector('input').value.trim();
-        const perc = parseFloat(r.cells[1].querySelector('input').value) || 0;
-        // formata usando vírgula decimal para manter o padrão que você usou antes
-        const percStr = perc.toFixed(2).replace('.', ',');
-        lines.push(`${nome}; ${percStr}`);
-      });
-      const content = lines.join("\n");
-      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const itens = getItens();
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(itens, null, 2));
       const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "itens_roleta.txt";
+      link.setAttribute("href", dataStr);
+      link.setAttribute("download", "itens_roleta.json");
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      URL.revokeObjectURL(link.href);
+      document.body.removeChild(link);
     }
 
-    // Inicialização: adiciona listeners aos inputs existentes
-    document.querySelectorAll('#tabela tbody tr').forEach(tr => {
-      const nameInp = tr.querySelector('td:nth-child(1) input');
-      const percInp = tr.querySelector('td:nth-child(2) input');
+    // Inicial
+    document.querySelectorAll("#tabela tbody tr").forEach(row => {
+      const nameInp = row.querySelector('td:nth-child(1) input');
+      const percInp = row.querySelector('td:nth-child(2) input');
       nameInp.addEventListener('input', desenharRoleta);
       percInp.addEventListener('change', () => { distribuirPercentuais(); desenharRoleta(); });
     });
-
-    // Mostrar roleta pela primeira vez
     distribuirPercentuais();
     desenharRoleta();
   </script>
