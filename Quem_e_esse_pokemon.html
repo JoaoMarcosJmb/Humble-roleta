@@ -18,7 +18,9 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+
+    html, body {
+      height: 100%;
       font-family: "Segoe UI", Arial, sans-serif;
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
@@ -54,16 +56,18 @@
 
     .wrap {
       padding-top: 120px;
+      min-height: calc(100vh - 120px); /* garante que ocupa toda a tela */
       display: flex;
       justify-content: center;
+      align-items: flex-start;
     }
 
     /* --- Área do jogo --- */
     .game-area {
       position: relative;
       display: inline-block;
-      width: 700px;
-      max-width: 95%;
+      width: 900px;   /* deixei maior que antes */
+      max-width: 98%;
     }
 
     .game-area img.fundo {
@@ -73,13 +77,13 @@
 
     #pokemonImg {
       position: absolute;
-      top: 52%;   /* ajuste vertical para caber no espaço da sombra */
-      left: 28%;  /* ajuste horizontal para ficar do lado esquerdo */
+      top: 52%;
+      left: 28%;
       transform: translate(-50%, -50%);
-      width: 220px;
+      width: 300px;   /* aumentei o tamanho do Pokémon */
       height: auto;
       object-fit: contain;
-      filter: brightness(0) saturate(100%); /* deixa só a silhueta preta */
+      filter: brightness(0) saturate(100%);
     }
 
     #pokemonNome {
