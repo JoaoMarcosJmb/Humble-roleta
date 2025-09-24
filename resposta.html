@@ -102,6 +102,8 @@
     <p>O Pokémon sorteado foi:</p>
     <div id="pokemonNome"></div>
     <img id="pokemonImg" alt="Pokémon revelado">
+    <br><br>
+    <button onclick="logout()">Sair</button>
   </div>
 
   <script>
@@ -123,7 +125,7 @@
       const senha = document.getElementById("senha").value;
 
       if (usuario === "OrganizadorDeEventos" && senha === "MikeOMacaco3Foda") {
-        document.getElementById("loginCard").style.display = "none";
+        localStorage.setItem("adminLogado", "true"); // 🔑 guarda sessão
         mostrarResultado();
       } else {
         document.getElementById("erro").style.display = "block";
@@ -131,19 +133,21 @@
     }
 
     function mostrarResultado() {
+      document.getElementById("loginCard").style.display = "none";
+      document.getElementById("resultado").style.display = "block";
+
       const respostaCripto = localStorage.getItem("pokemonResposta");
       if (!respostaCripto) {
-        alert("Nenhum Pokémon sorteado ainda!");
+        document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
         return;
       }
 
       const pokemon = decrypt(respostaCripto);
       if (!pokemon) {
-        alert("Erro ao descriptografar o Pokémon.");
+        document.getElementById("pokemonNome").innerText = "Erro ao descriptografar.";
         return;
       }
 
-      document.getElementById("resultado").style.display = "block";
       document.getElementById("pokemonNome").innerText = pokemon;
 
       // pega id da lista de pokemons
@@ -156,6 +160,18 @@
           }
         });
     }
+
+    function logout() {
+      localStorage.removeItem("adminLogado");
+      location.reload();
+    }
+
+    // 🔥 Verifica se já está logado
+    window.onload = () => {
+      if (localStorage.getItem("adminLogado") === "true") {
+        mostrarResultado();
+      }
+    };
   </script>
 </body>
 </html>
