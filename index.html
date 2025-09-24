@@ -36,17 +36,31 @@
     }
     header img { height: 42px; }
     header h1 { font-size: 1.6rem; color: var(--cor-dourado); }
+
     main {
       margin-top: 100px;
-      display: flex; gap: 40px;
-      justify-content: center; align-items: flex-start;
-      width: 100%; max-width: 1100px; padding: 20px;
+      display: flex;
+      gap: 28px;
+      justify-content: flex-start; /* roleta mais à esquerda */
+      align-items: flex-start;
+      width: 100%;
+      max-width: 1200px;
+      padding: 20px;
     }
-    .roleta-container { position: relative; width: 400px; height: 400px; }
+
+    .roleta-container {
+      position: relative;
+      width: 620px;  /* ligeiramente maior que canvas para margem */
+      height: 620px;
+      margin-right: 10px;
+    }
     canvas {
-      width: 100%; height: 100%; border-radius: 50%;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
       box-shadow: 0 0 20px rgba(0,0,0,0.7);
       background: #222;
+      display: block;
     }
     .ponteiro {
       position: absolute; top: -35px; left: 50%;
@@ -66,8 +80,12 @@
       transition: transform .2s;
     }
     .botao:hover { transform: scale(1.05); }
+
+    /* Aqui ajustei apenas a largura (sem mexer na rolagem) */
     .lista {
-      flex: 1; background: var(--cor-card);
+      width: 360px;           /* largura ajustada para caber nomes */
+      flex-shrink: 0;
+      background: var(--cor-card);
       padding: 20px; border-radius: 12px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.6);
     }
@@ -75,21 +93,32 @@
       margin-bottom: 12px; font-size: 1.3rem;
       color: var(--cor-dourado); text-align: center;
     }
-    .lista table { width: 100%; border-collapse: collapse; }
+    .lista table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     .lista th, .lista td {
       padding: 8px; text-align: center;
       border-bottom: 1px solid rgba(255,255,255,0.2);
+      vertical-align: middle;
     }
+    /* largura das colunas para garantir espaço para o nome */
+    .lista table th:nth-child(1), .lista td:nth-child(1) { width: 62%; text-align: left; padding-left:8px; }
+    .lista table th:nth-child(2), .lista td:nth-child(2) { width: 28%; }
+    .lista table th:nth-child(3), .lista td:nth-child(3) { width: 10%; }
+
     .lista input {
-      width: 80%; padding: 5px;
+      width: 95%; padding: 6px 8px;
       border-radius: 6px; border: none;
-      text-align: center;
+      text-align: left;
+      background: rgba(255,255,255,0.04);
+      color: var(--cor-texto);
     }
+    /* input de % menor para não encolher o nome */
+    .lista td:nth-child(2) input { width: 90px; text-align: center; }
+
     .remover {
       cursor: pointer; color: red; font-weight: bold;
       border: none; background: transparent; font-size: 1.1rem;
     }
-    .add-btn, .bulk-btn {
+    .add-btn, .bulk-btn, .save-btn {
       margin-top: 10px; width: 100%;
       font-weight: bold; border: none;
       padding: 10px; border-radius: 8px;
@@ -99,6 +128,9 @@
     .add-btn:hover { background: #218838; }
     .bulk-btn { background: #007bff; color: white; }
     .bulk-btn:hover { background: #0069d9; }
+    .save-btn { background: #6f42c1; color: white; }
+    .save-btn:hover { background: #5a33a8; }
+
     #bulk-area {
       display: none;
       margin-top: 10px;
@@ -116,6 +148,12 @@
       padding: 8px; border-radius: 6px; cursor: pointer;
     }
     #bulk-confirm:hover { background: #138496; }
+
+    /* Responsividade básica */
+    @media (max-width: 1100px) {
+      .roleta-container { transform: scale(0.85); transform-origin: left top; width: 525px; height: 525px; }
+      canvas { width: 500px; height: 500px; }
+    }
   </style>
 </head>
 <body>
@@ -127,7 +165,7 @@
   <main>
     <div class="roleta-container">
       <div class="ponteiro"></div>
-      <canvas id="roleta" width="400" height="400"></canvas>
+      <canvas id="roleta" width="600" height="600"></canvas>
       <button class="botao" onclick="girar()">Girar</button>
     </div>
 
@@ -150,8 +188,11 @@
           </tr>
         </tbody>
       </table>
+
       <button class="add-btn" onclick="adicionarLinha()">+ Adicionar Recompensa</button>
       <button class="bulk-btn" onclick="abrirBulk()">📥 Bulk Add</button>
+      <button class="save-btn" onclick="salvarLista()">💾 Salvar Lista</button>
+
       <div id="bulk-area">
         <textarea id="bulk-text" placeholder="Digite um item por linha... (ex: Item 1; 60,01)"></textarea>
         <button id="bulk-confirm" onclick="confirmarBulk()">Adicionar em Massa</button>
@@ -170,7 +211,7 @@
       linhas.forEach(linha => {
         const nome = linha.cells[0].querySelector("input").value.trim();
         const perc = parseFloat(linha.cells[1].querySelector("input").value) || 0;
-        if (nome && perc > 0) itens.push({ nome, perc });
+        if (nome) itens.push({ nome, perc }); // incluí mesmo se perc = 0 (para visual)
       });
       return itens;
     }
@@ -195,23 +236,19 @@
       if (fixedSum < 0) fixedSum = 0;
 
       if (fixed.length === 0 && free.length > 0) {
-        // nenhum valor fixo: divide igualmente entre todos
         const each = 100 / free.length;
         entries.forEach(e => e.inp.value = each.toFixed(2));
       } else if (fixedSum >= 100) {
-        // soma fixa >=100: normaliza os fixos para somarem 100, free = 0
         const factor = 100 / fixedSum;
         fixed.forEach(f => f.inp.value = (f.val * factor).toFixed(2));
         free.forEach(fr => fr.inp.value = (0).toFixed(2));
       } else {
-        // fixedSum < 100
         const remaining = 100 - fixedSum;
         if (free.length > 0) {
           const each = remaining / free.length;
           fixed.forEach(f => f.inp.value = f.val.toFixed(2));
           free.forEach(fr => fr.inp.value = each.toFixed(2));
         } else {
-          // não há free, e fixedSum < 100 -> normaliza os fixos para somarem 100
           const factor = fixedSum === 0 ? 0 : 100 / fixedSum;
           fixed.forEach(f => f.inp.value = (f.val * factor).toFixed(2));
         }
@@ -221,7 +258,7 @@
       const inputs = Array.from(document.querySelectorAll("#tabela tbody tr td:nth-child(2) input"));
       let soma = inputs.reduce((s, inp) => s + (parseFloat(inp.value) || 0), 0);
       let diff = Math.round((100 - soma) * 100) / 100; // dois decimais
-      if (Math.abs(diff) >= 0.01) {
+      if (Math.abs(diff) >= 0.01 && inputs.length > 0) {
         // aplica diferença ao último elemento (prioriza último que não for zero, senão o último qualquer)
         let alvo = inputs.slice().reverse().find(i => parseFloat(i.value) !== 0) || inputs[inputs.length - 1];
         let novo = (parseFloat(alvo.value) || 0) + diff;
@@ -231,9 +268,9 @@
     }
 
     function desenharRoleta() {
-      distribuirPercentuais(); // garante que inputs estejam atualizados
-      const itens = getItens();
-      const total = 100;
+      distribuirPercentuais();
+      const itens = getItens().filter(it => it.nome); // pega todos, mesmo com 0% (pode decidir ocultar)
+      const total = itens.reduce((s, it) => s + it.perc, 0) || 100;
       let anguloInicio = 0;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -242,12 +279,13 @@
       ctx.rotate(anguloAtual);
 
       itens.forEach((item, index) => {
-        const angulo = (item.perc / total) * 2 * Math.PI;
+        // se soma != 100, usamos proporção relativa
+        const angulo = ((item.perc) / total) * 2 * Math.PI;
         ctx.beginPath();
         ctx.moveTo(0, 0);
         ctx.arc(0, 0, canvas.width/2, anguloInicio, anguloInicio + angulo);
         ctx.closePath();
-        ctx.fillStyle = `hsl(${index * 70}, 70%, 50%)`;
+        ctx.fillStyle = `hsl(${index * 70 % 360}, 70%, 50%)`;
         ctx.fill();
         ctx.stroke();
 
@@ -255,9 +293,9 @@
         ctx.rotate(anguloInicio + angulo/2);
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
-        ctx.font = "16px Arial";
+        ctx.font = Math.max(12, Math.round(canvas.width/30)) + "px Arial";
         // mostra com 2 casas
-        ctx.fillText(`${item.nome} (${parseFloat(item.perc).toFixed(2)}%)`, canvas.width/2 - 10, 10);
+        ctx.fillText(`${item.nome} (${(item.perc||0).toFixed(2)}%)`, canvas.width/2 - 16, 10);
         ctx.restore();
 
         anguloInicio += angulo;
@@ -289,6 +327,7 @@
 
     function removerLinha(btn) {
       btn.closest("tr").remove();
+      distribuirPercentuais();
       desenharRoleta();
     }
 
@@ -335,7 +374,7 @@
         const nova = document.createElement("tr");
         nova.innerHTML = `
           <td><input value="${nome}"></td>
-          <td><input type="number" value="${perc.toFixed ? perc.toFixed(2) : perc}" step="0.01"></td>
+          <td><input type="number" value="${(typeof perc === 'number' ? perc.toFixed(2) : perc)}" step="0.01"></td>
           <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
         `;
         tbody.appendChild(nova);
@@ -351,6 +390,29 @@
 
       distribuirPercentuais();
       desenharRoleta();
+    }
+
+    // Salvar lista em arquivo .txt (formato: Nome; xx,yy)
+    function salvarLista() {
+      distribuirPercentuais(); // garante valores atualizados
+      const rows = document.querySelectorAll("#tabela tbody tr");
+      const lines = [];
+      rows.forEach(r => {
+        const nome = r.cells[0].querySelector('input').value.trim();
+        const perc = parseFloat(r.cells[1].querySelector('input').value) || 0;
+        // formata usando vírgula decimal para manter o padrão que você usou antes
+        const percStr = perc.toFixed(2).replace('.', ',');
+        lines.push(`${nome}; ${percStr}`);
+      });
+      const content = lines.join("\n");
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "itens_roleta.txt";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
     }
 
     // Inicialização: adiciona listeners aos inputs existentes
