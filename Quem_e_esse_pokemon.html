@@ -56,7 +56,7 @@
 
     .wrap {
       padding-top: 120px;
-      min-height: calc(100vh - 120px); /* garante que ocupa toda a tela */
+      min-height: calc(100vh - 120px);
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -66,8 +66,8 @@
     .game-area {
       position: relative;
       display: inline-block;
-      width: 900px;   /* deixei maior que antes */
-      max-width: 98%;
+      width: 100%;
+      max-width: 1000px;  /* maior que antes */
     }
 
     .game-area img.fundo {
@@ -80,22 +80,25 @@
       top: 52%;
       left: 28%;
       transform: translate(-50%, -50%);
-      width: 300px;   /* aumentei o tamanho do Pokémon */
+      width: 45%;   /* responsivo e maior */
       height: auto;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
     }
 
     #pokemonNome {
-      margin-top: 15px;
-      font-size: 1.6rem;
+      margin-top: 20px;
+      font-size: 2.2rem;        /* maior */
+      font-weight: bold;
       color: var(--cor-dourado);
+      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado); /* efeito brilhante */
       display: none;
       text-align: center;
+      letter-spacing: 2px;
     }
 
     .botoes {
-      margin-top: 20px;
+      margin-top: 25px;
       display: flex;
       justify-content: center;
       gap: 20px;
@@ -105,9 +108,9 @@
       background: var(--cor-dourado);
       color: #000;
       border: none;
-      padding: 12px 24px;
+      padding: 14px 28px;
       border-radius: 12px;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
@@ -147,7 +150,6 @@
     let pokemons = {};
     let currentPokemon = null;
 
-    // Carrega o JSON
     fetch("pokemons/pokemon.json")
       .then(res => res.json())
       .then(data => {
@@ -167,7 +169,7 @@
 
       const img = document.getElementById("pokemonImg");
       img.src = imgUrl;
-      img.style.filter = "brightness(0) saturate(100%)"; // silhueta
+      img.style.filter = "brightness(0) saturate(100%)";
 
       document.getElementById("pokemonNome").innerText = currentPokemon.name;
       document.getElementById("pokemonNome").style.display = "none";
@@ -175,7 +177,7 @@
 
     function revelarPokemon() {
       const img = document.getElementById("pokemonImg");
-      img.style.filter = "none"; // revela
+      img.style.filter = "none";
       document.getElementById("pokemonNome").style.display = "block";
     }
   </script>
