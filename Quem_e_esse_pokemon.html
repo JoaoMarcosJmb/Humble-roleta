@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quem é esse Pokémon?</title>
+
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
+  <link rel="apple-touch-icon" href="img/mike_anotando2.png">
 
   <style>
     :root {
@@ -14,181 +17,167 @@
       --cor-texto: #f5f5f5;
     }
 
-    * { box-sizing: border-box; }
-    html,body { height: 100%; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85));
       color: var(--cor-texto);
+      text-align: center;
+      padding: 20px;
     }
 
     header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(20,20,20,0.9);
+      padding: 15px;
       border-bottom: 2px solid var(--cor-dourado);
+      background: rgba(20,20,20,0.9);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      z-index: 1000;
+      margin-bottom: 20px;
     }
 
     header h1 {
-      font-size: 1.8rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      font-size: 2rem;
       color: var(--cor-dourado);
     }
-    header h1 img { height: 40px; cursor: pointer; display: block; }
 
-    .wrap {
-      padding-top: 120px;
-      display: flex;
-      justify-content: center;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* --- Seção Quem é esse Pokémon --- */
-    .quem-area {
+    /* Área do jogo */
+    .game-area {
       position: relative;
-      width: 1000px;
-      height: 600px;
-      background: url("img/quem_e_esse_pokemon.png") no-repeat center;
-      background-size: contain;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 40px;
+      display: inline-block;
+      width: 700px;
+      max-width: 95%;
     }
 
-    .pokemon-slot {
+    .game-area img.fundo {
+      width: 100%;
+      display: block;
+    }
+
+    #pokemonImg {
       position: absolute;
-      left: 120px; /* ajuste fino p/ centralizar */
       top: 50%;
-      transform: translateY(-50%);
-      width: 450px;
-      height: 450px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .pokemon-slot img {
-      max-width: 100%;
-      max-height: 100%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 280px;
+      max-height: 280px;
       object-fit: contain;
-      transition: filter 0.3s ease;
+      filter: brightness(0) saturate(100%); /* deixa só a silhueta preta */
     }
 
-    .silueta {
-      filter: brightness(0); /* deixa o Pokémon preto */
+    #pokemonNome {
+      margin-top: 15px;
+      font-size: 1.6rem;
+      color: var(--cor-dourado);
+      display: none;
     }
 
     .botoes {
       margin-top: 20px;
       display: flex;
-      gap: 20px;
       justify-content: center;
+      gap: 20px;
     }
 
-    .botoes button {
-      padding: 12px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
+    button {
       background: var(--cor-dourado);
-      color: var(--cor-fundo);
-      cursor: pointer;
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 1rem;
       font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      cursor: pointer;
       transition: transform 0.2s, background 0.2s;
     }
 
-    .botoes button:hover {
-      background: #e6b800;
+    button:hover {
+      background: #ffcc33;
       transform: scale(1.05);
     }
 
-    .nomePokemon {
-      font-size: 1.5rem;
-      font-weight: bold;
-      margin-top: 15px;
-      color: var(--cor-dourado);
-      display: none;
+    /* Área de debug visível */
+    #debug {
+      margin-top: 25px;
+      font-size: 0.9rem;
+      color: #ccc;
+      background: rgba(0,0,0,0.6);
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>
-      <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
-      Selecione Sua Versão
-    </h1>
+    <h1>Quem é esse Pokémon?</h1>
   </header>
 
-  <div class="wrap">
-    <!-- Quem é esse Pokémon -->
-    <div class="quem-area">
-      <div class="pokemon-slot">
-        <img id="pokemonImg" src="" alt="Pokémon">
-      </div>
-    </div>
-
-    <div class="botoes">
-      <button id="trocarBtn">Trocar Pokémon</button>
-      <button id="revelarBtn">Revelar Pokémon</button>
-    </div>
-
-    <div id="pokemonNome" class="nomePokemon"></div>
+  <div class="game-area">
+    <img src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
+    <img id="pokemonImg" alt="Pokémon misterioso">
   </div>
 
-  <script>
-    let pokemonList = {};
-    let currentKey = null;
+  <div id="pokemonNome"></div>
 
-    async function carregarPokemons() {
-      const resposta = await fetch("pokemons/pokemon.json");
-      pokemonList = await resposta.json();
-      trocarPokemon();
+  <div class="botoes">
+    <button onclick="trocarPokemon()">Trocar Pokémon</button>
+    <button onclick="revelarPokemon()">Revelar</button>
+  </div>
+
+  <div id="debug">Carregando pokémons...</div>
+
+  <script>
+    let pokemons = {};
+    let currentPokemon = null;
+
+    function logDebug(msg) {
+      document.getElementById("debug").innerText += "\n" + msg;
     }
 
+    // Carrega o JSON
+    fetch("pokemons/pokemon.json")
+      .then(res => res.json())
+      .then(data => {
+        pokemons = data;
+        logDebug("Pokémons carregados: " + Object.keys(pokemons).length);
+        trocarPokemon();
+      })
+      .catch(err => logDebug("Erro ao carregar JSON: " + err));
+
     function trocarPokemon() {
-      const keys = Object.keys(pokemonList);
-      currentKey = keys[Math.floor(Math.random() * keys.length)];
-      const currentPokemon = pokemonList[currentKey];
+      const keys = Object.keys(pokemons);
+      if (keys.length === 0) {
+        logDebug("Nenhum Pokémon disponível no JSON.");
+        return;
+      }
+
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
+      currentPokemon = { name: randomKey, id: pokemons[randomKey].id };
 
       const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+      logDebug("Sorteado: " + currentPokemon.name + " | URL: " + imgUrl);
 
       const img = document.getElementById("pokemonImg");
       img.src = imgUrl;
-      img.classList.add("silueta");
+      img.style.filter = "brightness(0) saturate(100%)"; // deixa silhueta
 
+      document.getElementById("pokemonNome").innerText = currentPokemon.name;
       document.getElementById("pokemonNome").style.display = "none";
     }
 
     function revelarPokemon() {
+      if (!currentPokemon) {
+        logDebug("Nenhum Pokémon carregado para revelar.");
+        return;
+      }
       const img = document.getElementById("pokemonImg");
-      img.classList.remove("silueta");
-
-      const nome = document.getElementById("pokemonNome");
-      nome.textContent = currentKey.charAt(0).toUpperCase() + currentKey.slice(1);
-      nome.style.display = "block";
+      img.style.filter = "none"; // revela
+      document.getElementById("pokemonNome").style.display = "block";
+      logDebug("Revelado: " + currentPokemon.name);
     }
-
-    document.getElementById("trocarBtn").addEventListener("click", trocarPokemon);
-    document.getElementById("revelarBtn").addEventListener("click", revelarPokemon);
-
-    carregarPokemons();
   </script>
 </body>
 </html>
