@@ -140,12 +140,12 @@
         <tbody>
           <tr>
             <td><input value="Item 1"></td>
-            <td><input type="number" value="50"></td>
+            <td><input type="number" value="50" step="0.01"></td>
             <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
           </tr>
           <tr>
             <td><input value="Item 2"></td>
-            <td><input type="number" value="50"></td>
+            <td><input type="number" value="50" step="0.01"></td>
             <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
           </tr>
         </tbody>
@@ -153,7 +153,7 @@
       <button class="add-btn" onclick="adicionarLinha()">+ Adicionar Recompensa</button>
       <button class="bulk-btn" onclick="abrirBulk()">📥 Bulk Add</button>
       <div id="bulk-area">
-        <textarea id="bulk-text" placeholder="Digite um item por linha..."></textarea>
+        <textarea id="bulk-text" placeholder="Digite um item por linha... (ex: Item 1; 60,01)"></textarea>
         <button id="bulk-confirm" onclick="confirmarBulk()">Adicionar em Massa</button>
       </div>
     </div>
@@ -168,27 +168,70 @@
       const linhas = document.querySelectorAll("#tabela tbody tr");
       let itens = [];
       linhas.forEach(linha => {
-        const nome = linha.cells[0].querySelector("input").value;
+        const nome = linha.cells[0].querySelector("input").value.trim();
         const perc = parseFloat(linha.cells[1].querySelector("input").value) || 0;
         if (nome && perc > 0) itens.push({ nome, perc });
       });
       return itens;
     }
 
-    function normalizarPercentuais() {
-      const linhas = document.querySelectorAll("#tabela tbody tr");
-      let soma = 0;
-      linhas.forEach(l => soma += parseFloat(l.cells[1].querySelector("input").value) || 0);
-      if (soma === 0) return;
-      linhas.forEach(linha => {
-        const inp = linha.cells[1].querySelector("input");
-        let valor = parseFloat(inp.value) || 0;
-        inp.value = ((valor / soma) * 100).toFixed(2);
+    // Distribui percentuais: os itens com valor >0 são tratados como 'fixos'
+    // os itens sem valor (<=0) dividem igualmente o restante.
+    function distribuirPercentuais() {
+      const linhas = Array.from(document.querySelectorAll("#tabela tbody tr"));
+      if (linhas.length === 0) return;
+
+      const entries = linhas.map(l => {
+        const inp = l.cells[1].querySelector("input");
+        let v = parseFloat(inp.value);
+        if (isNaN(v)) v = 0;
+        return { row: l, inp, val: v };
       });
+
+      const fixed = entries.filter(e => e.val > 0);
+      const free = entries.filter(e => e.val <= 0);
+
+      let fixedSum = fixed.reduce((s, f) => s + f.val, 0);
+      if (fixedSum < 0) fixedSum = 0;
+
+      if (fixed.length === 0 && free.length > 0) {
+        // nenhum valor fixo: divide igualmente entre todos
+        const each = 100 / free.length;
+        entries.forEach(e => e.inp.value = each.toFixed(2));
+      } else if (fixedSum >= 100) {
+        // soma fixa >=100: normaliza os fixos para somarem 100, free = 0
+        const factor = 100 / fixedSum;
+        fixed.forEach(f => f.inp.value = (f.val * factor).toFixed(2));
+        free.forEach(fr => fr.inp.value = (0).toFixed(2));
+      } else {
+        // fixedSum < 100
+        const remaining = 100 - fixedSum;
+        if (free.length > 0) {
+          const each = remaining / free.length;
+          fixed.forEach(f => f.inp.value = f.val.toFixed(2));
+          free.forEach(fr => fr.inp.value = each.toFixed(2));
+        } else {
+          // não há free, e fixedSum < 100 -> normaliza os fixos para somarem 100
+          const factor = fixedSum === 0 ? 0 : 100 / fixedSum;
+          fixed.forEach(f => f.inp.value = (f.val * factor).toFixed(2));
+        }
+      }
+
+      // Ajuste final por causa de arredondamentos: garantir soma = 100.00
+      const inputs = Array.from(document.querySelectorAll("#tabela tbody tr td:nth-child(2) input"));
+      let soma = inputs.reduce((s, inp) => s + (parseFloat(inp.value) || 0), 0);
+      let diff = Math.round((100 - soma) * 100) / 100; // dois decimais
+      if (Math.abs(diff) >= 0.01) {
+        // aplica diferença ao último elemento (prioriza último que não for zero, senão o último qualquer)
+        let alvo = inputs.slice().reverse().find(i => parseFloat(i.value) !== 0) || inputs[inputs.length - 1];
+        let novo = (parseFloat(alvo.value) || 0) + diff;
+        if (novo < 0) novo = 0;
+        alvo.value = novo.toFixed(2);
+      }
     }
 
     function desenharRoleta() {
-      normalizarPercentuais();
+      distribuirPercentuais(); // garante que inputs estejam atualizados
       const itens = getItens();
       const total = 100;
       let anguloInicio = 0;
@@ -213,7 +256,8 @@
         ctx.textAlign = "right";
         ctx.fillStyle = "#fff";
         ctx.font = "16px Arial";
-        ctx.fillText(`${item.nome} (${item.perc}%)`, canvas.width/2 - 10, 10);
+        // mostra com 2 casas
+        ctx.fillText(`${item.nome} (${parseFloat(item.perc).toFixed(2)}%)`, canvas.width/2 - 10, 10);
         ctx.restore();
 
         anguloInicio += angulo;
@@ -253,22 +297,17 @@
       const nova = document.createElement("tr");
       nova.innerHTML = `
         <td><input value="${nome}"></td>
-        <td><input type="number" value="0"></td>
+        <td><input type="number" value="0" step="0.01"></td>
         <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
       `;
       tbody.appendChild(nova);
-      recalcularDistribuicao();
-      nova.querySelectorAll("input").forEach(inp => inp.addEventListener("input", desenharRoleta));
-    }
 
-    function recalcularDistribuicao() {
-      const linhas = document.querySelectorAll("#tabela tbody tr");
-      const qtd = linhas.length;
-      if (qtd === 0) return;
-      const perc = (100 / qtd).toFixed(2);
-      linhas.forEach(linha => {
-        linha.cells[1].querySelector("input").value = perc;
-      });
+      const nameInp = nova.querySelector('td:nth-child(1) input');
+      const percInp = nova.querySelector('td:nth-child(2) input');
+      nameInp.addEventListener('input', desenharRoleta);
+      percInp.addEventListener('change', () => { distribuirPercentuais(); desenharRoleta(); });
+
+      distribuirPercentuais();
       desenharRoleta();
     }
 
@@ -281,14 +320,50 @@
       const texto = document.getElementById("bulk-text").value.trim();
       if (!texto) return;
       const linhas = texto.split("\n").map(l => l.trim()).filter(l => l);
-      linhas.forEach(item => adicionarLinha(item));
+      const tbody = document.querySelector("#tabela tbody");
+
+      linhas.forEach(item => {
+        let nome = item;
+        let perc = 0;
+
+        if (item.includes(";")) {
+          const partes = item.split(";");
+          nome = partes[0].trim();
+          perc = parseFloat(partes[1].replace(",", ".").trim()) || 0;
+        }
+
+        const nova = document.createElement("tr");
+        nova.innerHTML = `
+          <td><input value="${nome}"></td>
+          <td><input type="number" value="${perc.toFixed ? perc.toFixed(2) : perc}" step="0.01"></td>
+          <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
+        `;
+        tbody.appendChild(nova);
+
+        const nameInp = nova.querySelector('td:nth-child(1) input');
+        const percInp = nova.querySelector('td:nth-child(2) input');
+        nameInp.addEventListener('input', desenharRoleta);
+        percInp.addEventListener('change', () => { distribuirPercentuais(); desenharRoleta(); });
+      });
+
       document.getElementById("bulk-text").value = "";
       document.getElementById("bulk-area").style.display = "none";
-      recalcularDistribuicao();
+
+      distribuirPercentuais();
+      desenharRoleta();
     }
 
+    // Inicialização: adiciona listeners aos inputs existentes
+    document.querySelectorAll('#tabela tbody tr').forEach(tr => {
+      const nameInp = tr.querySelector('td:nth-child(1) input');
+      const percInp = tr.querySelector('td:nth-child(2) input');
+      nameInp.addEventListener('input', desenharRoleta);
+      percInp.addEventListener('change', () => { distribuirPercentuais(); desenharRoleta(); });
+    });
+
+    // Mostrar roleta pela primeira vez
+    distribuirPercentuais();
     desenharRoleta();
-    document.querySelectorAll("#tabela input").forEach(inp => inp.addEventListener("input", desenharRoleta));
   </script>
 </body>
 </html>
