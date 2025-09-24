@@ -3,13 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pagina inicial</title>
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
-  <link rel="apple-touch-icon" href="img/mike_anotando2.png">
-
+  <title>Roleta do Mike</title>
+  <link rel="icon" type="image/png" href="https://i.imgur.com/XOEcuO8.png">
   <style>
     :root {
       --cor-dourado: #d1a720;
@@ -17,240 +12,250 @@
       --cor-card: rgba(40, 35, 25, 0.95);
       --cor-texto: #f5f5f5;
     }
-
-    * { box-sizing: border-box; }
-    html,body { height: 100%; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+      background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(40,30,20,0.9)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-
     header {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      padding: 15px 20px;
+      top: 0; left: 0; right: 0;
+      padding: 12px 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 12px;
       background: rgba(20,20,20,0.9);
       border-bottom: 2px solid var(--cor-dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       z-index: 1000;
     }
-
-    header h1 {
-      font-size: 1.8rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--cor-dourado);
+    header img { height: 42px; }
+    header h1 { font-size: 1.6rem; color: var(--cor-dourado); }
+    main {
+      margin-top: 100px;
+      display: flex; gap: 40px;
+      justify-content: center; align-items: flex-start;
+      width: 100%; max-width: 1100px; padding: 20px;
     }
-    header h1 img { height: 40px; cursor: pointer; display: block; }
-
-    .menu-toggle {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 34px;
-      height: 22px;
-      cursor: pointer;
-      z-index: 1100;
+    .roleta-container { position: relative; width: 400px; height: 400px; }
+    canvas {
+      width: 100%; height: 100%; border-radius: 50%;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+      background: #222;
     }
-    .menu-toggle span {
-      display: block;
-      height: 4px;
-      background: var(--cor-texto);
-      border-radius: 4px;
-      transition: transform .25s, opacity .25s;
+    .ponteiro {
+      position: absolute; top: -35px; left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 18px solid transparent;
+      border-right: 18px solid transparent;
+      border-top: 35px solid #fff;
+      filter: drop-shadow(0 0 3px black);
+      z-index: 10;
     }
-    .menu-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
+    .botao {
+      margin-top: 20px; padding: 12px 24px;
+      font-size: 1rem; font-weight: bold;
+      border: none; border-radius: 10px; cursor: pointer;
+      background: var(--cor-dourado); color: #111;
+      transition: transform .2s;
     }
-    .menu-toggle.active span:nth-child(2) { opacity: 0; }
-    .menu-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
+    .botao:hover { transform: scale(1.05); }
+    .lista {
+      flex: 1; background: var(--cor-card);
+      padding: 20px; border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.6);
     }
-
-    nav {
-      position: absolute;
-      top: 65px;
-      right: 10px;
-      background: rgba(30,25,20,0.95);
-      border: 1px solid var(--cor-dourado);
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-      display: none;
-      flex-direction: column;
-      padding: 15px;
-      gap: 12px;
-      z-index: 1200;
-      max-width: calc(100% - 20px);
+    .lista h2 {
+      margin-bottom: 12px; font-size: 1.3rem;
+      color: var(--cor-dourado); text-align: center;
     }
-    nav.active { display: flex; }
-    nav a {
-      color: var(--cor-dourado);
-      text-decoration: none;
-      font-size: 1rem;
-      transition: color .15s;
+    .lista table { width: 100%; border-collapse: collapse; }
+    .lista th, .lista td {
+      padding: 8px; text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
-    nav a:hover { color: var(--cor-texto); }
-
-    .wrap {
-      padding-top: 120px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      justify-content: center;
-      max-width: 1280px;
-      padding: 20px;
-      margin: 0 auto;
-    }
-
-    .card {
-      position: relative;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      width: 580px;
-      height: 220px;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.7);
-      transition: transform .25s, box-shadow .25s;
-      cursor: pointer;
-      text-decoration: none;
-      background-color: var(--cor-card);
-      background-size: cover;
-      background-position: center;
-      color: var(--cor-texto);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      z-index: 0;
-    }
-
-    .card .overlay {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      padding: 14px 18px;
+    .lista input {
+      width: 80%; padding: 5px;
+      border-radius: 6px; border: none;
       text-align: center;
-      background: linear-gradient(transparent, rgba(0,0,0,0.75));
     }
-
-    .card h2 {
-      margin: 0 0 6px 0;
-      font-size: 1.6rem;
-      color: var(--cor-dourado);
-      line-height: 1;
+    .remover {
+      cursor: pointer; color: red; font-weight: bold;
+      border: none; background: transparent; font-size: 1.1rem;
     }
-    .card p {
-      margin: 0;
-      font-size: 1rem;
-      color: var(--cor-texto);
-      opacity: 0.95;
+    .add-btn {
+      margin-top: 15px; width: 100%;
+      background: #28a745; color: white;
+      font-weight: bold; border: none;
+      padding: 10px; border-radius: 8px;
+      cursor: pointer;
     }
-
-    .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 12px 30px rgba(0,0,0,0.85); }
-    .card:focus { outline: 3px solid rgba(209,167,32,0.18); outline-offset: 2px; }
+    .add-btn:hover { background: #218838; }
   </style>
 </head>
 <body>
   <header>
-    <h1>
-      <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
-      Selecione Sua Versão
-    </h1>
-
-    <div class="menu-toggle" id="menuBtn" aria-label="Abrir menu" role="button" tabindex="0">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
+    <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+    <h1>Roleta do Mike</h1>
   </header>
 
-  <nav id="dropdownMenu" aria-hidden="true">
-    <a href="index.html">🏠 Início</a>
-    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
-    <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
-    <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
-    <a href="notas.html">📝 Notas de Atualização</a>
-  </nav>
-
-  <div class="wrap">
-    <div class="container">
-      <a href="Tiers_1.12.html" class="card" style="background-image: url('img/1.12.png');" aria-label="Versão 1.12">
-        <div class="overlay">
-          <h2>1.12</h2>
-          <p>Estratégias clássicas e batalhas intensas da 8ª Geração.</p>
-        </div>
-      </a>
-
-      <!-- Card 1.16 com easter egg -->
-      <a href="Tiers_1.16.html" id="card116" class="card" style="background-image: url('img/1.16.png');" aria-label="Versão 1.16">
-        <div class="overlay">
-          <h2>1.16</h2>
-          <p>Paradoxos em destaque e combates estratégicos da 9ª Geração.</p>
-        </div>
-      </a>
+  <main>
+    <div class="roleta-container">
+      <div class="ponteiro"></div>
+      <canvas id="roleta" width="400" height="400"></canvas>
+      <button class="botao" onclick="girar()">Girar</button>
     </div>
-  </div>
+
+    <div class="lista">
+      <h2>Itens da Roleta</h2>
+      <table id="tabela">
+        <thead>
+          <tr><th>Item</th><th>%</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input value="Item 1"></td>
+            <td><input type="number" value="50"></td>
+            <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
+          </tr>
+          <tr>
+            <td><input value="Item 2"></td>
+            <td><input type="number" value="50"></td>
+            <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="add-btn" onclick="adicionarLinha()">+ Adicionar Recompensa</button>
+    </div>
+  </main>
 
   <script>
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
+    const canvas = document.getElementById("roleta");
+    const ctx = canvas.getContext("2d");
+    let anguloAtual = 0;
 
-    function toggleMenu() {
-      const isActive = dropdownMenu.classList.toggle("active");
-      menuBtn.classList.toggle("active");
-      dropdownMenu.setAttribute("aria-hidden", !isActive);
+    function getItens() {
+      const linhas = document.querySelectorAll("#tabela tbody tr");
+      let itens = [];
+      linhas.forEach(linha => {
+        const nome = linha.cells[0].querySelector("input").value;
+        const perc = parseFloat(linha.cells[1].querySelector("input").value) || 0;
+        if (nome && perc > 0) itens.push({ nome, perc });
+      });
+      return itens;
     }
 
-    menuBtn.addEventListener("click", toggleMenu);
-    menuBtn.addEventListener("keydown", (e) => { 
-      if (e.key === "Enter" || e.key === " ") { 
-        e.preventDefault(); 
-        toggleMenu(); 
-      } 
-    });
+    function normalizarPercentuais() {
+      const linhas = document.querySelectorAll("#tabela tbody tr");
+      let soma = 0;
+      linhas.forEach(l => soma += parseFloat(l.cells[1].querySelector("input").value) || 0);
+      if (soma === 0) return;
 
-    document.addEventListener("click", function(e) {
-      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        dropdownMenu.classList.remove("active");
-        menuBtn.classList.remove("active");
-        dropdownMenu.setAttribute("aria-hidden", "true");
-      }
-    });
-
-    // -------- Easter Egg no card 1.16 --------
-    const card116 = document.getElementById("card116");
-    if (card116) {
-      // chance de 2% de mostrar a imagem alternativa
-      const chance = Math.random();
-      if (chance < 0.05) {
-        card116.style.backgroundImage = "url('img/1.16.2.png')";
-      }
+      linhas.forEach(linha => {
+        const inp = linha.cells[1].querySelector("input");
+        let valor = parseFloat(inp.value) || 0;
+        inp.value = ((valor / soma) * 100).toFixed(2);
+      });
     }
+
+    function desenharRoleta() {
+      normalizarPercentuais();
+      const itens = getItens();
+      const total = 100;
+      let anguloInicio = 0;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.translate(canvas.width/2, canvas.height/2);
+      ctx.rotate(anguloAtual);
+
+      itens.forEach((item, index) => {
+        const angulo = (item.perc / total) * 2 * Math.PI;
+
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, canvas.width/2, anguloInicio, anguloInicio + angulo);
+        ctx.closePath();
+        ctx.fillStyle = `hsl(${index * 70}, 70%, 50%)`;
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.save();
+        ctx.rotate(anguloInicio + angulo/2);
+        ctx.textAlign = "right";
+        ctx.fillStyle = "#fff";
+        ctx.font = "16px Arial";
+        ctx.fillText(`${item.nome} (${item.perc}%)`, canvas.width/2 - 10, 10);
+        ctx.restore();
+
+        anguloInicio += angulo;
+      });
+
+      ctx.restore();
+    }
+
+    function girar() {
+      let anguloFinal = anguloAtual + (Math.random() * Math.PI * 4 + Math.PI * 6);
+      let duracao = 3000;
+      let inicio = null;
+
+      function animar(timestamp) {
+        if (!inicio) inicio = timestamp;
+        let progresso = (timestamp - inicio) / duracao;
+        if (progresso < 1) {
+          anguloAtual = anguloFinal * easeOutCubic(progresso);
+          desenharRoleta();
+          requestAnimationFrame(animar);
+        } else {
+          anguloAtual = anguloFinal;
+          desenharRoleta();
+        }
+      }
+      requestAnimationFrame(animar);
+    }
+
+    function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+    function removerLinha(btn) {
+      btn.closest("tr").remove();
+      desenharRoleta();
+    }
+
+    function adicionarLinha() {
+      const tbody = document.querySelector("#tabela tbody");
+      const nova = document.createElement("tr");
+      nova.innerHTML = `
+        <td><input value="Novo Item"></td>
+        <td><input type="number" value="0"></td>
+        <td><button class="remover" onclick="removerLinha(this)">❌</button></td>
+      `;
+      tbody.appendChild(nova);
+      recalcularDistribuicao();
+      nova.querySelectorAll("input").forEach(inp => inp.addEventListener("input", desenharRoleta));
+    }
+
+    function recalcularDistribuicao() {
+      const linhas = document.querySelectorAll("#tabela tbody tr");
+      const qtd = linhas.length;
+      if (qtd === 0) return;
+      const perc = (100 / qtd).toFixed(2);
+      linhas.forEach(linha => {
+        linha.cells[1].querySelector("input").value = perc;
+      });
+      desenharRoleta();
+    }
+
+    desenharRoleta();
+    document.querySelectorAll("#tabela input").forEach(inp => inp.addEventListener("input", desenharRoleta));
   </script>
 </body>
 </html>
