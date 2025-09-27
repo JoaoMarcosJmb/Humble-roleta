@@ -119,6 +119,7 @@
     <p id="pergunta"></p>
     <p id="resposta"></p>
     <p id="explicacao"></p>
+    <button onclick="novaPergunta()">🔄 Nova Pergunta</button>
   </div>
 
   <script>
@@ -182,20 +183,19 @@
       // verifica se já tem pergunta salva
       const perguntaSalva = sessionStorage.getItem("perguntaAtual");
       if (perguntaSalva) {
-        const obj = JSON.parse(perguntaSalva);
-        preencherQuiz(obj);
+        preencherQuiz(JSON.parse(perguntaSalva));
       } else {
         sortearPergunta();
       }
     }
 
     function sortearPergunta() {
-      fetch("perguntas/perguntas.json")
+      fetch("perguntas.json")
         .then(res => res.json())
         .then(data => {
           const lista = data.perguntas_respostas;
           const sorteada = lista[Math.floor(Math.random() * lista.length)];
-          sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada)); // salva para não mudar na sessão
+          sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada)); // salva
           preencherQuiz(sorteada);
         });
     }
@@ -204,6 +204,11 @@
       document.getElementById("pergunta").innerText = item.pergunta;
       document.getElementById("resposta").innerText = "Resposta: " + item.resposta;
       document.getElementById("explicacao").innerText = item.explicacao + " (Dex: " + item.dex + ")";
+    }
+
+    function novaPergunta() {
+      sessionStorage.removeItem("perguntaAtual"); // libera para nova
+      sortearPergunta();
     }
 
     function logout() {
