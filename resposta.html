@@ -3,11 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resposta - Quem é esse Pokémon?</title>
-
-<link rel="icon" type="image/png" href="img/mike_anotando2.png">
-<link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
-<link rel="apple-touch-icon" href="img/mike_anotando2.png">
+<title>Quem é esse Pokémon?</title>
 
 <style>
 :root {
@@ -16,13 +12,12 @@
   --cor-card: rgba(40, 35, 25, 0.95);
   --cor-texto: #f5f5f5;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+              url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
   background-size: cover;
   color: var(--cor-texto);
   display: flex;
@@ -66,63 +61,79 @@ button {
   cursor: pointer;
   transition: 0.2s;
 }
-
 button:hover { background: #ffcc33; transform: scale(1.05); }
 
-#resultado { display: none; }
+.hidden { display: none; }
 
 #pokemonNome {
   font-size: 1.6rem;
   font-weight: bold;
   color: var(--cor-dourado);
-  margin-top: 15px;
+  margin-top: 10px;
   text-shadow: 0 0 8px #000;
 }
-
 #pokemonImg {
-  margin-top: 15px;
-  max-width: 250px;
+  margin-top: 10px;
+  max-width: 220px;
   width: 100%;
 }
-
 .info {
   margin-top: 10px;
   text-align: left;
 }
-
-.info strong {
-  color: var(--cor-dourado);
+.info p {
+  margin: 5px 0;
 }
 </style>
 </head>
 <body>
-<div class="card" id="loginCard">
-  <h2>Login Organizador</h2>
-  <input type="text" id="login" placeholder="Usuário">
-  <input type="password" id="senha" placeholder="Senha">
-  <button onclick="fazerLogin()">Entrar</button>
-  <p id="erro" style="color:red; display:none;">Usuário ou senha incorretos!</p>
-</div>
+  <!-- Login -->
+  <div class="card" id="loginCard">
+    <h2>Login Organizador</h2>
+    <input type="text" id="login" placeholder="Usuário">
+    <input type="password" id="senha" placeholder="Senha">
+    <button onclick="fazerLogin()">Entrar</button>
+    <p id="erro" style="color:red; display:none;">Usuário ou senha incorretos!</p>
+  </div>
 
-<div class="card" id="resultado">
-  <h2>Resultado</h2>
-  <p>O Pokémon sorteado foi:</p>
-  <div id="pokemonNome"></div>
-  <img id="pokemonImg" alt="Pokémon revelado">
+  <!-- Pergunta -->
+  <div class="card hidden" id="perguntaCard">
+    <h2>Pergunta</h2>
+    <p id="perguntaTexto"></p>
+    <button onclick="mostrarResposta()">Mostrar Resposta</button>
+    <button onclick="logout()">Sair</button>
+  </div>
 
-  <!-- agora aparecem todos os dados -->
-  <div class="info"><strong>Resposta:</strong> <span id="respostaTexto"></span></div>
-  <div class="info"><strong>Dex:</strong> <span id="dexTexto"></span></div>
-  <div class="info"><strong>Explicação:</strong> <span id="explicacaoTexto"></span></div>
-
-  <br>
-  <button onclick="location.reload()">🔄 Recarregar</button>
-  <button onclick="logout()">Sair</button>
-</div>
+  <!-- Resposta -->
+  <div class="card hidden" id="respostaCard">
+    <h2>Resultado</h2>
+    <p>O Pokémon sorteado foi:</p>
+    <div id="pokemonNome"></div>
+    <img id="pokemonImg" alt="Pokémon revelado">
+    <div class="info">
+      <p><b>Resposta:</b> <span id="respostaTexto"></span></p>
+      <p><b>Dex:</b> <span id="dexTexto"></span></p>
+      <p><b>Explicação:</b> <span id="explicacaoTexto"></span></p>
+    </div>
+    <br>
+    <button onclick="sortearPergunta()">🔄 Recarregar</button>
+    <button onclick="logout()">Sair</button>
+  </div>
 
 <script>
-const SECRET_KEY = "MikeOMacacoefoda2024";
+// 🔑 Credenciais
+const USUARIO = "OrganizadorDeEventos";
+const SENHA = "MikeOMacaco3Foda";
 
+// 🔐 Criptografia simples
+const SECRET_KEY = "MikeOMacacoefoda2024";
+function encrypt(text) {
+  return btoa(unescape(encodeURIComponent(
+    text.split('').map((c,i)=>
+      String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
+    ).join('')
+  )));
+}
 function decrypt(text) {
   try {
     const decoded = decodeURIComponent(escape(atob(text)));
@@ -134,62 +145,80 @@ function decrypt(text) {
   }
 }
 
+// 🔹 Perguntas (exemplo, pode puxar de um JSON externo)
+const perguntas = [
+  {
+    pergunta: "Qual Pokémon pode voar a velocidades incríveis, chegando a cruzar o céu em segundos?",
+    resposta: "Pidgeot",
+    dex: "Silver",
+    explicacao: "A Pokédex diz que Pidgeot é tão rápido que atravessa grandes distâncias em pouco tempo.",
+    id: 18
+  },
+  {
+    pergunta: "Qual Pokémon consegue nadar em magma sem se queimar?",
+    resposta: "Magmar",
+    dex: "Ruby",
+    explicacao: "Ele é tão resistente ao calor que nada tranquilamente em magma.",
+    id: 126
+  }
+];
+
+// 🔹 Login
 function fazerLogin() {
   const usuario = document.getElementById("login").value;
   const senha = document.getElementById("senha").value;
 
-  if (usuario === "OrganizadorDeEventos" && senha === "MikeOMacaco3Foda") {
-    localStorage.setItem("adminLogado", "true");
-    mostrarResultado();
+  if (usuario === USUARIO && senha === SENHA) {
+    sessionStorage.setItem("adminLogado", "true"); // sessão expira ao fechar aba
+    sortearPergunta();
+    document.getElementById("loginCard").classList.add("hidden");
+    document.getElementById("perguntaCard").classList.remove("hidden");
   } else {
     document.getElementById("erro").style.display = "block";
   }
 }
 
-function mostrarResultado() {
-  document.getElementById("loginCard").style.display = "none";
-  document.getElementById("resultado").style.display = "block";
+// 🔹 Sorteio
+function sortearPergunta() {
+  const pergunta = perguntas[Math.floor(Math.random() * perguntas.length)];
+  sessionStorage.setItem("pokemonResposta", encrypt(JSON.stringify(pergunta)));
 
-  // pega objeto criptografado
-  const respostaCripto = localStorage.getItem("pokemonResposta");
-  if (!respostaCripto) {
-    document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
-    return;
-  }
+  document.getElementById("perguntaTexto").innerText = pergunta.pergunta;
 
-  const dados = decrypt(respostaCripto);
-  if (!dados) {
-    document.getElementById("pokemonNome").innerText = "Erro ao descriptografar.";
-    return;
-  }
+  document.getElementById("perguntaCard").classList.remove("hidden");
+  document.getElementById("respostaCard").classList.add("hidden");
+}
 
-  // dados vem como JSON
-  const obj = JSON.parse(dados);
+// 🔹 Mostrar resposta
+function mostrarResposta() {
+  const cripto = sessionStorage.getItem("pokemonResposta");
+  if (!cripto) return;
+
+  const obj = JSON.parse(decrypt(cripto));
 
   document.getElementById("pokemonNome").innerText = obj.resposta;
   document.getElementById("respostaTexto").innerText = obj.resposta;
   document.getElementById("dexTexto").innerText = obj.dex;
   document.getElementById("explicacaoTexto").innerText = obj.explicacao;
+  document.getElementById("pokemonImg").src =
+    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${obj.id}.png`;
 
-  // carrega sprite oficial
-  fetch("pokemons/pokemon.json")
-    .then(res => res.json())
-    .then(data => {
-      if (data[obj.resposta]) {
-        const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data[obj.resposta].id}.png`;
-        document.getElementById("pokemonImg").src = imgUrl;
-      }
-    });
+  document.getElementById("perguntaCard").classList.add("hidden");
+  document.getElementById("respostaCard").classList.remove("hidden");
 }
 
+// 🔹 Logout
 function logout() {
-  localStorage.removeItem("adminLogado");
+  sessionStorage.clear();
   location.reload();
 }
 
+// 🔹 Verifica login ativo
 window.onload = () => {
-  if (localStorage.getItem("adminLogado") === "true") {
-    mostrarResultado();
+  if (sessionStorage.getItem("adminLogado") === "true") {
+    sortearPergunta();
+    document.getElementById("loginCard").classList.add("hidden");
+    document.getElementById("perguntaCard").classList.remove("hidden");
   }
 };
 </script>
