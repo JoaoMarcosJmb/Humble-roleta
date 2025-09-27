@@ -164,13 +164,13 @@
     function mostrarResultado() {
       document.getElementById("resultado").style.display = "block";
 
-      const respostaCripto = localStorage.getItem("pokemonResposta");
-      if (!respostaCripto) {
+      const respostaSalva = localStorage.getItem("pokemonResposta");
+      if (!respostaSalva) {
         document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
         return;
       }
 
-      const pokemon = respostaCripto; // já salvo direto
+      const pokemon = respostaSalva; // salvo direto
       document.getElementById("pokemonNome").innerText = pokemon;
 
       fetch("pokemons/pokemon.json")
@@ -232,11 +232,6 @@
       sessionStorage.removeItem("perguntaAtual");
       sortearPergunta();
     }
-
-    // remove login ao fechar página
-    window.addEventListener("beforeunload", () => {
-      sessionStorage.removeItem("adminLogado");
-    });
 
     // se já logado, mostra direto
     window.onload = () => {
