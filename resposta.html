@@ -1,93 +1,101 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quem é esse Pokémon?</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resposta - Quem é esse Pokémon?</title>
 
-<style>
-:root {
-  --cor-dourado: #d1a720;
-  --cor-fundo: #1a1a1a;
-  --cor-card: rgba(40, 35, 25, 0.95);
-  --cor-texto: #f5f5f5;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
+  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
+  <link rel="apple-touch-icon" href="img/mike_anotando2.png">
 
-body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-              url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-  background-size: cover;
-  color: var(--cor-texto);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  <style>
+    :root {
+      --cor-dourado: #d1a720;
+      --cor-fundo: #1a1a1a;
+      --cor-card: rgba(40, 35, 25, 0.95);
+      --cor-texto: #f5f5f5;
+    }
 
-.card {
-  background: var(--cor-card);
-  padding: 25px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.6);
-  text-align: center;
-  width: 380px;
-}
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-h2 {
-  color: var(--cor-dourado);
-  margin-bottom: 20px;
-}
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--cor-texto);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 40px;
+      min-height: 100vh;
+      flex-wrap: wrap;
+    }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: none;
-  border-radius: 8px;
-}
+    .card {
+      background: var(--cor-card);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      text-align: center;
+      width: 350px;
+    }
 
-button {
-  background: var(--cor-dourado);
-  color: #000;
-  border: none;
-  padding: 12px;
-  margin-top: 10px;
-  width: 100%;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-button:hover { background: #ffcc33; transform: scale(1.05); }
+    h2 {
+      color: var(--cor-dourado);
+      margin-bottom: 20px;
+    }
 
-.hidden { display: none; }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+    }
 
-#pokemonNome {
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: var(--cor-dourado);
-  margin-top: 10px;
-  text-shadow: 0 0 8px #000;
-}
-#pokemonImg {
-  margin-top: 10px;
-  max-width: 220px;
-  width: 100%;
-}
-.info {
-  margin-top: 10px;
-  text-align: left;
-}
-.info p {
-  margin: 5px 0;
-}
-</style>
+    button {
+      background: var(--cor-dourado);
+      color: #000;
+      border: none;
+      padding: 12px;
+      margin-top: 10px;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover { background: #ffcc33; transform: scale(1.05); }
+
+    #resultado, #quizCard {
+      display: none;
+    }
+
+    #pokemonNome {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--cor-dourado);
+      margin-top: 15px;
+      text-shadow: 0 0 8px #000;
+    }
+
+    #pokemonImg {
+      margin-top: 15px;
+      max-width: 250px;
+      width: 100%;
+    }
+
+    #pergunta { font-weight: bold; margin-bottom: 12px; }
+    #resposta { color: var(--cor-dourado); font-size: 1.2rem; margin-bottom: 10px; }
+    #explicacao { font-size: 0.9rem; opacity: 0.9; }
+  </style>
 </head>
 <body>
-  <!-- Login -->
   <div class="card" id="loginCard">
     <h2>Login Organizador</h2>
     <input type="text" id="login" placeholder="Usuário">
@@ -96,131 +104,119 @@ button:hover { background: #ffcc33; transform: scale(1.05); }
     <p id="erro" style="color:red; display:none;">Usuário ou senha incorretos!</p>
   </div>
 
-  <!-- Pergunta -->
-  <div class="card hidden" id="perguntaCard">
-    <h2>Pergunta</h2>
-    <p id="perguntaTexto"></p>
-    <button onclick="mostrarResposta()">Mostrar Resposta</button>
-    <button onclick="logout()">Sair</button>
-  </div>
-
-  <!-- Resposta -->
-  <div class="card hidden" id="respostaCard">
+  <div class="card" id="resultado">
     <h2>Resultado</h2>
     <p>O Pokémon sorteado foi:</p>
     <div id="pokemonNome"></div>
     <img id="pokemonImg" alt="Pokémon revelado">
-    <div class="info">
-      <p><b>Resposta:</b> <span id="respostaTexto"></span></p>
-      <p><b>Dex:</b> <span id="dexTexto"></span></p>
-      <p><b>Explicação:</b> <span id="explicacaoTexto"></span></p>
-    </div>
-    <br>
-    <button onclick="sortearPergunta()">🔄 Recarregar</button>
+    <br><br>
+    <button onclick="location.reload()">🔄 Recarregar</button>
     <button onclick="logout()">Sair</button>
   </div>
 
-<script>
-// 🔑 Credenciais
-const USUARIO = "OrganizadorDeEventos";
-const SENHA = "MikeOMacaco3Foda";
+  <div class="card" id="quizCard">
+    <h2>Quiz Pokémon</h2>
+    <p id="pergunta"></p>
+    <p id="resposta"></p>
+    <p id="explicacao"></p>
+  </div>
 
-// 🔐 Criptografia simples
-const SECRET_KEY = "MikeOMacacoefoda2024";
-function encrypt(text) {
-  return btoa(unescape(encodeURIComponent(
-    text.split('').map((c,i)=>
-      String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
-    ).join('')
-  )));
-}
-function decrypt(text) {
-  try {
-    const decoded = decodeURIComponent(escape(atob(text)));
-    return decoded.split('').map((c,i)=>
-      String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
-    ).join('');
-  } catch {
-    return null;
-  }
-}
+  <script>
+    const SECRET_KEY = "MikeOMacacoefoda2024";
 
-// 🔹 Perguntas (exemplo, pode puxar de um JSON externo)
-const perguntas = [
-  {
-    pergunta: "Qual Pokémon pode voar a velocidades incríveis, chegando a cruzar o céu em segundos?",
-    resposta: "Pidgeot",
-    dex: "Silver",
-    explicacao: "A Pokédex diz que Pidgeot é tão rápido que atravessa grandes distâncias em pouco tempo.",
-    id: 18
-  },
-  {
-    pergunta: "Qual Pokémon consegue nadar em magma sem se queimar?",
-    resposta: "Magmar",
-    dex: "Ruby",
-    explicacao: "Ele é tão resistente ao calor que nada tranquilamente em magma.",
-    id: 126
-  }
-];
+    function decrypt(text) {
+      try {
+        const decoded = decodeURIComponent(escape(atob(text)));
+        return decoded.split('').map((c,i)=>
+          String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
+        ).join('');
+      } catch {
+        return null;
+      }
+    }
 
-// 🔹 Login
-function fazerLogin() {
-  const usuario = document.getElementById("login").value;
-  const senha = document.getElementById("senha").value;
+    function fazerLogin() {
+      const usuario = document.getElementById("login").value;
+      const senha = document.getElementById("senha").value;
 
-  if (usuario === USUARIO && senha === SENHA) {
-    sessionStorage.setItem("adminLogado", "true"); // sessão expira ao fechar aba
-    sortearPergunta();
-    document.getElementById("loginCard").classList.add("hidden");
-    document.getElementById("perguntaCard").classList.remove("hidden");
-  } else {
-    document.getElementById("erro").style.display = "block";
-  }
-}
+      if (usuario === "OrganizadorDeEventos" && senha === "MikeOMacaco3Foda") {
+        sessionStorage.setItem("adminLogado", "true"); // 🔑 sessão temporária
+        mostrarResultado();
+        mostrarQuiz();
+      } else {
+        document.getElementById("erro").style.display = "block";
+      }
+    }
 
-// 🔹 Sorteio
-function sortearPergunta() {
-  const pergunta = perguntas[Math.floor(Math.random() * perguntas.length)];
-  sessionStorage.setItem("pokemonResposta", encrypt(JSON.stringify(pergunta)));
+    function mostrarResultado() {
+      document.getElementById("loginCard").style.display = "none";
+      document.getElementById("resultado").style.display = "block";
 
-  document.getElementById("perguntaTexto").innerText = pergunta.pergunta;
+      const respostaCripto = localStorage.getItem("pokemonResposta");
+      if (!respostaCripto) {
+        document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
+        return;
+      }
 
-  document.getElementById("perguntaCard").classList.remove("hidden");
-  document.getElementById("respostaCard").classList.add("hidden");
-}
+      const pokemon = decrypt(respostaCripto);
+      if (!pokemon) {
+        document.getElementById("pokemonNome").innerText = "Erro ao descriptografar.";
+        return;
+      }
 
-// 🔹 Mostrar resposta
-function mostrarResposta() {
-  const cripto = sessionStorage.getItem("pokemonResposta");
-  if (!cripto) return;
+      document.getElementById("pokemonNome").innerText = pokemon;
 
-  const obj = JSON.parse(decrypt(cripto));
+      fetch("pokemons/pokemon.json")
+        .then(res => res.json())
+        .then(data => {
+          if (data[pokemon]) {
+            const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data[pokemon].id}.png`;
+            document.getElementById("pokemonImg").src = imgUrl;
+          }
+        });
+    }
 
-  document.getElementById("pokemonNome").innerText = obj.resposta;
-  document.getElementById("respostaTexto").innerText = obj.resposta;
-  document.getElementById("dexTexto").innerText = obj.dex;
-  document.getElementById("explicacaoTexto").innerText = obj.explicacao;
-  document.getElementById("pokemonImg").src =
-    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${obj.id}.png`;
+    function mostrarQuiz() {
+      document.getElementById("quizCard").style.display = "block";
 
-  document.getElementById("perguntaCard").classList.add("hidden");
-  document.getElementById("respostaCard").classList.remove("hidden");
-}
+      // verifica se já tem pergunta salva
+      const perguntaSalva = sessionStorage.getItem("perguntaAtual");
+      if (perguntaSalva) {
+        const obj = JSON.parse(perguntaSalva);
+        preencherQuiz(obj);
+      } else {
+        sortearPergunta();
+      }
+    }
 
-// 🔹 Logout
-function logout() {
-  sessionStorage.clear();
-  location.reload();
-}
+    function sortearPergunta() {
+      fetch("perguntas.json")
+        .then(res => res.json())
+        .then(data => {
+          const lista = data.perguntas_respostas;
+          const sorteada = lista[Math.floor(Math.random() * lista.length)];
+          sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada)); // salva para não mudar na sessão
+          preencherQuiz(sorteada);
+        });
+    }
 
-// 🔹 Verifica login ativo
-window.onload = () => {
-  if (sessionStorage.getItem("adminLogado") === "true") {
-    sortearPergunta();
-    document.getElementById("loginCard").classList.add("hidden");
-    document.getElementById("perguntaCard").classList.remove("hidden");
-  }
-};
-</script>
+    function preencherQuiz(item) {
+      document.getElementById("pergunta").innerText = item.pergunta;
+      document.getElementById("resposta").innerText = "Resposta: " + item.resposta;
+      document.getElementById("explicacao").innerText = item.explicacao + " (Dex: " + item.dex + ")";
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      location.reload();
+    }
+
+    window.onload = () => {
+      if (sessionStorage.getItem("adminLogado") === "true") {
+        mostrarResultado();
+        mostrarQuiz();
+      }
+    };
+  </script>
 </body>
 </html>
