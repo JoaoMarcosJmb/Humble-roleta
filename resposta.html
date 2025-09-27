@@ -99,7 +99,7 @@
     }
 
     function sortearPergunta() {
-      fetch("perguntas.json")
+      fetch("perguntas/perguntas.json")
         .then(res => res.json())
         .then(data => {
           const lista = data.perguntas_respostas;
