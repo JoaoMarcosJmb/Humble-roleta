@@ -1,0 +1,118 @@
+{
+  "perguntas_respostas": [
+    {
+      "pergunta": "Qual Pokémon pode voar a velocidades incríveis, chegando a cruzar o céu em segundos?",
+      "resposta": "Pidgeot",
+      "dex": "Silver",
+      "explicacao": "A Pokédex diz que Pidgeot é tão rápido que atravessa grandes distâncias em pouco tempo."
+    },
+    {
+      "pergunta": "Qual Pokémon consegue nadar em magma sem se queimar?",
+      "resposta": "Magmar",
+      "dex": "Ruby",
+      "explicacao": "Ele é tão resistente ao calor que nada em lava como se fosse água."
+    },
+    {
+      "pergunta": "Qual Pokémon é conhecido por copiar qualquer movimento que ver?",
+      "resposta": "Smeargle",
+      "dex": "Gold",
+      "explicacao": "Smeargle usa sua cauda como pincel e consegue “pintar” qualquer golpe."
+    },
+    {
+      "pergunta": "Qual Pokémon se transforma dependendo do clima do ambiente?",
+      "resposta": "Castform",
+      "dex": "Ruby",
+      "explicacao": "Ele muda de forma se estiver sol, chuva ou neve."
+    },
+    {
+      "pergunta": "Qual Pokémon pode cortar árvores com suas asas afiadas?",
+      "resposta": "Scyther",
+      "dex": "FireRed",
+      "explicacao": "Suas asas são tão afiadas que podem derrubar troncos com um só golpe."
+    },
+    {
+      "pergunta": "Qual Pokémon consegue voar sem fazer nenhum barulho?",
+      "resposta": "Noivern",
+      "dex": "X",
+      "explicacao": "A Pokédex diz que ele pode voar silenciosamente, sendo quase impossível de notar."
+    },
+    {
+      "pergunta": "Qual Pokémon é famoso por dormir quase o tempo todo?",
+      "resposta": "Snorlax",
+      "dex": "Gold",
+      "explicacao": "Snorlax só acorda para comer, e depois volta a dormir."
+    },
+    {
+      "pergunta": "Qual Pokémon pode se esconder perfeitamente transformando-se em qualquer objeto?",
+      "resposta": "Ditto",
+      "dex": "Silver",
+      "explicacao": "Ditto copia a forma de qualquer coisa para se camuflar."
+    },
+    {
+      "pergunta": "Qual Pokémon consegue falar imitando a voz humana?",
+      "resposta": "Chatot",
+      "dex": "Diamond",
+      "explicacao": "Ele pode repetir frases como se fosse uma pessoa."
+    },
+    {
+      "pergunta": "Qual Pokémon pode inflar seu corpo como um balão para voar?",
+      "resposta": "Jigglypuff",
+      "dex": "Yellow",
+      "explicacao": "Quando fica bravo, ele enche o corpo de ar e flutua."
+    },
+    {
+      "pergunta": "Qual Pokémon consegue derreter pedras com seu fogo?",
+      "resposta": "Charizard",
+      "dex": "Silver",
+      "explicacao": "Seu fogo é tão intenso que pode queimar até rochas."
+    },
+    {
+      "pergunta": "Qual Pokémon gosta de guardar objetos brilhantes que encontra?",
+      "resposta": "Meowth",
+      "dex": "Yellow",
+      "explicacao": "Ele é atraído por moedas e coisas que brilham."
+    },
+    {
+      "pergunta": "Qual Pokémon gira seu corpo como uma hélice para voar?",
+      "resposta": "Hitmontop",
+      "dex": "Gold",
+      "explicacao": "Ele fica de cabeça para baixo e gira como um pião."
+    },
+    {
+      "pergunta": "Qual Pokémon é pequeno, mas pode levantar objetos bem mais pesados que ele mesmo?",
+      "resposta": "Machop",
+      "dex": "FireRed",
+      "explicacao": "Machop treina tanto que carrega pesos enormes para ficar forte."
+    },
+    {
+      "pergunta": "Qual Pokémon pode se comunicar usando ondas de aura?",
+      "resposta": "Lucario",
+      "dex": "Sun",
+      "explicacao": "Ele consegue entender sentimentos e intenções das pessoas."
+    },
+    {
+      "pergunta": "Qual Pokémon consegue correr incansavelmente por dias?",
+      "resposta": "Ponyta",
+      "dex": "Diamond",
+      "explicacao": "Quando bem treinado, ele corre grandes distâncias sem cansar."
+    },
+    {
+      "pergunta": "Qual Pokémon solta trovões tão fortes que parecem uma tempestade?",
+      "resposta": "Raikou",
+      "dex": "Crystal",
+      "explicacao": "Ele é como um trovão vivo e anda junto das tempestades."
+    },
+    {
+      "pergunta": "Qual Pokémon pode nadar mais rápido que um barco?",
+      "resposta": "Gyarados",
+      "dex": "HeartGold",
+      "explicacao": "Sua velocidade na água é tão grande que supera embarcações."
+    },
+    {
+      "pergunta": "Qual Pokémon consegue viver em cavernas sem usar os olhos?",
+      "resposta": "Zubat",
+      "dex": "FireRed",
+      "explicacao": "Ele usa ondas sonoras para se orientar no escuro."
+    }
+  ]
+}
