@@ -62,7 +62,6 @@
       align-items: flex-start;
     }
 
-    /* --- Área do jogo --- */
     .game-area {
       position: relative;
       display: inline-block;
@@ -149,8 +148,8 @@
   <script>
     let pokemons = {};
     let currentPokemon = null;
+    let isShiny = false;
 
-    // chave secreta para criptografia
     const SECRET_KEY = "MikeOMacacoefoda2024";
 
     function encrypt(text) {
@@ -174,17 +173,24 @@
       const randomKey = keys[Math.floor(Math.random() * keys.length)];
       currentPokemon = { name: randomKey, id: pokemons[randomKey].id };
 
-      const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+      // 30% de chance shiny
+      isShiny = Math.random() < 0.3;
+
+      let imgUrl;
+      if (isShiny) {
+        imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`;
+      } else {
+        imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+      }
 
       const img = document.getElementById("pokemonImg");
       img.src = imgUrl;
       img.style.filter = "brightness(0) saturate(100%)";
 
-      document.getElementById("pokemonNome").innerText = currentPokemon.name;
+      document.getElementById("pokemonNome").innerText = currentPokemon.name + (isShiny ? " ✨" : "");
       document.getElementById("pokemonNome").style.display = "none";
 
-      // salva a resposta criptografada no localStorage
-      localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name));
+      localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + (isShiny ? " (Shiny)" : "")));
     }
 
     function revelarPokemon() {
