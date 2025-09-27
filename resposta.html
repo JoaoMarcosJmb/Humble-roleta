@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resposta - Quem é esse Pokémon?</title>
+  <title>Pergunta - Quem é esse Pokémon?</title>
 
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
@@ -37,7 +37,7 @@
       border-radius: 15px;
       box-shadow: 0 0 15px rgba(0,0,0,0.6);
       text-align: center;
-      width: 350px;
+      width: 400px;
     }
 
     h2 {
@@ -69,23 +69,9 @@
 
     button:hover { background: #ffcc33; transform: scale(1.05); }
 
-    #resultado {
-      display: none;
-    }
-
-    #pokemonNome {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--cor-dourado);
-      margin-top: 15px;
-      text-shadow: 0 0 8px #000;
-    }
-
-    #pokemonImg {
-      margin-top: 15px;
-      max-width: 250px;
-      width: 100%;
-    }
+    #resultado { display: none; text-align: left; }
+    .info { margin-top: 10px; }
+    .info strong { color: var(--cor-dourado); }
   </style>
 </head>
 <body>
@@ -98,35 +84,23 @@
   </div>
 
   <div class="card" id="resultado">
-    <h2>Resultado</h2>
-    <p>O Pokémon sorteado foi:</p>
-    <div id="pokemonNome"></div>
-    <img id="pokemonImg" alt="Pokémon revelado">
-    <br><br>
-    <button onclick="location.reload()">🔄 Recarregar</button>
+    <h2>Pergunta do Dia</h2>
+    <p class="info"><strong>Pergunta:</strong> <span id="pergunta"></span></p>
+    <p class="info"><strong>Resposta:</strong> <span id="resposta"></span></p>
+    <p class="info"><strong>Dex:</strong> <span id="dex"></span></p>
+    <p class="info"><strong>Explicação:</strong> <span id="explicacao"></span></p>
+    <br>
+    <button onclick="location.reload()">🔄 Nova Pergunta</button>
     <button onclick="logout()">Sair</button>
   </div>
 
   <script>
-    const SECRET_KEY = "MikeOMacacoefoda2024";
-
-    function decrypt(text) {
-      try {
-        const decoded = decodeURIComponent(escape(atob(text)));
-        return decoded.split('').map((c,i)=>
-          String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
-        ).join('');
-      } catch {
-        return null;
-      }
-    }
-
     function fazerLogin() {
       const usuario = document.getElementById("login").value;
       const senha = document.getElementById("senha").value;
 
       if (usuario === "OrganizadorDeEventos" && senha === "MikeOMacaco3Foda") {
-        localStorage.setItem("adminLogado", "true"); // 🔑 guarda sessão
+        localStorage.setItem("adminLogado", "true");
         mostrarResultado();
       } else {
         document.getElementById("erro").style.display = "block";
@@ -137,37 +111,49 @@
       document.getElementById("loginCard").style.display = "none";
       document.getElementById("resultado").style.display = "block";
 
-      const respostaCripto = localStorage.getItem("pokemonResposta");
-      if (!respostaCripto) {
-        document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
-        return;
-      }
-
-      const pokemon = decrypt(respostaCripto);
-      if (!pokemon) {
-        document.getElementById("pokemonNome").innerText = "Erro ao descriptografar.";
-        return;
-      }
-
-      document.getElementById("pokemonNome").innerText = pokemon;
-
-      // pega id da lista de pokemons
-      fetch("pokemons/pokemon.json")
+      fetch("perguntas/perguntas.json")
         .then(res => res.json())
         .then(data => {
-          if (data[pokemon]) {
-            const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data[pokemon].id}.png`;
-            document.getElementById("pokemonImg").src = imgUrl;
+          const perguntas = data.perguntas_respostas;
+
+          // pega as já usadas nesta sessão
+          let usadas = JSON.parse(sessionStorage.getItem("perguntasUsadas")) || [];
+
+          // filtra perguntas não usadas
+          let disponiveis = perguntas.filter((_, i) => !usadas.includes(i));
+
+          if (disponiveis.length === 0) {
+            document.getElementById("pergunta").innerText = "Todas as perguntas já foram usadas nesta sessão.";
+            document.getElementById("resposta").innerText = "-";
+            document.getElementById("dex").innerText = "-";
+            document.getElementById("explicacao").innerText = "-";
+            return;
           }
+
+          // sorteia uma pergunta aleatória
+          let idx = Math.floor(Math.random() * disponiveis.length);
+          let perguntaSelecionada = disponiveis[idx];
+
+          // pega índice real no array original
+          let indiceReal = perguntas.indexOf(perguntaSelecionada);
+          usadas.push(indiceReal);
+          sessionStorage.setItem("perguntasUsadas", JSON.stringify(usadas));
+
+          // exibe na tela
+          document.getElementById("pergunta").innerText = perguntaSelecionada.pergunta;
+          document.getElementById("resposta").innerText = perguntaSelecionada.resposta;
+          document.getElementById("dex").innerText = perguntaSelecionada.dex;
+          document.getElementById("explicacao").innerText = perguntaSelecionada.explicacao;
         });
     }
 
     function logout() {
       localStorage.removeItem("adminLogado");
+      sessionStorage.removeItem("perguntasUsadas");
       location.reload();
     }
 
-    // 🔥 Verifica se já está logado
+    // se já estiver logado
     window.onload = () => {
       if (localStorage.getItem("adminLogado") === "true") {
         mostrarResultado();
