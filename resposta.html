@@ -3,184 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Resposta - Quem é esse Pokémon?</title>
-
-  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
-  <link rel="apple-touch-icon" href="img/mike_anotando2.png">
-
+  <title>Quiz Pokémon</title>
   <style>
-    :root {
-      --cor-dourado: #d1a720;
-      --cor-fundo: #1a1a1a;
-      --cor-card: rgba(40, 35, 25, 0.95);
-      --cor-texto: #f5f5f5;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
-      color: var(--cor-texto);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      gap: 20px;
-      padding: 40px;
-      min-height: 100vh;
-      flex-wrap: wrap;
-    }
-
-    .card {
-      background: var(--cor-card);
-      padding: 25px;
-      border-radius: 15px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.6);
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
       text-align: center;
-      width: 350px;
     }
-
-    h2 {
-      color: var(--cor-dourado);
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 8px;
-    }
-
-    button {
-      background: var(--cor-dourado);
-      color: #000;
-      border: none;
-      padding: 12px;
-      margin-top: 10px;
-      width: 100%;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    button:hover { background: #ffcc33; transform: scale(1.05); }
-
-    #resultado, #quizCard {
+    #loginCard, #quizCard {
       display: none;
+      margin: 50px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      max-width: 500px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
-
-    #pokemonNome {
-      font-size: 1.8rem;
+    input {
+      display: block;
+      margin: 10px auto;
+      padding: 10px;
+      width: 80%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      background: #4CAF50;
+      color: white;
       font-weight: bold;
-      color: var(--cor-dourado);
-      margin-top: 15px;
-      text-shadow: 0 0 8px #000;
+      cursor: pointer;
     }
-
-    #pokemonImg {
-      margin-top: 15px;
-      max-width: 250px;
-      width: 100%;
+    button:hover {
+      background: #45a049;
     }
-
-    #pergunta { font-weight: bold; margin-bottom: 12px; }
-    #resposta { color: var(--cor-dourado); font-size: 1.2rem; margin-bottom: 10px; }
-    #explicacao { font-size: 0.9rem; opacity: 0.9; }
+    h2 { color: #333; }
+    #resposta, #explicacao { margin-top: 10px; font-size: 14px; }
   </style>
 </head>
 <body>
-  <div class="card" id="loginCard">
-    <h2>Login Organizador</h2>
-    <input type="text" id="login" placeholder="Usuário">
+  <div id="loginCard">
+    <h2>Login do Organizador</h2>
+    <input type="text" id="usuario" placeholder="Usuário">
     <input type="password" id="senha" placeholder="Senha">
     <button onclick="fazerLogin()">Entrar</button>
-    <p id="erro" style="color:red; display:none;">Usuário ou senha incorretos!</p>
+    <p id="erro" style="color:red;"></p>
   </div>
 
-  <div class="card" id="resultado">
-    <h2>Resultado</h2>
-    <p>O Pokémon sorteado foi:</p>
-    <div id="pokemonNome"></div>
-    <img id="pokemonImg" alt="Pokémon revelado">
-    <br><br>
-    <button onclick="location.reload()">🔄 Recarregar</button>
-    <button onclick="logout()">Sair</button>
-  </div>
-
-  <div class="card" id="quizCard">
-    <h2>Quiz Pokémon</h2>
-    <p id="pergunta"></p>
+  <div id="quizCard">
+    <h2 id="pergunta"></h2>
     <p id="resposta"></p>
     <p id="explicacao"></p>
     <button onclick="novaPergunta()">🔄 Nova Pergunta</button>
+    <button onclick="sair()">🚪 Sair</button>
   </div>
 
   <script>
-    const SECRET_KEY = "MikeOMacacoefoda2024";
+    const USER = "organizador_de_eventos";
+    const PASS = "MikeOMacacoefoda";
 
-    function decrypt(text) {
-      try {
-        const decoded = decodeURIComponent(escape(atob(text)));
-        return decoded.split('').map((c,i)=>
-          String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
-        ).join('');
-      } catch {
-        return null;
-      }
-    }
-
-    function fazerLogin() {
-      const usuario = document.getElementById("login").value;
-      const senha = document.getElementById("senha").value;
-
-      if (usuario === "OrganizadorDeEventos" && senha === "MikeOMacaco3Foda") {
-        sessionStorage.setItem("adminLogado", "true"); // 🔑 sessão temporária
-        mostrarResultado();
+    window.onload = () => {
+      if (sessionStorage.getItem("logado") === "true") {
         mostrarQuiz();
       } else {
-        document.getElementById("erro").style.display = "block";
+        document.getElementById("loginCard").style.display = "block";
       }
-    }
+    };
 
-    function mostrarResultado() {
-      document.getElementById("loginCard").style.display = "none";
-      document.getElementById("resultado").style.display = "block";
-
-      const respostaCripto = localStorage.getItem("pokemonResposta");
-      if (!respostaCripto) {
-        document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
-        return;
+    function fazerLogin() {
+      const u = document.getElementById("usuario").value;
+      const p = document.getElementById("senha").value;
+      if (u === USER && p === PASS) {
+        sessionStorage.setItem("logado", "true");
+        mostrarQuiz();
+      } else {
+        document.getElementById("erro").innerText = "Usuário ou senha inválidos!";
       }
-
-      const pokemon = decrypt(respostaCripto);
-      if (!pokemon) {
-        document.getElementById("pokemonNome").innerText = "Erro ao descriptografar.";
-        return;
-      }
-
-      document.getElementById("pokemonNome").innerText = pokemon;
-
-      fetch("pokemons/pokemon.json")
-        .then(res => res.json())
-        .then(data => {
-          if (data[pokemon]) {
-            const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data[pokemon].id}.png`;
-            document.getElementById("pokemonImg").src = imgUrl;
-          }
-        });
     }
 
     function mostrarQuiz() {
+      document.getElementById("loginCard").style.display = "none";
       document.getElementById("quizCard").style.display = "block";
 
-      // verifica se já tem pergunta salva
       const perguntaSalva = sessionStorage.getItem("perguntaAtual");
       if (perguntaSalva) {
         preencherQuiz(JSON.parse(perguntaSalva));
@@ -190,12 +99,30 @@
     }
 
     function sortearPergunta() {
-      fetch("perguntas/perguntas.json")
+      fetch("perguntas.json")
         .then(res => res.json())
         .then(data => {
           const lista = data.perguntas_respostas;
-          const sorteada = lista[Math.floor(Math.random() * lista.length)];
-          sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada)); // salva
+
+          let usadas = JSON.parse(sessionStorage.getItem("perguntasUsadas") || "[]");
+
+          if (usadas.length >= lista.length) {
+            document.getElementById("pergunta").innerText = "✅ Todas as perguntas já foram usadas!";
+            document.getElementById("resposta").innerText = "";
+            document.getElementById("explicacao").innerText = "";
+            return;
+          }
+
+          let sorteada;
+          do {
+            sorteada = lista[Math.floor(Math.random() * lista.length)];
+          } while (usadas.includes(sorteada.pergunta));
+
+          usadas.push(sorteada.pergunta);
+          sessionStorage.setItem("perguntasUsadas", JSON.stringify(usadas));
+
+          sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada));
+
           preencherQuiz(sorteada);
         });
     }
@@ -207,21 +134,14 @@
     }
 
     function novaPergunta() {
-      sessionStorage.removeItem("perguntaAtual"); // libera para nova
+      sessionStorage.removeItem("perguntaAtual");
       sortearPergunta();
     }
 
-    function logout() {
+    function sair() {
       sessionStorage.clear();
       location.reload();
     }
-
-    window.onload = () => {
-      if (sessionStorage.getItem("adminLogado") === "true") {
-        mostrarResultado();
-        mostrarQuiz();
-      }
-    };
   </script>
 </body>
 </html>
