@@ -15,6 +15,7 @@
       --cor-fundo: #1a1a1a;
       --cor-card: rgba(40, 35, 25, 0.95);
       --cor-texto: #f5f5f5;
+      --cor-modificado: #1e88e5;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,6 +28,7 @@
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
+      transition: background 0.5s ease;
     }
 
     header {
@@ -43,6 +45,7 @@
       border-bottom: 2px solid var(--cor-dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       z-index: 1000;
+      transition: background 0.5s ease, border-color 0.5s ease;
     }
 
     header h1 {
@@ -52,6 +55,7 @@
       align-items: center;
       gap: 12px;
       color: var(--cor-dourado);
+      transition: color 0.5s ease;
     }
     header h1 img { height: 40px; display: block; }
 
@@ -103,7 +107,7 @@
       margin-top: 10px;
       font-size: 1.5rem;
       font-weight: bold;
-      color: #1e88e5;
+      color: var(--cor-modificado);
       display: none;
       text-align: center;
       letter-spacing: 1px;
@@ -145,7 +149,6 @@
   <div class="wrap">
     <div>
       <div class="game-area">
-        <!-- O fundo do card será alterado apenas pela troca de imagem (quem_e_esse_pokemon_mod.png) -->
         <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
         <img id="pokemonImg" alt="Pokémon misterioso">
       </div>
@@ -162,8 +165,13 @@
 
   <script>
     let pokemons = {};
-    // coloque aqui os nomes dos arquivos de pokémons modificados (com extensão)
-    let modificados = ["pikachu_mod.png","charmander_mod.png"];
+    let modificados = [
+      "pikachu_mod.png",
+      "charmander_mod.png",
+      "gengabble.png",
+      "mimichu.png",
+      "mitto.png"
+    ]; 
     let usados = [];
     let currentPokemon = null;
     let isShiny = false;
@@ -172,11 +180,9 @@
     const SECRET_KEY = "MikeOMacacoefoda2024";
 
     function encrypt(text) {
-      return btoa(unescape(encodeURIComponent(
-        text.split('').map((c,i) =>
-          String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
-        ).join('')
-      )));
+      return btoa(unescape(encodeURIComponent(text.split('').map((c,i)=>
+        String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
+      ).join(''))));
     }
 
     fetch("pokemons/pokemon.json")
@@ -195,7 +201,6 @@
       let escolhido;
 
       const chance = Math.random();
-      // chance < 0.15 = 15% de modificado (mude aqui se quiser)
       if (chance < 0.15) {
         tipo = "modificado";
         escolhido = modificados[Math.floor(Math.random() * modificados.length)];
@@ -233,18 +238,17 @@
       const fundoCard = document.getElementById("fundoCard");
 
       if (tipo === "modificado") {
-        // **APENAS** trocamos a imagem do card aqui, sem alterar CSS global
-        fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
         titulo.innerText = "Quem é esse Pokémon?";
+        fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
         img.src = "img/pokemons modificados/" + currentPokemon.name + ".png";
         img.style.filter = "brightness(0) saturate(100%)";
         nome.style.display = "none";
         nomeMod.innerText = currentPokemon.name.toUpperCase();
-        nomeMod.style.display = "block";
+        nomeMod.style.display = "none"; // escondido até revelar
         localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + " (Modificado)"));
       } else {
-        fundoCard.src = "img/quem_e_esse_pokemon.png";
         titulo.innerText = "Quem é esse Pokémon?";
+        fundoCard.src = "img/quem_e_esse_pokemon.png";
         let imgUrl;
         if (isShiny) {
           imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`;
@@ -262,7 +266,7 @@
 
     function revelarPokemon() {
       const img = document.getElementById("pokemonImg");
-      document.getElementById("pokemonNome").style.display = "block";
+      document.getElementById("pokemonNome").style.display = isModificado ? "none" : "block";
       document.getElementById("pokemonModNome").style.display = isModificado ? "block" : "none";
       img.style.filter = "none";
     }
