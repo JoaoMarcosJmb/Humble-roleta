@@ -89,8 +89,8 @@
       max-height: 70%;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
-      transition: filter 0.5s ease, opacity 0.3s ease;
-      opacity: 0; /* começa invisível até carregar */
+      opacity: 0; /* Inicialmente invisível */
+      transition: opacity 0.5s ease, filter 0.5s ease; /* Só aplica transição de fade na revelação */
     }
 
     #pokemonNome {
@@ -236,8 +236,8 @@
       const nomeMod = document.getElementById("pokemonModNome");
       const fundoCard = document.getElementById("fundoCard");
 
-      // deixa invisível até carregar
-      img.style.opacity = "0";
+      // A imagem começa invisível
+      img.style.opacity = "0";  
 
       let newSrc;
 
@@ -268,7 +268,7 @@
       tempImg.onload = function () {
         img.src = newSrc;
         img.style.filter = "brightness(0) saturate(100%)"; 
-        img.style.opacity = "1"; // aparece suave só depois de carregar
+        // A imagem só vai aparecer depois de ser carregada
       };
       tempImg.src = newSrc;
     }
@@ -277,6 +277,10 @@
       const img = document.getElementById("pokemonImg");
       document.getElementById("pokemonNome").style.display = isModificado ? "none" : "block";
       document.getElementById("pokemonModNome").style.display = isModificado ? "block" : "none";
+      
+      // Só aplicar fade quando for revelado
+      img.style.transition = "opacity 1s ease-in-out"; // Mais suave
+      img.style.opacity = "1"; 
       img.style.filter = "none";
     }
   </script>
