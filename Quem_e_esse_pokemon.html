@@ -88,9 +88,9 @@
       height: auto;
       max-height: 70%;
       object-fit: contain;
-      filter: brightness(0) saturate(100%);
-      opacity: 1; /* A versão preta permanece visível */
-      transition: opacity 0.5s ease, filter 0.5s ease; /* Transição de revelação */
+      filter: brightness(0) saturate(100%); /* Começa com a versão preta */
+      opacity: 1; /* Visível desde o início */
+      transition: opacity 1s ease-in-out, filter 1s ease; /* Transição de revelação */
     }
 
     #pokemonNome {
@@ -235,9 +235,6 @@
       const nome = document.getElementById("pokemonNome");
       const nomeMod = document.getElementById("pokemonModNome");
       const fundoCard = document.getElementById("fundoCard");
-
-      // A imagem começa visível e com o filtro preto
-      img.style.opacity = "1";
 
       let newSrc;
 
