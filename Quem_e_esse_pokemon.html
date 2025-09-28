@@ -90,7 +90,7 @@
       object-fit: contain;
       filter: brightness(0) saturate(100%); /* Começa com a versão preta */
       opacity: 1; /* Visível desde o início */
-      transition: opacity 1s ease-in-out, filter 1s ease; /* Transição de revelação */
+      transition: opacity 2s ease-in-out, filter 2s ease; /* Transição mais lenta */
     }
 
     #pokemonNome {
@@ -274,8 +274,8 @@
       document.getElementById("pokemonNome").style.display = isModificado ? "none" : "block";
       document.getElementById("pokemonModNome").style.display = isModificado ? "block" : "none";
       
-      // Revela com fade (transição de opacidade)
-      img.style.transition = "opacity 1s ease-in-out"; 
+      // Revela com fade (transição de opacidade) mais suave
+      img.style.transition = "opacity 2s ease-in-out, filter 2s ease"; // A transição é mais lenta
       img.style.opacity = "1"; // Faz a imagem aparecer com o fade
       img.style.filter = "none"; // Remove o filtro para mostrar a versão colorida
     }
