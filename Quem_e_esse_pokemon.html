@@ -89,7 +89,8 @@
       max-height: 70%;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
-      transition: filter 0.5s ease;
+      transition: filter 0.5s ease, opacity 0.3s ease;
+      opacity: 0; /* começa invisível até carregar */
     }
 
     #pokemonNome {
@@ -235,31 +236,41 @@
       const nomeMod = document.getElementById("pokemonModNome");
       const fundoCard = document.getElementById("fundoCard");
 
+      // deixa invisível até carregar
+      img.style.opacity = "0";
+
+      let newSrc;
+
       if (tipo === "modificado") {
         titulo.innerText = "Quem é esse Pokémon?";
         fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
-        img.src = "img/pokemons modificados/" + currentPokemon.name + ".png";
-        img.style.filter = "brightness(0) saturate(100%)";
+        newSrc = "img/pokemons modificados/" + currentPokemon.name + ".png";
         nome.style.display = "none";
         nomeMod.innerText = currentPokemon.name.toUpperCase();
-        nomeMod.style.display = "none"; // escondido até revelar
+        nomeMod.style.display = "none";
         localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + " (Modificado)"));
       } else {
         titulo.innerText = "Quem é esse Pokémon?";
         fundoCard.src = "img/quem_e_esse_pokemon.png";
-        let imgUrl;
         if (isShiny) {
-          imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`;
+          newSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`;
         } else {
-          imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+          newSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
         }
-        img.src = imgUrl;
-        img.style.filter = "brightness(0) saturate(100%)";
         nome.innerText = currentPokemon.name + (isShiny ? " ✨" : "");
         nome.style.display = "none";
         nomeMod.style.display = "none";
         localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + (isShiny ? " (Shiny)" : "")));
       }
+
+      // Pré-carregar a nova imagem antes de trocar
+      const tempImg = new Image();
+      tempImg.onload = function () {
+        img.src = newSrc;
+        img.style.filter = "brightness(0) saturate(100%)"; 
+        img.style.opacity = "1"; // aparece suave só depois de carregar
+      };
+      tempImg.src = newSrc;
     }
 
     function revelarPokemon() {
@@ -271,4 +282,3 @@
   </script>
 </body>
 </html>
-
