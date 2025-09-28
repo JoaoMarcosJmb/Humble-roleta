@@ -15,10 +15,7 @@
       --cor-fundo: #1a1a1a;
       --cor-card: rgba(40, 35, 25, 0.95);
       --cor-texto: #f5f5f5;
-
-      /* Tema para modificados */
-      --cor-modificado: #ff4d4d;
-      --cor-fundo-modificado: linear-gradient(135deg, #330000, #660000);
+      --cor-modificado: #1e88e5;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,15 +23,12 @@
     html, body {
       height: 100%;
       font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--cor-fundo);
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
-      transition: background 0.4s ease;
-    }
-
-    body.modificado {
-      background: var(--cor-fundo-modificado) !important;
+      transition: background 0.5s ease;
     }
 
     header {
@@ -51,12 +45,7 @@
       border-bottom: 2px solid var(--cor-dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       z-index: 1000;
-      transition: border-color 0.3s, background 0.3s;
-    }
-
-    body.modificado header {
-      border-color: var(--cor-modificado);
-      background: rgba(60,0,0,0.85);
+      transition: background 0.5s ease, border-color 0.5s ease;
     }
 
     header h1 {
@@ -66,12 +55,8 @@
       align-items: center;
       gap: 12px;
       color: var(--cor-dourado);
-      transition: color 0.3s;
+      transition: color 0.5s ease;
     }
-    body.modificado header h1 {
-      color: var(--cor-modificado);
-    }
-
     header h1 img { height: 40px; display: block; }
 
     .wrap {
@@ -101,9 +86,10 @@
       transform: translate(-50%, -50%);
       width: 45%;
       height: auto;
+      max-height: 70%;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
-      transition: all 0.3s ease;
+      transition: filter 0.5s ease;
     }
 
     #pokemonNome {
@@ -115,12 +101,16 @@
       display: none;
       text-align: center;
       letter-spacing: 2px;
-      transition: color 0.3s, text-shadow 0.3s;
     }
 
-    body.modificado #pokemonNome {
+    #pokemonModNome {
+      margin-top: 10px;
+      font-size: 1.5rem;
+      font-weight: bold;
       color: var(--cor-modificado);
-      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-modificado);
+      display: none;
+      text-align: center;
+      letter-spacing: 1px;
     }
 
     .botoes {
@@ -142,14 +132,23 @@
       transition: transform 0.2s, background 0.2s;
     }
 
-    body.modificado button {
-      background: var(--cor-modificado);
-      color: #fff;
-    }
-
     button:hover {
       background: #ffcc33;
       transform: scale(1.05);
+    }
+
+    body.modificado {
+      background: linear-gradient(135deg, rgba(20,20,80,0.85), rgba(30,30,120,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    body.modificado header {
+      border-color: var(--cor-modificado);
+    }
+
+    body.modificado header h1 {
+      color: var(--cor-modificado);
     }
   </style>
 </head>
@@ -157,7 +156,7 @@
   <header>
     <h1>
       <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
-      Quem é esse Pokémon?
+      <span id="titulo">Quem é esse Pokémon?</span>
     </h1>
   </header>
 
@@ -169,6 +168,7 @@
       </div>
 
       <div id="pokemonNome"></div>
+      <div id="pokemonModNome"></div>
 
       <div class="botoes">
         <button onclick="trocarPokemon()">Trocar Pokémon</button>
@@ -179,8 +179,11 @@
 
   <script>
     let pokemons = {};
+    let modificados = ["pikachu_mod.png","charmander_mod.png"]; // coloque os nomes dos arquivos
+    let usados = [];
     let currentPokemon = null;
     let isShiny = false;
+    let isModificado = false;
 
     const SECRET_KEY = "MikeOMacacoefoda2024";
 
@@ -189,12 +192,6 @@
         String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
       ).join(''))));
     }
-
-    // lista de pokémons modificados (coloque nomes reais aqui)
-    const modificados = [
-      { arquivo: "pikachu_bugado.png", nome: "Pikachu Bugado" },
-      { arquivo: "psyduck_confuso.png", nome: "Psyduck Confuso" }
-    ];
 
     fetch("pokemons/pokemon.json")
       .then(res => res.json())
@@ -207,63 +204,78 @@
       });
 
     function trocarPokemon() {
-      const img = document.getElementById("pokemonImg");
-
-      // reset visual caso não seja modificado
-      document.body.classList.remove("modificado");
-
-      // --- 15% de chance de pegar um da pasta "pokemons modificados"
-      if (Math.random() < 0.15) {
-        const randomMod = modificados[Math.floor(Math.random() * modificados.length)];
-        img.src = "img/pokemons modificados/" + randomMod.arquivo;
-        img.style.filter = "brightness(0) saturate(100%)";
-
-        currentPokemon = { name: randomMod.nome, id: "mod" };
-        document.getElementById("pokemonNome").innerText = randomMod.nome;
-        document.getElementById("pokemonNome").style.display = "none";
-
-        localStorage.setItem("pokemonResposta", encrypt(randomMod.nome));
-
-        // aplicar tema modificado
-        document.body.classList.add("modificado");
-        document.querySelector("header h1").innerHTML = "🌟 Pokémon Modificado! 🌟";
-        return;
-      }
-
-      // --- fluxo normal (PokéAPI)
       const keys = Object.keys(pokemons);
-      const randomKey = keys[Math.floor(Math.random() * keys.length)];
-      currentPokemon = { name: randomKey, id: pokemons[randomKey].id };
+      let tipo;
+      let escolhido;
 
-      // 25% de chance shiny
-      isShiny = Math.random() < 0.25;
-
-      let imgUrl;
-      if (isShiny) {
-        imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`;
+      const chance = Math.random();
+      if (chance < 0.15) {
+        tipo = "modificado";
+        escolhido = modificados[Math.floor(Math.random() * modificados.length)];
       } else {
-        imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+        tipo = "normal";
+        escolhido = keys[Math.floor(Math.random() * keys.length)];
       }
 
-      img.src = imgUrl;
-      img.style.filter = "brightness(0) saturate(100%)";
+      if (tipo === "modificado") {
+        if (usados.includes(escolhido)) {
+          return trocarPokemon();
+        }
+        currentPokemon = { name: escolhido.replace(".png",""), id: null };
+        usados.push(escolhido);
+        isModificado = true;
+        isShiny = false;
+      } else {
+        if (usados.includes(escolhido)) {
+          return trocarPokemon();
+        }
+        currentPokemon = { name: escolhido, id: pokemons[escolhido].id };
+        usados.push(escolhido);
+        isShiny = Math.random() < 0.25;
+        isModificado = false;
+      }
 
-      document.getElementById("pokemonNome").innerText = currentPokemon.name + (isShiny ? " ✨" : "");
-      document.getElementById("pokemonNome").style.display = "none";
+      atualizarVisual(tipo);
+    }
 
-      localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + (isShiny ? " (Shiny)" : "")));
+    function atualizarVisual(tipo) {
+      const img = document.getElementById("pokemonImg");
+      const titulo = document.getElementById("titulo");
+      const nome = document.getElementById("pokemonNome");
+      const nomeMod = document.getElementById("pokemonModNome");
 
-      // título padrão
-      document.querySelector("header h1").innerHTML = `
-        <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
-        Quem é esse Pokémon?
-      `;
+      if (tipo === "modificado") {
+        document.body.classList.add("modificado");
+        titulo.innerText = "Pokémon Modificado!";
+        img.src = "img/pokemons modificados/" + currentPokemon.name + ".png";
+        img.style.filter = "brightness(0) saturate(100%)";
+        nome.style.display = "none";
+        nomeMod.innerText = currentPokemon.name.toUpperCase();
+        nomeMod.style.display = "block";
+        localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + " (Modificado)"));
+      } else {
+        document.body.classList.remove("modificado");
+        titulo.innerText = "Quem é esse Pokémon?";
+        let imgUrl;
+        if (isShiny) {
+          imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`;
+        } else {
+          imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+        }
+        img.src = imgUrl;
+        img.style.filter = "brightness(0) saturate(100%)";
+        nome.innerText = currentPokemon.name + (isShiny ? " ✨" : "");
+        nome.style.display = "none";
+        nomeMod.style.display = "none";
+        localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + (isShiny ? " (Shiny)" : "")));
+      }
     }
 
     function revelarPokemon() {
       const img = document.getElementById("pokemonImg");
-      img.style.filter = "none";
       document.getElementById("pokemonNome").style.display = "block";
+      document.getElementById("pokemonModNome").style.display = isModificado ? "block" : "none";
+      img.style.filter = "none";
     }
   </script>
 </body>
