@@ -170,8 +170,17 @@
       fetch("pokemons/pokemon.json")
         .then(res => res.json())
         .then(data => {
-          if (data[pokemon]) {
-            const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data[pokemon].id}.png`;
+          const nomeBase = pokemon.replace(" (Shiny)", "");
+          if (data[nomeBase]) {
+            const baseId = data[nomeBase].id;
+
+            let imgUrl;
+            if (pokemon.includes("(Shiny)")) {
+              imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${baseId}.png`;
+            } else {
+              imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${baseId}.png`;
+            }
+
             document.getElementById("pokemonImg").src = imgUrl;
           }
         });
