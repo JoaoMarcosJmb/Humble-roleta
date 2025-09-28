@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Resposta - Quem é esse Pokémon?</title>
 
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
@@ -18,6 +18,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html,body { height:100%; }
 
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -48,7 +49,7 @@
       margin-bottom: 20px;
     }
 
-    input {
+    input[type="text"], input[type="password"] {
       width: 100%;
       padding: 12px;
       margin: 8px 0;
@@ -70,17 +71,17 @@
       transition: 0.2s;
     }
 
-    button:hover { background: #ffcc33; transform: scale(1.05); }
+    button:hover { background: #ffcc33; transform: scale(1.03); }
 
     #resultado, #quizCard {
       display: none;
     }
 
     #pokemonNome {
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: bold;
       color: var(--cor-dourado);
-      margin-top: 15px;
+      margin-top: 12px;
       text-shadow: 0 0 8px #000;
     }
 
@@ -88,11 +89,33 @@
       margin-top: 15px;
       max-width: 250px;
       width: 100%;
+      transition: transform .25s ease, filter .25s ease;
     }
 
-    #pergunta { font-weight: bold; margin-bottom: 12px; }
-    #resposta { color: var(--cor-dourado); font-size: 1.2rem; margin-bottom: 10px; }
-    #explicacao { font-size: 0.9rem; opacity: 0.9; }
+    /* efeito discreto para shinies */
+    .shiny-glow {
+      animation: shinyPulse 1.6s infinite;
+      filter: drop-shadow(0 0 14px rgba(255,215,90,0.9));
+    }
+
+    @keyframes shinyPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    #pergunta { font-weight: bold; margin-bottom: 12px; text-align: left; }
+    #resposta { color: var(--cor-dourado); font-size: 1.1rem; margin-bottom: 10px; text-align: left; }
+    #explicacao { font-size: 0.9rem; opacity: 0.9; text-align:left; }
+
+    .small {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-top: 8px;
+    }
+
+    .row { display:flex; gap:8px; align-items:center; justify-content:center; margin-top:8px; }
+    label.inline { font-size:0.9rem; cursor:pointer; }
   </style>
 </head>
 <body>
@@ -104,13 +127,24 @@
     <p id="erro" style="color:red; display:none;">Usuário ou senha incorretos!</p>
   </div>
 
-  <div class="card" id="resultado">
+  <div class="card" id="resultado" aria-live="polite">
     <h2>Resultado</h2>
     <p>O Pokémon sorteado foi:</p>
-    <div id="pokemonNome"></div>
-    <img id="pokemonImg" alt="Pokémon revelado">
-    <br><br>
-    <button onclick="location.reload()">🔄 Recarregar</button>
+    <div id="pokemonNome">—</div>
+    <img id="pokemonImg" alt="Pokémon revelado" src="" />
+    <div class="row" style="justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" id="forceShiny" />
+        <label for="forceShiny" class="inline">Forçar Shiny (teste)</label>
+      </div>
+      <div style="text-align:right;">
+        <button onclick="revelarOutro()">🔄 Recarregar</button>
+      </div>
+    </div>
+
+    <div class="small" id="metaInfo"></div>
+
+    <br>
     <button onclick="logout()">Sair</button>
   </div>
 
@@ -123,10 +157,22 @@
   </div>
 
   <script>
+    // ---------- CONFIGURAÇÃO ----------
+    // Taxa padrão de Shiny (1/4096 como nos jogos mais recentes).
+    // Você pode alterar para 0.5 (50%) para testes rápido,
+    // ou para 1/4096 para comportamento "real".
+    const SHINY_RATE = 1 / 4096;
+
     const SECRET_KEY = "MikeOMacacoefoda2024";
+
+    // ---------- UTIL ----------
+    function tryJSONParse(s) {
+      try { return JSON.parse(s); } catch { return null; }
+    }
 
     function decrypt(text) {
       try {
+        // Mantive a sua função de decrypt original (atob + xor)
         const decoded = decodeURIComponent(escape(atob(text)));
         return decoded.split('').map((c,i)=>
           String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
@@ -136,6 +182,12 @@
       }
     }
 
+    function capitalize(str) {
+      if (!str) return str;
+      return str[0].toUpperCase() + str.slice(1);
+    }
+
+    // ---------- LOGIN / SESSÃO ----------
     function fazerLogin() {
       const usuario = document.getElementById("login").value;
       const senha = document.getElementById("senha").value;
@@ -145,42 +197,143 @@
         mostrarResultado();
         mostrarQuiz();
       } else {
-        document.getElementById("erro").style.display = "block";
+        const erro = document.getElementById("erro");
+        erro.style.display = "block";
+        setTimeout(()=> erro.style.display = "none", 2500);
       }
     }
 
-    function mostrarResultado() {
+    function logout() {
+      sessionStorage.clear();
+      location.reload();
+    }
+
+    // ---------- MOSTRAR RESULTADO (COM SHINY) ----------
+    async function mostrarResultado() {
       document.getElementById("loginCard").style.display = "none";
       document.getElementById("resultado").style.display = "block";
 
       const respostaCripto = localStorage.getItem("pokemonResposta");
       if (!respostaCripto) {
         document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
+        document.getElementById("pokemonImg").src = "";
         return;
       }
 
-      const pokemon = decrypt(respostaCripto);
-      if (!pokemon) {
+      const pokemonRaw = decrypt(respostaCripto);
+      if (!pokemonRaw) {
         document.getElementById("pokemonNome").innerText = "Erro ao descriptografar.";
+        document.getElementById("pokemonImg").src = "";
         return;
       }
 
-      document.getElementById("pokemonNome").innerText = pokemon;
+      // Forçar shiny pelo checkbox (útil para testes)
+      const forceShinyCheckbox = document.getElementById("forceShiny");
+      const forcedShiny = forceShinyCheckbox && forceShinyCheckbox.checked;
 
-      fetch("pokemons/pokemon.json")
-        .then(res => res.json())
-        .then(data => {
-          if (data[pokemon]) {
-            const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${data[pokemon].id}.png`;
-            document.getElementById("pokemonImg").src = imgUrl;
+      // Decide se é shiny (aleatório) ou forçado
+      const isShiny = forcedShiny ? true : (Math.random() < SHINY_RATE);
+
+      const pokemonDisplayName = capitalize(String(pokemonRaw));
+      document.getElementById("pokemonNome").innerText = pokemonDisplayName + (isShiny ? " ✨ (Shiny)" : "");
+
+      // Informação meta (para debug/admin)
+      const meta = document.getElementById("metaInfo");
+      meta.innerText = `Shiny rate: ${SHINY_RATE} — Forçado: ${forcedShiny ? 'sim' : 'não'}`;
+
+      // Busca o ID no seu arquivo pokemons/pokemon.json de forma flexível
+      try {
+        const res = await fetch("pokemons/pokemon.json");
+        const data = await res.json();
+
+        // Tenta encontrar por várias estratégias
+        let entry = null;
+        const keyExact = data[pokemonRaw];
+        if (keyExact) entry = keyExact;
+
+        const keyLower = data[pokemonRaw.toLowerCase()];
+        if (!entry && keyLower) entry = keyLower;
+
+        if (!entry) {
+          // procura nos valores por propriedade 'name' ou 'nome' que case ignorando case
+          entry = Object.values(data).find(e => {
+            if (!e) return false;
+            const possibleNames = [];
+            if (typeof e === 'string') possibleNames.push(e);
+            if (e.name) possibleNames.push(String(e.name));
+            if (e.nome) possibleNames.push(String(e.nome));
+            // algumas bases usam key como nome e valor como id (ex: "Pidgeot": 18)
+            if (typeof e === 'number' || typeof e === 'string' && /^\d+$/.test(e)) return false;
+            return possibleNames.some(n => n && n.toLowerCase() === pokemonRaw.toLowerCase());
+          }) || null;
+        }
+
+        // se entry ainda null, tenta interpretar pokemonRaw como ID
+        let id = null;
+        if (entry) {
+          id = entry.id || entry.numero || entry.number || entry.n || entry.dex || null;
+        }
+
+        if (!id) {
+          // se pokemonRaw for um número
+          const maybeId = parseInt(pokemonRaw, 10);
+          if (!isNaN(maybeId)) id = maybeId;
+        }
+
+        // se ainda sem id, tentamos encontrar objeto cujo chave seja o nome e valor seja número
+        if (!id) {
+          for (const [k,v] of Object.entries(data)) {
+            if (k.toLowerCase() === pokemonRaw.toLowerCase()) {
+              if (typeof v === 'number' || (typeof v === 'string' && /^\d+$/.test(v))) {
+                id = Number(v);
+                break;
+              }
+            }
           }
-        });
+        }
+
+        // Se temos id, monta as URLs
+        if (id) {
+          const normalUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+          const shinyUrl  = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`;
+          const imgEl = document.getElementById("pokemonImg");
+          imgEl.classList.toggle("shiny-glow", isShiny);
+          imgEl.src = isShiny ? shinyUrl : normalUrl;
+          imgEl.alt = `${pokemonDisplayName} ${isShiny ? '(Shiny)' : ''}`;
+        } else {
+          // fallback visual quando não encontra id: busca pelo nome na PokeAPI (opcional)
+          // Aqui usamos uma imagem genérica e mostramos aviso
+          document.getElementById("pokemonImg").src = "";
+          document.getElementById("pokemonImg").alt = "Imagem indisponível";
+          meta.innerText += " — ID do Pokémon não encontrado no pokemons/pokemon.json";
+        }
+      } catch (err) {
+        console.error("Erro ao carregar pokemons/pokemon.json:", err);
+        document.getElementById("pokemonImg").src = "";
+        document.getElementById("pokemonImg").alt = "Erro ao carregar imagem";
+        document.getElementById("metaInfo").innerText = "Erro ao carregar dados do arquivo pokemons/pokemon.json";
+      }
     }
 
+    // para recarregar sem logout
+    function revelarOutro() {
+      // Apenas recarrega a página; mantém sessão admin
+      if (sessionStorage.getItem("adminLogado") === "true") {
+        // mantém estado checkbox forçar shiny
+        const forced = document.getElementById("forceShiny").checked;
+        // recalc: chamar mostrarResultado novamente
+        mostrarResultado();
+        // restaura checkbox (mostrarResultado não altera)
+        document.getElementById("forceShiny").checked = forced;
+      } else {
+        location.reload();
+      }
+    }
+
+    // ---------- QUIZ ----------
     function mostrarQuiz() {
       document.getElementById("quizCard").style.display = "block";
 
-      // verifica se já tem pergunta salva
       const perguntaSalva = sessionStorage.getItem("perguntaAtual");
       if (perguntaSalva) {
         preencherQuiz(JSON.parse(perguntaSalva));
@@ -193,17 +346,25 @@
       fetch("perguntas/perguntas.json")
         .then(res => res.json())
         .then(data => {
-          const lista = data.perguntas_respostas;
+          const lista = data.perguntas_respostas || data.perguntas || [];
           const sorteada = lista[Math.floor(Math.random() * lista.length)];
           sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada)); // salva
           preencherQuiz(sorteada);
+        })
+        .catch(err => {
+          console.error("Erro ao carregar perguntas:", err);
+          document.getElementById("pergunta").innerText = "Erro ao carregar perguntas.";
         });
     }
 
     function preencherQuiz(item) {
-      document.getElementById("pergunta").innerText = item.pergunta;
-      document.getElementById("resposta").innerText = "Resposta: " + item.resposta;
-      document.getElementById("explicacao").innerText = item.explicacao + " (Dex: " + item.dex + ")";
+      if (!item) {
+        document.getElementById("pergunta").innerText = "Nenhuma pergunta disponível.";
+        return;
+      }
+      document.getElementById("pergunta").innerText = item.pergunta || "Pergunta";
+      document.getElementById("resposta").innerText = "Resposta: " + (item.resposta || "—");
+      document.getElementById("explicacao").innerText = (item.explicacao || "") + (item.dex ? " (Dex: " + item.dex + ")" : "");
     }
 
     function novaPergunta() {
@@ -211,16 +372,18 @@
       sortearPergunta();
     }
 
-    function logout() {
-      sessionStorage.clear();
-      location.reload();
-    }
-
+    // ---------- ONLOAD ----------
     window.onload = () => {
+      // se admin ja logado, mostra resultado e quiz
       if (sessionStorage.getItem("adminLogado") === "true") {
         mostrarResultado();
         mostrarQuiz();
       }
+      // permite forçar shiny durante testes (checkbox funcional)
+      document.getElementById("forceShiny").addEventListener('change', () => {
+        // atualizar a exibição atual quando trocar o checkbox
+        if (sessionStorage.getItem("adminLogado") === "true") mostrarResultado();
+      });
     };
   </script>
 </body>
