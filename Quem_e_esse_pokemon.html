@@ -15,7 +15,6 @@
       --cor-fundo: #1a1a1a;
       --cor-card: rgba(40, 35, 25, 0.95);
       --cor-texto: #f5f5f5;
-      --cor-modificado: #1e88e5;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,7 +27,6 @@
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
-      transition: background 0.5s ease;
     }
 
     header {
@@ -45,7 +43,6 @@
       border-bottom: 2px solid var(--cor-dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       z-index: 1000;
-      transition: background 0.5s ease, border-color 0.5s ease;
     }
 
     header h1 {
@@ -55,7 +52,6 @@
       align-items: center;
       gap: 12px;
       color: var(--cor-dourado);
-      transition: color 0.5s ease;
     }
     header h1 img { height: 40px; display: block; }
 
@@ -107,7 +103,7 @@
       margin-top: 10px;
       font-size: 1.5rem;
       font-weight: bold;
-      color: var(--cor-modificado);
+      color: #1e88e5;
       display: none;
       text-align: center;
       letter-spacing: 1px;
@@ -136,20 +132,6 @@
       background: #ffcc33;
       transform: scale(1.05);
     }
-
-    body.modificado {
-      background: linear-gradient(135deg, rgba(20,20,80,0.85), rgba(30,30,120,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
-    }
-
-    body.modificado header {
-      border-color: var(--cor-modificado);
-    }
-
-    body.modificado header h1 {
-      color: var(--cor-modificado);
-    }
   </style>
 </head>
 <body>
@@ -163,7 +145,8 @@
   <div class="wrap">
     <div>
       <div class="game-area">
-        <img src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
+        <!-- O fundo do card será alterado apenas pela troca de imagem (quem_e_esse_pokemon_mod.png) -->
+        <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
         <img id="pokemonImg" alt="Pokémon misterioso">
       </div>
 
@@ -179,7 +162,8 @@
 
   <script>
     let pokemons = {};
-    let modificados = ["pikachu_mod.png","charmander_mod.png"]; // coloque os nomes dos arquivos
+    // coloque aqui os nomes dos arquivos de pokémons modificados (com extensão)
+    let modificados = ["pikachu_mod.png","charmander_mod.png"];
     let usados = [];
     let currentPokemon = null;
     let isShiny = false;
@@ -188,9 +172,11 @@
     const SECRET_KEY = "MikeOMacacoefoda2024";
 
     function encrypt(text) {
-      return btoa(unescape(encodeURIComponent(text.split('').map((c,i)=>
-        String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
-      ).join(''))));
+      return btoa(unescape(encodeURIComponent(
+        text.split('').map((c,i) =>
+          String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
+        ).join('')
+      )));
     }
 
     fetch("pokemons/pokemon.json")
@@ -209,6 +195,7 @@
       let escolhido;
 
       const chance = Math.random();
+      // chance < 0.15 = 15% de modificado (mude aqui se quiser)
       if (chance < 0.15) {
         tipo = "modificado";
         escolhido = modificados[Math.floor(Math.random() * modificados.length)];
@@ -243,10 +230,12 @@
       const titulo = document.getElementById("titulo");
       const nome = document.getElementById("pokemonNome");
       const nomeMod = document.getElementById("pokemonModNome");
+      const fundoCard = document.getElementById("fundoCard");
 
       if (tipo === "modificado") {
-        document.body.classList.add("modificado");
-        titulo.innerText = "Pokémon Modificado!";
+        // **APENAS** trocamos a imagem do card aqui, sem alterar CSS global
+        fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
+        titulo.innerText = "Quem é esse Pokémon?";
         img.src = "img/pokemons modificados/" + currentPokemon.name + ".png";
         img.style.filter = "brightness(0) saturate(100%)";
         nome.style.display = "none";
@@ -254,7 +243,7 @@
         nomeMod.style.display = "block";
         localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + " (Modificado)"));
       } else {
-        document.body.classList.remove("modificado");
+        fundoCard.src = "img/quem_e_esse_pokemon.png";
         titulo.innerText = "Quem é esse Pokémon?";
         let imgUrl;
         if (isShiny) {
