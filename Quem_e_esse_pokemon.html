@@ -15,6 +15,10 @@
       --cor-fundo: #1a1a1a;
       --cor-card: rgba(40, 35, 25, 0.95);
       --cor-texto: #f5f5f5;
+
+      /* Tema para modificados */
+      --cor-modificado: #ff4d4d;
+      --cor-fundo-modificado: linear-gradient(135deg, #330000, #660000);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,6 +30,11 @@
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
+      transition: background 0.4s ease;
+    }
+
+    body.modificado {
+      background: var(--cor-fundo-modificado) !important;
     }
 
     header {
@@ -42,6 +51,12 @@
       border-bottom: 2px solid var(--cor-dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       z-index: 1000;
+      transition: border-color 0.3s, background 0.3s;
+    }
+
+    body.modificado header {
+      border-color: var(--cor-modificado);
+      background: rgba(60,0,0,0.85);
     }
 
     header h1 {
@@ -51,7 +66,12 @@
       align-items: center;
       gap: 12px;
       color: var(--cor-dourado);
+      transition: color 0.3s;
     }
+    body.modificado header h1 {
+      color: var(--cor-modificado);
+    }
+
     header h1 img { height: 40px; display: block; }
 
     .wrap {
@@ -83,6 +103,7 @@
       height: auto;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
+      transition: all 0.3s ease;
     }
 
     #pokemonNome {
@@ -94,6 +115,12 @@
       display: none;
       text-align: center;
       letter-spacing: 2px;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
+
+    body.modificado #pokemonNome {
+      color: var(--cor-modificado);
+      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-modificado);
     }
 
     .botoes {
@@ -113,6 +140,11 @@
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
+    }
+
+    body.modificado button {
+      background: var(--cor-modificado);
+      color: #fff;
     }
 
     button:hover {
@@ -158,11 +190,10 @@
       ).join(''))));
     }
 
-    // lista de pokémons modificados (adicione os arquivos reais da sua pasta aqui)
+    // lista de pokémons modificados (coloque nomes reais aqui)
     const modificados = [
-      "gengabble.png",
-      "mimichu.png",
-      "mitto.png"
+      { arquivo: "pikachu_bugado.png", nome: "Pikachu Bugado" },
+      { arquivo: "psyduck_confuso.png", nome: "Psyduck Confuso" }
     ];
 
     fetch("pokemons/pokemon.json")
@@ -178,18 +209,25 @@
     function trocarPokemon() {
       const img = document.getElementById("pokemonImg");
 
+      // reset visual caso não seja modificado
+      document.body.classList.remove("modificado");
+
       // --- 15% de chance de pegar um da pasta "pokemons modificados"
       if (Math.random() < 0.15) {
         const randomMod = modificados[Math.floor(Math.random() * modificados.length)];
-        img.src = "img/pokemons modificados/" + randomMod;
+        img.src = "img/pokemons modificados/" + randomMod.arquivo;
         img.style.filter = "brightness(0) saturate(100%)";
 
-        currentPokemon = { name: "Pokémon Modificado", id: "mod" };
-        document.getElementById("pokemonNome").innerText = "Pokémon Modificado";
+        currentPokemon = { name: randomMod.nome, id: "mod" };
+        document.getElementById("pokemonNome").innerText = randomMod.nome;
         document.getElementById("pokemonNome").style.display = "none";
 
-        localStorage.setItem("pokemonResposta", encrypt("Pokémon Modificado"));
-        return; // sai aqui, não executa o fluxo normal
+        localStorage.setItem("pokemonResposta", encrypt(randomMod.nome));
+
+        // aplicar tema modificado
+        document.body.classList.add("modificado");
+        document.querySelector("header h1").innerHTML = "🌟 Pokémon Modificado! 🌟";
+        return;
       }
 
       // --- fluxo normal (PokéAPI)
@@ -214,6 +252,12 @@
       document.getElementById("pokemonNome").style.display = "none";
 
       localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + (isShiny ? " (Shiny)" : "")));
+
+      // título padrão
+      document.querySelector("header h1").innerHTML = `
+        <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+        Quem é esse Pokémon?
+      `;
     }
 
     function revelarPokemon() {
@@ -224,4 +268,3 @@
   </script>
 </body>
 </html>
-
