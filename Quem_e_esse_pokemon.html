@@ -89,8 +89,8 @@
       max-height: 70%;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
-      opacity: 0; /* Inicialmente invisível */
-      transition: opacity 0.5s ease, filter 0.5s ease; /* Só aplica transição de fade na revelação */
+      opacity: 1; /* A versão preta permanece visível */
+      transition: opacity 0.5s ease, filter 0.5s ease; /* Transição de revelação */
     }
 
     #pokemonNome {
@@ -236,8 +236,8 @@
       const nomeMod = document.getElementById("pokemonModNome");
       const fundoCard = document.getElementById("fundoCard");
 
-      // A imagem começa invisível
-      img.style.opacity = "0";  
+      // A imagem começa visível e com o filtro preto
+      img.style.opacity = "1";
 
       let newSrc;
 
@@ -247,7 +247,7 @@
         newSrc = "img/pokemons modificados/" + currentPokemon.name + ".png";
         nome.style.display = "none";
         nomeMod.innerText = currentPokemon.name.toUpperCase();
-        nomeMod.style.display = "none";
+        nomeMod.style.display = "none"; // escondido até revelar
         localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + " (Modificado)"));
       } else {
         titulo.innerText = "Quem é esse Pokémon?";
@@ -267,8 +267,7 @@
       const tempImg = new Image();
       tempImg.onload = function () {
         img.src = newSrc;
-        img.style.filter = "brightness(0) saturate(100%)"; 
-        // A imagem só vai aparecer depois de ser carregada
+        img.style.filter = "brightness(0) saturate(100%)"; // Versão preta visível até revelar
       };
       tempImg.src = newSrc;
     }
@@ -278,10 +277,10 @@
       document.getElementById("pokemonNome").style.display = isModificado ? "none" : "block";
       document.getElementById("pokemonModNome").style.display = isModificado ? "block" : "none";
       
-      // Só aplicar fade quando for revelado
-      img.style.transition = "opacity 1s ease-in-out"; // Mais suave
-      img.style.opacity = "1"; 
-      img.style.filter = "none";
+      // Revela com fade
+      img.style.transition = "opacity 1s ease-in-out"; 
+      img.style.opacity = "1"; // Faz a imagem aparecer com o fade
+      img.style.filter = "none"; // Remove o filtro para mostrar a versão colorida
     }
   </script>
 </body>
