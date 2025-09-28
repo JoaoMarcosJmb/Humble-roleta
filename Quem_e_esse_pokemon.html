@@ -158,6 +158,13 @@
       ).join(''))));
     }
 
+    // lista de pokémons modificados (adicione os arquivos reais da sua pasta aqui)
+    const modificados = [
+      "mod1.png",
+      "mod2.png",
+      "mod3.png"
+    ];
+
     fetch("pokemons/pokemon.json")
       .then(res => res.json())
       .then(data => {
@@ -169,11 +176,28 @@
       });
 
     function trocarPokemon() {
+      const img = document.getElementById("pokemonImg");
+
+      // --- 15% de chance de pegar um da pasta "pokemons modificados"
+      if (Math.random() < 0.15) {
+        const randomMod = modificados[Math.floor(Math.random() * modificados.length)];
+        img.src = "img/pokemons modificados/" + randomMod;
+        img.style.filter = "brightness(0) saturate(100%)";
+
+        currentPokemon = { name: "Pokémon Modificado", id: "mod" };
+        document.getElementById("pokemonNome").innerText = "Pokémon Modificado";
+        document.getElementById("pokemonNome").style.display = "none";
+
+        localStorage.setItem("pokemonResposta", encrypt("Pokémon Modificado"));
+        return; // sai aqui, não executa o fluxo normal
+      }
+
+      // --- fluxo normal (PokéAPI)
       const keys = Object.keys(pokemons);
       const randomKey = keys[Math.floor(Math.random() * keys.length)];
       currentPokemon = { name: randomKey, id: pokemons[randomKey].id };
 
-      // 30% de chance shiny
+      // 25% de chance shiny
       isShiny = Math.random() < 0.25;
 
       let imgUrl;
@@ -183,7 +207,6 @@
         imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
       }
 
-      const img = document.getElementById("pokemonImg");
       img.src = imgUrl;
       img.style.filter = "brightness(0) saturate(100%)";
 
@@ -201,4 +224,3 @@
   </script>
 </body>
 </html>
-
