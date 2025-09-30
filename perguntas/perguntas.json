@@ -1,118 +1,118 @@
 {
   "perguntas_respostas": [
     {
-      "pergunta": "Qual Pokémon pode voar a velocidades incríveis, chegando a cruzar o céu em segundos?",
+      "pergunta": "Qual Pokémon pode voar em alta velocidade para capturar pokémons desprevenidos?",
       "resposta": "Pidgeot",
-      "dex": "Silver",
-      "explicacao": "A Pokédex diz que Pidgeot é tão rápido que atravessa grandes distâncias em pouco tempo."
+      "dex": "LeafGreen",
+      "explicacao": "Quando caça, ele desliza sobre a superfície da água em alta velocidade para capturar presas desprevenidas, como Magikarp."
     },
     {
-      "pergunta": "Qual Pokémon consegue nadar em magma sem se queimar?",
+      "pergunta": "Qual Pokémon nasce do bico de um vulcão?",
       "resposta": "Magmar",
-      "dex": "Ruby",
+      "dex": "Diamond/Pearl",
       "explicacao": "Ele é tão resistente ao calor que nada em lava como se fosse água."
-    },
-    {
-      "pergunta": "Qual Pokémon é conhecido por copiar qualquer movimento que ver?",
-      "resposta": "Smeargle",
-      "dex": "Gold",
-      "explicacao": "Smeargle usa sua cauda como pincel e consegue “pintar” qualquer golpe."
     },
     {
       "pergunta": "Qual Pokémon se transforma dependendo do clima do ambiente?",
       "resposta": "Castform",
       "dex": "Ruby",
-      "explicacao": "Ele muda de forma se estiver sol, chuva ou neve."
+      "explicacao": "A aparência do CASTFORM muda com o clima. Este pokémon ganhou a habilidade de usar o vasto poder da natureza para proteger seu pequeno corpo."
     },
     {
-      "pergunta": "Qual Pokémon pode cortar árvores com suas asas afiadas?",
+      "pergunta": "Qual Pokémon corta grama com suas foices afiadas, movendo-se tão rápido que chega a ser invisível a olho humano?",
       "resposta": "Scyther",
-      "dex": "FireRed",
-      "explicacao": "Suas asas são tão afiadas que podem derrubar troncos com um só golpe."
+      "dex": "Gold",
+      "explicacao": "Ele corta a grama com suas foices afiadas, movendo-se rápido demais para o olho humano rastrear."
     },
     {
-      "pergunta": "Qual Pokémon consegue voar sem fazer nenhum barulho?",
-      "resposta": "Noivern",
+      "pergunta": "Qual Pokémon que mora na caverna, consegue emitir ondas ultrassônicas de até 200.000 hertz?",
+      "resposta": "Noibat",
       "dex": "X",
-      "explicacao": "A Pokédex diz que ele pode voar silenciosamente, sendo quase impossível de notar."
+      "explicacao": "Eles vivem em cavernas escuras. Suas orelhas enormes podem emitir ondas ultrassônicas de 200.000 hertz."
     },
     {
       "pergunta": "Qual Pokémon é famoso por dormir quase o tempo todo?",
       "resposta": "Snorlax",
-      "dex": "Gold",
-      "explicacao": "Snorlax só acorda para comer, e depois volta a dormir."
+      "dex": "FireRed",
+      "explicacao": "Não fica satisfeito a menos que coma mais de 880 quilos de comida todos os dias. Quando termina de comer, ele vai dormir imediatamente."
     },
     {
       "pergunta": "Qual Pokémon pode se esconder perfeitamente transformando-se em qualquer objeto?",
       "resposta": "Ditto",
-      "dex": "Silver",
-      "explicacao": "Ditto copia a forma de qualquer coisa para se camuflar."
+      "dex": "Gold",
+      "explicacao": "Pode transformar-se em qualquer coisa. Quando dorme, transforma-se em pedra para evitar ser atacado."
     },
     {
       "pergunta": "Qual Pokémon consegue falar imitando a voz humana?",
       "resposta": "Chatot",
       "dex": "Diamond",
-      "explicacao": "Ele pode repetir frases como se fosse uma pessoa."
+      "explicacao": " Sua língua é igual à de um humano. Como resultado, ele pode imitar habilmente a fala humana."
     },
     {
-      "pergunta": "Qual Pokémon pode inflar seu corpo como um balão para voar?",
+      "pergunta": "Qual Pokémon pode inflar seu corpo e cantar uma música que deixará seu público sonolento?",
       "resposta": "Jigglypuff",
       "dex": "Yellow",
-      "explicacao": "Quando fica bravo, ele enche o corpo de ar e flutua."
+      "explicacao": "Se ele inflar para cantar uma canção de ninar, ele pode se apresentar por mais tempo e causar sonolência certa em seu público."
     },
     {
       "pergunta": "Qual Pokémon consegue derreter pedras com seu fogo?",
       "resposta": "Charizard",
-      "dex": "Silver",
-      "explicacao": "Seu fogo é tão intenso que pode queimar até rochas."
+      "dex": "LeafGreen",
+      "explicacao": "Ele cospe fogo quente o suficiente para derreter pedras. Pode causar incêndios florestais ao soprar chamas."
     },
     {
       "pergunta": "Qual Pokémon gosta de guardar objetos brilhantes que encontra?",
       "resposta": "Meowth",
-      "dex": "Yellow",
-      "explicacao": "Ele é atraído por moedas e coisas que brilham."
+      "dex": "SoulSilver",
+      "explicacao": "Adora tudo o que brilha. Adora especialmente moedas que pega e acumula secretamente."
     },
     {
-      "pergunta": "Qual Pokémon gira seu corpo como uma hélice para voar?",
+      "pergunta": "Qual Pokémon gira seu corpo com tanta velocidade podendo até mesmo entrar no chão?",
       "resposta": "Hitmontop",
       "dex": "Gold",
-      "explicacao": "Ele fica de cabeça para baixo e gira como um pião."
+      "explicacao": "Ele lança chutes enquanto gira. Se girar em alta velocidade, poderá entrar no chão."
     },
     {
       "pergunta": "Qual Pokémon é pequeno, mas pode levantar objetos bem mais pesados que ele mesmo?",
       "resposta": "Machop",
-      "dex": "FireRed",
-      "explicacao": "Machop treina tanto que carrega pesos enormes para ficar forte."
+      "dex": "Ruby",
+      "explicacao": "Os músculos do MACHOP são especiais: eles nunca ficam doloridos, não importa o quanto sejam usados nos exercícios. Este POKÉMON tem poder suficiente para lançar cem humanos adultos."
     },
     {
       "pergunta": "Qual Pokémon pode se comunicar usando ondas de aura?",
       "resposta": "Lucario",
-      "dex": "Sun",
-      "explicacao": "Ele consegue entender sentimentos e intenções das pessoas."
+      "dex": "Pearl",
+      "explicacao": "Ao captar a aura que emana dos outros, ele pode ler seus pensamentos e movimentos."
     },
     {
-      "pergunta": "Qual Pokémon consegue correr incansavelmente por dias?",
-      "resposta": "Ponyta",
-      "dex": "Diamond",
-      "explicacao": "Quando bem treinado, ele corre grandes distâncias sem cansar."
+      "pergunta": "Qual Pokémon consegue correr até 240Km/h como um trem bala?",
+      "resposta": "Rapidash",
+      "dex": "FireRed",
+      "explicacao": "Ele pode galopar a uma velocidade máxima de 240 quilômetros por hora. Ele pode correr tão rápido quanto um trem-bala enquanto está em chamas."
     },
     {
-      "pergunta": "Qual Pokémon solta trovões tão fortes que parecem uma tempestade?",
+      "pergunta": "Qual Pokémon solta fortes trovões que parecem uma tempestade?",
       "resposta": "Raikou",
-      "dex": "Crystal",
-      "explicacao": "Ele é como um trovão vivo e anda junto das tempestades."
+      "dex": "HeartGold",
+      "explicacao": "As nuvens de chuva que carrega lhe permite disparar raios à vontade. Dizem que desceu com um raio."
     },
     {
-      "pergunta": "Qual Pokémon pode nadar mais rápido que um barco?",
+      "pergunta": "Qual Pokémon sofre uma forte alteração na evolução que o deixa extremamente violento?",
       "resposta": "Gyarados",
-      "dex": "HeartGold",
-      "explicacao": "Sua velocidade na água é tão grande que supera embarcações."
+      "dex": "Ruby",
+      "explicacao": "Quando MAGIKARP evolui para GYARADOS, suas células cerebrais sofrem uma transformação estrutural. Diz-se que essa transformação é a culpada pela natureza extremamente violenta deste pokémon."
     },
     {
       "pergunta": "Qual Pokémon consegue viver em cavernas sem usar os olhos?",
       "resposta": "Zubat",
-      "dex": "FireRed",
-      "explicacao": "Ele usa ondas sonoras para se orientar no escuro."
+      "dex": "Legend Of Arceus",
+      "explicacao": "Faz seu lar em cavernas sombrias. Olhos atrofiados deixaram este Pokémon cego, então ele examina seus arredores através de ondas sonoras que emite de sua boca enquanto voa. "
+    },
+    {
+      "pergunta": "Qual Pokémon possui uma concha tão resistente que não pode ser destuída nem mesmo com uma bomba?",
+      "resposta": "Cloyster",
+      "dex": "Sword",
+      "explicacao": "Sua casca é extremamente dura. Não pode ser destruído, mesmo com uma bomba. A concha só se abre somente quando está atacando."
     }
   ]
 }
