@@ -45,7 +45,6 @@
       border-bottom: 2px solid var(--cor-dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
       z-index: 1000;
-      transition: background 0.5s ease, border-color 0.5s ease;
     }
 
     header h1 {
@@ -55,7 +54,6 @@
       align-items: center;
       gap: 12px;
       color: var(--cor-dourado);
-      transition: color 0.5s ease;
     }
     header h1 img { height: 40px; display: block; }
 
@@ -63,9 +61,9 @@
       padding-top: 120px;
       min-height: calc(100vh - 120px);
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
       flex-direction: column;
+      justify-content: center;
+      align-items: center;
       gap: 30px;
     }
 
@@ -103,7 +101,6 @@
       text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
       display: none;
       text-align: center;
-      letter-spacing: 2px;
     }
 
     #pokemonModNome {
@@ -113,19 +110,21 @@
       color: var(--cor-modificado);
       display: none;
       text-align: center;
-      letter-spacing: 1px;
     }
 
-    /* Card do cronômetro */
+    /* Card do cronômetro fixo no canto superior direito */
     .cronometro-card {
+      position: fixed;
+      top: 90px; /* abaixo do header */
+      right: 20px;
       background: var(--cor-card);
       border: 2px solid var(--cor-dourado);
       border-radius: 12px;
       padding: 20px;
-      max-width: 250px;
-      margin: 0 auto;
+      width: 200px;
       text-align: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      z-index: 1500;
     }
 
     #cronometro {
@@ -147,9 +146,9 @@
       background: var(--cor-dourado);
       color: #000;
       border: none;
-      padding: 14px 28px;
-      border-radius: 12px;
-      font-size: 1.1rem;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       transition: transform 0.2s, background 0.2s;
@@ -170,37 +169,31 @@
   </header>
 
   <div class="wrap">
-    <div>
-      <div class="game-area">
-        <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
-        <img id="pokemonImg" alt="Pokémon misterioso">
-      </div>
-
-      <div id="pokemonNome"></div>
-      <div id="pokemonModNome"></div>
-
-      <div class="botoes">
-        <button onclick="trocarPokemon()">Trocar Pokémon</button>
-        <button onclick="revelarPokemon()">Revelar</button>
-      </div>
+    <div class="game-area">
+      <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
+      <img id="pokemonImg" alt="Pokémon misterioso">
     </div>
 
-    <!-- Card do cronômetro -->
-    <div class="cronometro-card">
-      <div id="cronometro">15</div>
-      <button onclick="iniciarCronometro()">Iniciar</button>
+    <div id="pokemonNome"></div>
+    <div id="pokemonModNome"></div>
+
+    <div class="botoes">
+      <button onclick="trocarPokemon()">Trocar Pokémon</button>
+      <button onclick="revelarPokemon()">Revelar</button>
     </div>
+  </div>
+
+  <!-- Card do cronômetro fixo -->
+  <div class="cronometro-card">
+    <div id="cronometro">15</div>
+    <button onclick="iniciarCronometro()">Iniciar</button>
   </div>
 
   <script>
     let pokemons = {};
     let modificados = [
-      "gengabble.png",
-      "mimichu.png",
-      "Gaslyng.png",
-      "Onixly.png",
-      "venosent.png",
-      "mitto.png"
+      "gengabble.png","mimichu.png","Gaslyng.png",
+      "Onixly.png","venosent.png","mitto.png"
     ]; 
     let usados = [];
     let currentPokemon = null;
@@ -277,7 +270,7 @@
       }
 
       atualizarVisual(tipo);
-      clearInterval(timer); // cronômetro só começa se clicar em "Iniciar"
+      clearInterval(timer);
       document.getElementById("cronometro").innerText = 15;
     }
 
@@ -297,7 +290,6 @@
         nome.style.display = "none";
         nomeMod.innerText = currentPokemon.name.toUpperCase();
         nomeMod.style.display = "none";
-        localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + " (Modificado)"));
       } else {
         titulo.innerText = "Quem é esse Pokémon?";
         fundoCard.src = "img/quem_e_esse_pokemon.png";
@@ -309,7 +301,6 @@
         nome.innerText = currentPokemon.name + (isShiny ? " ✨" : "");
         nome.style.display = "none";
         nomeMod.style.display = "none";
-        localStorage.setItem("pokemonResposta", encrypt(currentPokemon.name + (isShiny ? " (Shiny)" : "")));
       }
 
       const tempImg = new Image();
