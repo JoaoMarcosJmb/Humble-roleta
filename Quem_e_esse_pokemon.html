@@ -65,6 +65,8 @@
       display: flex;
       justify-content: center;
       align-items: flex-start;
+      flex-direction: column;
+      gap: 30px;
     }
 
     .game-area {
@@ -114,13 +116,24 @@
       letter-spacing: 1px;
     }
 
+    /* Card do cronômetro */
+    .cronometro-card {
+      background: var(--cor-card);
+      border: 2px solid var(--cor-dourado);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 250px;
+      margin: 0 auto;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    }
+
     #cronometro {
-      margin-top: 15px;
-      font-size: 1.8rem;
+      font-size: 2.5rem;
       font-weight: bold;
       color: var(--cor-dourado);
-      text-align: center;
       text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
+      margin-bottom: 15px;
     }
 
     .botoes {
@@ -165,12 +178,17 @@
 
       <div id="pokemonNome"></div>
       <div id="pokemonModNome"></div>
-      <div id="cronometro">15</div>
 
       <div class="botoes">
         <button onclick="trocarPokemon()">Trocar Pokémon</button>
         <button onclick="revelarPokemon()">Revelar</button>
       </div>
+    </div>
+
+    <!-- Card do cronômetro -->
+    <div class="cronometro-card">
+      <div id="cronometro">15</div>
+      <button onclick="iniciarCronometro()">Iniciar</button>
     </div>
   </div>
 
@@ -221,7 +239,7 @@
 
         if (tempoRestante <= 0) {
           clearInterval(timer);
-          // não revela automaticamente
+          document.getElementById("cronometro").innerText = "Tempo esgotado!";
         }
       }, 1000);
     }
@@ -259,7 +277,8 @@
       }
 
       atualizarVisual(tipo);
-      iniciarCronometro();
+      clearInterval(timer); // cronômetro só começa se clicar em "Iniciar"
+      document.getElementById("cronometro").innerText = 15;
     }
 
     function atualizarVisual(tipo) {
