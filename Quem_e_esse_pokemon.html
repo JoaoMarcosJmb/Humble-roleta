@@ -23,10 +23,12 @@
     html, body {
       height: 100%;
       font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--cor-fundo);
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
+      transition: background 0.5s ease;
     }
 
     header {
@@ -57,6 +59,7 @@
 
     .wrap {
       padding-top: 120px;
+      min-height: calc(100vh - 120px);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -83,19 +86,53 @@
       transform: translate(-50%, -50%);
       width: 45%;
       height: auto;
+      max-height: 70%;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
+      opacity: 1;
       transition: filter 0.5s ease;
     }
 
-    #pokemonNome, #pokemonModNome {
+    #pokemonNome {
+      margin-top: 20px;
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: var(--cor-dourado);
+      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
       display: none;
       text-align: center;
-      font-weight: bold;
     }
 
-    #pokemonNome { color: var(--cor-dourado); font-size: 2.2rem; }
-    #pokemonModNome { color: var(--cor-modificado); font-size: 1.6rem; }
+    #pokemonModNome {
+      margin-top: 10px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--cor-modificado);
+      display: none;
+      text-align: center;
+    }
+
+    .cronometro-card {
+      position: fixed;
+      top: 90px;
+      right: 20px;
+      background: var(--cor-card);
+      border: 2px solid var(--cor-dourado);
+      border-radius: 12px;
+      padding: 20px;
+      width: 200px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      z-index: 1500;
+    }
+
+    #cronometro {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--cor-dourado);
+      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
+      margin-bottom: 15px;
+    }
 
     .botoes {
       margin-top: 25px;
@@ -120,26 +157,6 @@
       background: #ffcc33;
       transform: scale(1.05);
     }
-
-    .cronometro-card {
-      position: fixed;
-      top: 90px;
-      right: 20px;
-      background: var(--cor-card);
-      border: 2px solid var(--cor-dourado);
-      border-radius: 12px;
-      padding: 20px;
-      width: 200px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-      z-index: 1500;
-    }
-
-    #cronometro {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: var(--cor-dourado);
-    }
   </style>
 </head>
 <body>
@@ -152,7 +169,7 @@
 
   <div class="wrap">
     <div class="game-area">
-      <img id="fundoCard" src="img/quem_e_esse_pokemon.png" class="fundo">
+      <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
       <img id="pokemonImg" alt="Pokémon misterioso">
     </div>
 
@@ -169,6 +186,7 @@
     <div id="cronometro">15</div>
     <button onclick="iniciarCronometro()">Iniciar</button>
   </div>
+
   <script>
     let pokemons = {};
     let modificados = ["gengabble.png","mimichu.png","Gaslyng.png","Onixly.png","venosent.png","mitto.png"];
@@ -283,4 +301,5 @@
   </script>
 </body>
 </html>
+
 
