@@ -112,10 +112,9 @@
       text-align: center;
     }
 
-    /* Card do cronômetro fixo no canto superior direito */
     .cronometro-card {
       position: fixed;
-      top: 90px; /* abaixo do header */
+      top: 90px;
       right: 20px;
       background: var(--cor-card);
       border: 2px solid var(--cor-dourado);
@@ -183,7 +182,6 @@
     </div>
   </div>
 
-  <!-- Card do cronômetro fixo -->
   <div class="cronometro-card">
     <div id="cronometro">15</div>
     <button onclick="iniciarCronometro()">Iniciar</button>
@@ -320,6 +318,12 @@
       img.style.transition = "opacity 2s ease-in-out, filter 0s";
       img.style.opacity = "1";
       img.style.filter = "none";
+
+      // 🔹 Salvar resposta criptografada para o resposta.html
+      const nomePokemon = isModificado 
+          ? currentPokemon.name 
+          : currentPokemon.name + (isShiny ? " (Shiny)" : "");
+      localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
     }
   </script>
 </body>
