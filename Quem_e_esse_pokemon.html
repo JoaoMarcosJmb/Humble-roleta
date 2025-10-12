@@ -319,17 +319,13 @@
       img.style.opacity = "1";
       img.style.filter = "none";
 
-      // 🔹 Envia a resposta criptografada e abre o resposta.html
+      // 🔹 Envia a resposta criptografada e abre o resposta.html na mesma aba
       const nomePokemon = isModificado 
           ? currentPokemon.name 
           : currentPokemon.name + (isShiny ? " (Shiny)" : "");
       localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
       localStorage.setItem("adminAuto", "true");
-      try {
-        window.open('resposta.html', '_blank');
-      } catch (e) {
-        console.warn('Não foi possível abrir resposta.html automaticamente:', e);
-      }
+      window.location.href = "resposta.html";
     }
   </script>
 </body>
