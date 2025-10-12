@@ -309,23 +309,26 @@
       tempImg.src = newSrc;
     }
 
+    // 🔹 Agora a resposta vai apenas para o admin (sem mudar a tela dos jogadores)
     function revelarPokemon() {
       clearInterval(timer);
       const img = document.getElementById("pokemonImg");
       document.getElementById("pokemonNome").style.display = isModificado ? "none" : "block";
       document.getElementById("pokemonModNome").style.display = isModificado ? "block" : "none";
-      
+
       img.style.transition = "opacity 2s ease-in-out, filter 0s";
       img.style.opacity = "1";
       img.style.filter = "none";
 
-      // 🔹 Envia a resposta criptografada e abre o resposta.html na mesma aba
       const nomePokemon = isModificado 
           ? currentPokemon.name 
           : currentPokemon.name + (isShiny ? " (Shiny)" : "");
+
       localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
       localStorage.setItem("adminAuto", "true");
-      window.location.href = "resposta.html";
+
+      console.log("[JOGO] Resposta enviada ao painel do administrador:", nomePokemon);
+      alert("✅ Resposta enviada ao painel do administrador!");
     }
   </script>
 </body>
