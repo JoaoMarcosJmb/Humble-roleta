@@ -48,7 +48,6 @@
 
     header h1 {
       font-size: 1.8rem;
-      margin: 0;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -68,27 +67,33 @@
       align-items: center;
       gap: 30px;
       text-align: center;
+      width: 100%;
     }
 
     .game-area {
       position: relative;
-      display: inline-block;
       width: 100%;
-      max-width: 900px;
+      max-width: 1100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .game-area img.fundo {
       width: 100%;
       display: block;
       border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
 
     #pokemonImg {
       position: absolute;
       top: 52%;
-      left: 28%;
+      left: 50%;
       transform: translate(-50%, -50%);
-      width: 45%;
+      width: auto;
+      max-width: 50%;
+      max-height: 65%;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
       transition: filter 0.5s ease, opacity 0.5s ease;
@@ -98,16 +103,17 @@
       display: none;
       font-weight: bold;
       margin-top: 10px;
+      text-align: center;
     }
 
     #pokemonNome {
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       color: var(--cor-dourado);
       text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
     }
 
     #pokemonModNome {
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       color: var(--cor-modificado);
       text-shadow: 0 0 10px #000, 0 0 20px var(--cor-modificado);
     }
@@ -117,6 +123,7 @@
       display: flex;
       justify-content: center;
       gap: 20px;
+      flex-wrap: wrap;
     }
 
     button {
@@ -177,8 +184,8 @@
     <div id="pokemonModNome"></div>
 
     <div class="botoes">
-      <button onclick="trocarPokemon()">Trocar Pokémon</button>
-      <button onclick="revelarPokemon()">Revelar</button>
+      <button onclick="trocarPokemon()">🔄 Trocar Pokémon</button>
+      <button onclick="revelarPokemon()">👀 Revelar</button>
     </div>
   </div>
 
@@ -189,7 +196,7 @@
 
   <script>
     let pokemons = {};
-    let modificados = ["gengabble.png", "mimichu.png", "Gaslyng.png", "Onixly.png", "venosent.png", "mitto.png"];
+    let modificados = ["gengabble.png","mimichu.png","Gaslyng.png","Onixly.png","venosent.png","mitto.png"];
     let usados = [];
     let currentPokemon = null;
     let isShiny = false;
@@ -200,7 +207,7 @@
     const SECRET_KEY = "MikeOMacacoefoda2024";
 
     function encrypt(text) {
-      return btoa(unescape(encodeURIComponent(text.split('').map((c, i) =>
+      return btoa(unescape(encodeURIComponent(text.split('').map((c,i)=>
         String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
       ).join(''))));
     }
@@ -211,7 +218,7 @@
         pokemons = data;
         trocarPokemon();
       })
-      .catch(err => alert("Erro ao carregar a lista de Pokémons: " + err));
+      .catch(err => alert("Erro ao carregar lista de Pokémons: " + err));
 
     function iniciarCronometro() {
       clearInterval(timer);
@@ -230,8 +237,7 @@
 
     function trocarPokemon() {
       const keys = Object.keys(pokemons);
-      let tipo;
-      let escolhido;
+      let tipo, escolhido;
 
       const chance = Math.random();
       if (chance < 0.15) {
@@ -243,7 +249,7 @@
       }
 
       if (tipo === "modificado") {
-        currentPokemon = { name: escolhido.replace(".png", ""), id: null };
+        currentPokemon = { name: escolhido.replace(".png",""), id: null };
         isModificado = true;
         isShiny = false;
       } else {
@@ -253,7 +259,7 @@
       }
 
       atualizarVisual(tipo);
-      enviarRespostaParaAdmin(); // 🔹 Envia resposta ao painel assim que sorteia
+      enviarRespostaParaAdmin(); // 🔹 Envia a resposta assim que o Pokémon é sorteado
     }
 
     function atualizarVisual(tipo) {
@@ -264,11 +270,15 @@
       if (tipo === "modificado") {
         fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
         newSrc = "img/pokemons modificados/" + currentPokemon.name + ".png";
+        img.style.maxWidth = "60%";
+        img.style.maxHeight = "70%";
       } else {
         fundoCard.src = "img/quem_e_esse_pokemon.png";
         newSrc = isShiny
           ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`
           : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+        img.style.maxWidth = "50%";
+        img.style.maxHeight = "65%";
       }
 
       const tempImg = new Image();
@@ -279,17 +289,15 @@
       tempImg.src = newSrc;
     }
 
-    // 🔹 Envia automaticamente a resposta ao painel admin
     function enviarRespostaParaAdmin() {
       const nomePokemon = isModificado
         ? currentPokemon.name
         : currentPokemon.name + (isShiny ? " (Shiny)" : "");
       localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
       localStorage.setItem("adminAuto", "true");
-      console.log("[JOGO] Resposta enviada ao painel do administrador:", nomePokemon);
+      console.log("[JOGO] Enviado ao painel admin:", nomePokemon);
     }
 
-    // 🔹 Apenas revela a imagem aos jogadores
     function revelarPokemon() {
       clearInterval(timer);
       const img = document.getElementById("pokemonImg");
