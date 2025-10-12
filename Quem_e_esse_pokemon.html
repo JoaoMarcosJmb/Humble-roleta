@@ -28,7 +28,6 @@
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
-      transition: background 0.5s ease;
     }
 
     header {
@@ -80,18 +79,19 @@
     }
 
     #pokemonImg {
-  position: absolute;
-  top: 52%;
-  left: 28%;
-  transform: translate(-50%, -50%);
-  width: 45%;
-  height: auto;
-  max-height: 70%;
-  object-fit: contain;
-  filter: brightness(0) saturate(100%);
-  opacity: 1;
-}
-    
+      position: absolute;
+      top: 52%;
+      left: 28%;
+      transform: translate(-50%, -50%);
+      width: 45%;
+      height: auto;
+      max-height: 70%;
+      object-fit: contain;
+      filter: brightness(0) saturate(100%);
+      opacity: 1;
+      /* transition removido para eliminar o fade */
+    }
+
     #pokemonNome {
       margin-top: 20px;
       font-size: 2.2rem;
@@ -231,14 +231,23 @@
       const keys = Object.keys(pokemons);
       let tipo, escolhido;
 
-      const chance = Math.random();
-      if (chance < 0.15) {
-        tipo = "modificado";
-        escolhido = modificados[Math.floor(Math.random() * modificados.length)];
-      } else {
-        tipo = "normal";
-        escolhido = keys[Math.floor(Math.random() * keys.length)];
+      // 🔹 Impede repetição
+      if (usados.length >= keys.length + modificados.length) {
+        usados = []; // se já usou todos, reseta a lista
       }
+
+      do {
+        const chance = Math.random();
+        if (chance < 0.15) {
+          tipo = "modificado";
+          escolhido = modificados[Math.floor(Math.random() * modificados.length)];
+        } else {
+          tipo = "normal";
+          escolhido = keys[Math.floor(Math.random() * keys.length)];
+        }
+      } while (usados.includes(escolhido));
+
+      usados.push(escolhido);
 
       if (tipo === "modificado") {
         currentPokemon = { name: escolhido.replace(".png",""), id: null };
@@ -251,7 +260,7 @@
       }
 
       atualizarVisual(tipo);
-      enviarRespostaParaAdmin(); // 🔹 Envia a resposta assim que o Pokémon é sorteado
+      enviarRespostaParaAdmin();
     }
 
     function atualizarVisual(tipo) {
@@ -300,6 +309,3 @@
   </script>
 </body>
 </html>
-
-
-
