@@ -16,9 +16,7 @@
       --cor-card: rgba(40, 35, 25, 0.95);
       --cor-texto: #f5f5f5;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
@@ -33,7 +31,6 @@
       min-height: 100vh;
       flex-wrap: wrap;
     }
-
     .card {
       background: var(--cor-card);
       padding: 25px;
@@ -42,20 +39,8 @@
       text-align: center;
       width: 350px;
     }
-
-    h2 {
-      color: var(--cor-dourado);
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 8px;
-    }
-
+    h2 { color: var(--cor-dourado); margin-bottom: 20px; }
+    input { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 8px; }
     button {
       background: var(--cor-dourado);
       color: #000;
@@ -69,30 +54,14 @@
       cursor: pointer;
       transition: 0.2s;
     }
-
-    button:hover { background: #ffcc33; transform: scale(1.05); }
-
-    #resultado, #quizCard {
-      display: none;
-    }
-
-    #pokemonNome {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--cor-dourado);
-      margin-top: 15px;
-      text-shadow: 0 0 8px #000;
-    }
-
-    #pokemonImg {
-      margin-top: 15px;
-      max-width: 250px;
-      width: 100%;
-    }
-
+    button:hover { background: #ffcc33; transform: scale(1.03); }
+    #resultado, #quizCard { display: none; }
+    #pokemonNome { font-size: 1.8rem; font-weight: bold; color: var(--cor-dourado); margin-top: 15px; text-shadow: 0 0 8px #000; }
+    #pokemonImg { margin-top: 15px; max-width: 250px; width: 100%; }
     #pergunta { font-weight: bold; margin-bottom: 12px; }
     #resposta { color: var(--cor-dourado); font-size: 1.2rem; margin-bottom: 10px; }
     #explicacao { font-size: 0.9rem; opacity: 0.9; }
+    .small { font-size: 0.85rem; opacity: 0.9; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -102,6 +71,8 @@
     <input type="password" id="senha" placeholder="Senha">
     <button onclick="fazerLogin()">Entrar</button>
     <p id="erro" style="color:red; display:none;">Usuário ou senha incorretos!</p>
+    <p class="small">Se você veio da página principal, o login será feito automaticamente.</p>
+    <p class="small">Logs: abra o Console (F12) para ver mensagens.</p>
   </div>
 
   <div class="card" id="resultado">
@@ -123,6 +94,7 @@
   </div>
 
   <script>
+    // mesma chave usada no Quem_e_esse_pokemon.html
     const SECRET_KEY = "MikeOMacacoefoda2024";
 
     function decrypt(text) {
@@ -131,9 +103,17 @@
         return decoded.split('').map((c,i)=>
           String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
         ).join('');
-      } catch {
+      } catch (e) {
+        console.warn('decrypt falhou:', e);
         return null;
       }
+    }
+
+    // --- auto-login via flag do Quem é esse Pokémon ---
+    if (localStorage.getItem("adminAuto") === "true") {
+      sessionStorage.setItem("adminLogado", "true");
+      localStorage.removeItem("adminAuto");
+      console.log("[resposta.html] adminAuto detectado -> login automático ativado");
     }
 
     function fazerLogin() {
@@ -141,7 +121,7 @@
       const senha = document.getElementById("senha").value;
 
       if (usuario === "OrganizadorDeEventos" && senha === "MikeOMacaco3Foda") {
-        sessionStorage.setItem("adminLogado", "true"); // 🔑 sessão temporária
+        sessionStorage.setItem("adminLogado", "true");
         mostrarResultado();
         mostrarQuiz();
       } else {
@@ -154,12 +134,15 @@
       document.getElementById("resultado").style.display = "block";
 
       const respostaCripto = localStorage.getItem("pokemonResposta");
+      console.log('[resposta.html] pokemonResposta (raw):', respostaCripto);
+
       if (!respostaCripto) {
         document.getElementById("pokemonNome").innerText = "Nenhum Pokémon sorteado ainda!";
         return;
       }
 
       const pokemon = decrypt(respostaCripto);
+      console.log('[resposta.html] pokemon (decrypted):', pokemon);
       if (!pokemon) {
         document.getElementById("pokemonNome").innerText = "Erro ao descriptografar.";
         return;
@@ -170,26 +153,49 @@
       fetch("pokemons/pokemon.json")
         .then(res => res.json())
         .then(data => {
-          const nomeBase = pokemon.replace(" (Shiny)", "");
+          // remove marcações (ex: " (Shiny)")
+          const nomeBase = pokemon.replace(/ *\\(Shiny\\) */i, "").trim();
+          // se o json usa keys como "Pikachu" ou "pikachu.png", tentamos várias formas
+          let baseId = null;
+
           if (data[nomeBase]) {
-            const baseId = data[nomeBase].id;
-
-            let imgUrl;
-            if (pokemon.includes("(Shiny)")) {
-              imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${baseId}.png`;
-            } else {
-              imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${baseId}.png`;
+            baseId = data[nomeBase].id;
+          } else if (data[nomeBase.toLowerCase()]) {
+            baseId = data[nomeBase.toLowerCase()].id;
+          } else {
+            // tenta procurar por valor id em qualquer entrada
+            for (const k in data) {
+              if (k.toLowerCase().includes(nomeBase.toLowerCase()) || (data[k].name && data[k].name.toLowerCase() === nomeBase.toLowerCase())) {
+                baseId = data[k].id;
+                break;
+              }
             }
-
-            document.getElementById("pokemonImg").src = imgUrl;
           }
+
+          if (!baseId) {
+            console.warn('[resposta.html] Não foi possível achar ID do pokemon no pokemon.json para:', nomeBase);
+            // não quebra: apenas mostra o texto já descriptografado
+            document.getElementById("pokemonImg").style.display = "none";
+            return;
+          }
+
+          let imgUrl;
+          if (/\\(Shiny\\)/i.test(pokemon)) {
+            imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${baseId}.png`;
+          } else {
+            imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${baseId}.png`;
+          }
+          document.getElementById("pokemonImg").src = imgUrl;
+          document.getElementById("pokemonImg").style.display = "block";
+        })
+        .catch(err => {
+          console.error('[resposta.html] Erro ao buscar pokemon.json:', err);
         });
     }
 
+    // Quiz (mantive o comportamento original)
     function mostrarQuiz() {
       document.getElementById("quizCard").style.display = "block";
-
-      // verifica se já tem pergunta salva
       const perguntaSalva = sessionStorage.getItem("perguntaAtual");
       if (perguntaSalva) {
         preencherQuiz(JSON.parse(perguntaSalva));
@@ -204,9 +210,10 @@
         .then(data => {
           const lista = data.perguntas_respostas;
           const sorteada = lista[Math.floor(Math.random() * lista.length)];
-          sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada)); // salva
+          sessionStorage.setItem("perguntaAtual", JSON.stringify(sorteada));
           preencherQuiz(sorteada);
-        });
+        })
+        .catch(e => console.warn('Erro ao carregar perguntas:', e));
     }
 
     function preencherQuiz(item) {
@@ -216,7 +223,7 @@
     }
 
     function novaPergunta() {
-      sessionStorage.removeItem("perguntaAtual"); // libera para nova
+      sessionStorage.removeItem("perguntaAtual");
       sortearPergunta();
     }
 
@@ -225,10 +232,13 @@
       location.reload();
     }
 
+    // comportamento onload: se já foi logado na sessão, mostra
     window.onload = () => {
       if (sessionStorage.getItem("adminLogado") === "true") {
         mostrarResultado();
         mostrarQuiz();
+      } else {
+        console.log('[resposta.html] não logado na sessão (sessionStorage.adminLogado ausente)');
       }
     };
   </script>
