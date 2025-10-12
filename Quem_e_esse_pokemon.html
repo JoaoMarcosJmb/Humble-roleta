@@ -23,12 +23,11 @@
     html, body {
       height: 100%;
       font-family: "Segoe UI", Arial, sans-serif;
-      background: var(--cor-fundo);
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
-      transition: background 0.5s ease;
+      overflow-x: hidden;
     }
 
     header {
@@ -55,28 +54,33 @@
       gap: 12px;
       color: var(--cor-dourado);
     }
-    header h1 img { height: 40px; display: block; }
+
+    header h1 img {
+      height: 40px;
+      display: block;
+    }
 
     .wrap {
       padding-top: 120px;
-      min-height: calc(100vh - 120px);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       gap: 30px;
+      text-align: center;
     }
 
     .game-area {
       position: relative;
       display: inline-block;
       width: 100%;
-      max-width: 1000px;
+      max-width: 900px;
     }
 
     .game-area img.fundo {
       width: 100%;
       display: block;
+      border-radius: 15px;
     }
 
     #pokemonImg {
@@ -85,31 +89,51 @@
       left: 28%;
       transform: translate(-50%, -50%);
       width: 45%;
-      height: auto;
-      max-height: 70%;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
-      opacity: 1;
-      transition: filter 0.5s ease;
+      transition: filter 0.5s ease, opacity 0.5s ease;
+    }
+
+    #pokemonNome, #pokemonModNome {
+      display: none;
+      font-weight: bold;
+      margin-top: 10px;
     }
 
     #pokemonNome {
-      margin-top: 20px;
       font-size: 2.2rem;
-      font-weight: bold;
       color: var(--cor-dourado);
       text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
-      display: none;
-      text-align: center;
     }
 
     #pokemonModNome {
-      margin-top: 10px;
-      font-size: 1.5rem;
-      font-weight: bold;
+      font-size: 1.6rem;
       color: var(--cor-modificado);
-      display: none;
-      text-align: center;
+      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-modificado);
+    }
+
+    .botoes {
+      margin-top: 25px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    button {
+      background: var(--cor-dourado);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    button:hover {
+      background: #ffcc33;
+      transform: scale(1.05);
     }
 
     .cronometro-card {
@@ -133,30 +157,6 @@
       text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
       margin-bottom: 15px;
     }
-
-    .botoes {
-      margin-top: 25px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    button {
-      background: var(--cor-dourado);
-      color: #000;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s, background 0.2s;
-    }
-
-    button:hover {
-      background: #ffcc33;
-      transform: scale(1.05);
-    }
   </style>
 </head>
 <body>
@@ -169,7 +169,7 @@
 
   <div class="wrap">
     <div class="game-area">
-      <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo Quem é esse Pokémon" class="fundo">
+      <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo do card" class="fundo">
       <img id="pokemonImg" alt="Pokémon misterioso">
     </div>
 
@@ -189,22 +189,18 @@
 
   <script>
     let pokemons = {};
-    let modificados = [
-      "gengabble.png","mimichu.png","Gaslyng.png",
-      "Onixly.png","venosent.png","mitto.png"
-    ]; 
+    let modificados = ["gengabble.png", "mimichu.png", "Gaslyng.png", "Onixly.png", "venosent.png", "mitto.png"];
     let usados = [];
     let currentPokemon = null;
     let isShiny = false;
     let isModificado = false;
-
     let timer = null;
     let tempoRestante = 15;
 
     const SECRET_KEY = "MikeOMacacoefoda2024";
 
     function encrypt(text) {
-      return btoa(unescape(encodeURIComponent(text.split('').map((c,i)=>
+      return btoa(unescape(encodeURIComponent(text.split('').map((c, i) =>
         String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
       ).join(''))));
     }
@@ -215,9 +211,7 @@
         pokemons = data;
         trocarPokemon();
       })
-      .catch(err => {
-        alert("Erro ao carregar a lista de Pokémons: " + err);
-      });
+      .catch(err => alert("Erro ao carregar a lista de Pokémons: " + err));
 
     function iniciarCronometro() {
       clearInterval(timer);
@@ -227,7 +221,6 @@
       timer = setInterval(() => {
         tempoRestante--;
         document.getElementById("cronometro").innerText = tempoRestante;
-
         if (tempoRestante <= 0) {
           clearInterval(timer);
           document.getElementById("cronometro").innerText = "Tempo esgotado!";
@@ -250,55 +243,32 @@
       }
 
       if (tipo === "modificado") {
-        if (usados.includes(escolhido)) {
-          return trocarPokemon();
-        }
-        currentPokemon = { name: escolhido.replace(".png",""), id: null };
-        usados.push(escolhido);
+        currentPokemon = { name: escolhido.replace(".png", ""), id: null };
         isModificado = true;
         isShiny = false;
       } else {
-        if (usados.includes(escolhido)) {
-          return trocarPokemon();
-        }
         currentPokemon = { name: escolhido, id: pokemons[escolhido].id };
-        usados.push(escolhido);
-        isShiny = Math.random() < 0.25;
         isModificado = false;
+        isShiny = Math.random() < 0.25;
       }
 
       atualizarVisual(tipo);
-      clearInterval(timer);
-      document.getElementById("cronometro").innerText = 15;
+      enviarRespostaParaAdmin(); // 🔹 Envia resposta ao painel assim que sorteia
     }
 
     function atualizarVisual(tipo) {
       const img = document.getElementById("pokemonImg");
-      const titulo = document.getElementById("titulo");
-      const nome = document.getElementById("pokemonNome");
-      const nomeMod = document.getElementById("pokemonModNome");
       const fundoCard = document.getElementById("fundoCard");
-
       let newSrc;
 
       if (tipo === "modificado") {
-        titulo.innerText = "Quem é esse Pokémon?";
         fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
         newSrc = "img/pokemons modificados/" + currentPokemon.name + ".png";
-        nome.style.display = "none";
-        nomeMod.innerText = currentPokemon.name.toUpperCase();
-        nomeMod.style.display = "none";
       } else {
-        titulo.innerText = "Quem é esse Pokémon?";
         fundoCard.src = "img/quem_e_esse_pokemon.png";
-        if (isShiny) {
-          newSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`;
-        } else {
-          newSrc = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
-        }
-        nome.innerText = currentPokemon.name + (isShiny ? " ✨" : "");
-        nome.style.display = "none";
-        nomeMod.style.display = "none";
+        newSrc = isShiny
+          ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`
+          : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
       }
 
       const tempImg = new Image();
@@ -309,26 +279,23 @@
       tempImg.src = newSrc;
     }
 
-    // 🔹 Agora a resposta vai apenas para o admin (sem mudar a tela dos jogadores)
+    // 🔹 Envia automaticamente a resposta ao painel admin
+    function enviarRespostaParaAdmin() {
+      const nomePokemon = isModificado
+        ? currentPokemon.name
+        : currentPokemon.name + (isShiny ? " (Shiny)" : "");
+      localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
+      localStorage.setItem("adminAuto", "true");
+      console.log("[JOGO] Resposta enviada ao painel do administrador:", nomePokemon);
+    }
+
+    // 🔹 Apenas revela a imagem aos jogadores
     function revelarPokemon() {
       clearInterval(timer);
       const img = document.getElementById("pokemonImg");
-      document.getElementById("pokemonNome").style.display = isModificado ? "none" : "block";
-      document.getElementById("pokemonModNome").style.display = isModificado ? "block" : "none";
-
-      img.style.transition = "opacity 2s ease-in-out, filter 0s";
-      img.style.opacity = "1";
       img.style.filter = "none";
-
-      const nomePokemon = isModificado 
-          ? currentPokemon.name 
-          : currentPokemon.name + (isShiny ? " (Shiny)" : "");
-
-      localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
-      localStorage.setItem("adminAuto", "true");
-
-      console.log("[JOGO] Resposta enviada ao painel do administrador:", nomePokemon);
-      alert("✅ Resposta enviada ao painel do administrador!");
+      img.style.opacity = "1";
+      console.log("[JOGO] Pokémon revelado aos jogadores!");
     }
   </script>
 </body>
