@@ -27,7 +27,6 @@
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
       color: var(--cor-texto);
-      overflow-x: hidden;
     }
 
     header {
@@ -48,16 +47,13 @@
 
     header h1 {
       font-size: 1.8rem;
+      margin: 0;
       display: flex;
       align-items: center;
       gap: 12px;
       color: var(--cor-dourado);
     }
-
-    header h1 img {
-      height: 40px;
-      display: block;
-    }
+    header h1 img { height: 40px; display: block; }
 
     .wrap {
       padding-top: 120px;
@@ -66,71 +62,53 @@
       justify-content: center;
       align-items: center;
       gap: 30px;
-      text-align: center;
-      width: 100%;
     }
 
     .game-area {
       position: relative;
+      display: inline-block;
       width: 100%;
-      max-width: 1100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      max-width: 1000px;
     }
 
     .game-area img.fundo {
       width: 100%;
       display: block;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
 
     #pokemonImg {
       position: absolute;
       top: 52%;
-      left: 50%;
+      left: 28%;
       transform: translate(-50%, -50%);
-      width: auto;
-      max-width: 50%;
-      max-height: 65%;
+      width: 45%;
+      height: auto;
       object-fit: contain;
       filter: brightness(0) saturate(100%);
-      transition: filter 0.5s ease, opacity 0.5s ease;
+      transition: filter 0.5s ease;
     }
 
     #pokemonNome, #pokemonModNome {
       display: none;
-      font-weight: bold;
-      margin-top: 10px;
       text-align: center;
+      font-weight: bold;
     }
 
-    #pokemonNome {
-      font-size: 2.4rem;
-      color: var(--cor-dourado);
-      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
-    }
-
-    #pokemonModNome {
-      font-size: 1.8rem;
-      color: var(--cor-modificado);
-      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-modificado);
-    }
+    #pokemonNome { color: var(--cor-dourado); font-size: 2.2rem; }
+    #pokemonModNome { color: var(--cor-modificado); font-size: 1.6rem; }
 
     .botoes {
       margin-top: 25px;
       display: flex;
       justify-content: center;
       gap: 20px;
-      flex-wrap: wrap;
     }
 
     button {
       background: var(--cor-dourado);
       color: #000;
       border: none;
-      padding: 12px 24px;
+      padding: 10px 20px;
       border-radius: 10px;
       font-size: 1rem;
       font-weight: bold;
@@ -161,8 +139,6 @@
       font-size: 2.5rem;
       font-weight: bold;
       color: var(--cor-dourado);
-      text-shadow: 0 0 10px #000, 0 0 20px var(--cor-dourado);
-      margin-bottom: 15px;
     }
   </style>
 </head>
@@ -176,7 +152,7 @@
 
   <div class="wrap">
     <div class="game-area">
-      <img id="fundoCard" src="img/quem_e_esse_pokemon.png" alt="Fundo do card" class="fundo">
+      <img id="fundoCard" src="img/quem_e_esse_pokemon.png" class="fundo">
       <img id="pokemonImg" alt="Pokémon misterioso">
     </div>
 
@@ -184,8 +160,8 @@
     <div id="pokemonModNome"></div>
 
     <div class="botoes">
-      <button onclick="trocarPokemon()">🔄 Trocar Pokémon</button>
-      <button onclick="revelarPokemon()">👀 Revelar</button>
+      <button onclick="trocarPokemon()">Trocar Pokémon</button>
+      <button onclick="revelarPokemon()">Revelar</button>
     </div>
   </div>
 
@@ -193,7 +169,6 @@
     <div id="cronometro">15</div>
     <button onclick="iniciarCronometro()">Iniciar</button>
   </div>
-
   <script>
     let pokemons = {};
     let modificados = ["gengabble.png","mimichu.png","Gaslyng.png","Onixly.png","venosent.png","mitto.png"];
@@ -308,3 +283,4 @@
   </script>
 </body>
 </html>
+
