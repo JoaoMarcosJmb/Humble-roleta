@@ -238,7 +238,7 @@
 
       do {
         const chance = Math.random();
-        if (chance < 0.15) {
+        if (chance < 0.10) {
           tipo = "modificado";
           escolhido = modificados[Math.floor(Math.random() * modificados.length)];
         } else {
@@ -256,7 +256,7 @@
       } else {
         currentPokemon = { name: escolhido, id: pokemons[escolhido].id };
         isModificado = false;
-        isShiny = Math.random() < 0.25;
+        isShiny = Math.random() < 0.15;
       }
 
       atualizarVisual(tipo);
@@ -309,3 +309,4 @@
   </script>
 </body>
 </html>
+
