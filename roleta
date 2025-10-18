@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Roleta do Mike — Versão Otimizada</title>
+<link rel="icon" type="image/png" href="https://i.imgur.com/XOEcuO8.png">
+<style>
+:root{--cor-dourado:#d1a720;--cor-fundo:#1a1a1a;--cor-card:rgba(40,35,25,0.95);--cor-texto:#f5f5f5}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,rgba(20,20,20,0.9),rgba(40,30,20,0.9)),url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;background-size:cover;color:var(--cor-texto);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+header{position:fixed;top:0;left:0;right:0;padding:12px 20px;display:flex;align-items:center;gap:12px;background:rgba(20,20,20,0.9);border-bottom:2px solid var(--cor-dourado);box-shadow:0 2px 8px rgba(0,0,0,0.6);z-index:1000}
+header img{height:42px}
+header h1{font-size:1.6rem;color:var(--cor-dourado)}
+main{margin-top:100px;display:flex;gap:28px;justify-content:flex-start;align-items:flex-start;width:100%;max-width:1200px;padding:20px}
+.roleta-container{position:relative;width:620px;height:620px;margin-right:10px}
+canvas{width:600px;height:600px;border-radius:50%;box-shadow:0 0 20px rgba(0,0,0,0.7);background:#222;display:block}
+.ponteiro{position:absolute;top:-35px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:18px solid transparent;border-right:18px solid transparent;border-top:35px solid #fff;filter:drop-shadow(0 0 3px black);z-index:10}
+.botao{margin-top:20px;padding:12px 24px;font-size:1rem;font-weight:bold;border:none;border-radius:10px;cursor:pointer;background:var(--cor-dourado);color:#111;transition:transform .15s}
+.botao:hover{transform:scale(1.04)}
+.controls{display:flex;gap:10px;align-items:center;margin-top:12px}
+.lista{width:360px;flex-shrink:0;background:var(--cor-card);padding:20px;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,0.6)}
+.lista h2{margin-bottom:12px;font-size:1.3rem;color:var(--cor-dourado);text-align:center}
+.lista table{width:100%;border-collapse:collapse;table-layout:fixed}
+.lista th,.lista td{padding:8px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.12);vertical-align:middle}
+.lista table th:nth-child(1),.lista td:nth-child(1){width:62%;text-align:left;padding-left:8px}
+.lista table th:nth-child(2),.lista td:nth-child(2){width:28%}
+.lista table th:nth-child(3),.lista td:nth-child(3){width:10%}
+.lista input{width:95%;padding:6px 8px;border-radius:6px;border:none;text-align:left;background:rgba(255,255,255,0.04);color:var(--cor-texto)}
+.lista td:nth-child(2) input{width:90px;text-align:center}
+.remover{cursor:pointer;color:#ff6b6b;font-weight:bold;border:none;background:transparent;font-size:1.1rem}
+.add-btn,.bulk-btn,.save-btn{margin-top:10px;width:100%;font-weight:bold;padding:10px;border-radius:8px;cursor:pointer}
+.add-btn{background:#28a745;color:white}
+.bulk-btn{background:#007bff;color:white}
+.save-btn{background:#6f42c1;color:white}
+.small{font-size:.9rem;padding:6px 8px;border-radius:6px}
+.bulk-panel{display:none;margin-top:10px}
+#bulk-text{width:100%;height:120px;border-radius:8px;padding:10px;border:none;resize:vertical}
+.bulk-row{display:flex;gap:8px;margin-top:8px}
+.select-saves{width:100%;margin-top:8px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:2000}
+.modal-card{background:var(--cor-card);padding:18px;border-radius:12px;max-width:90%;min-width:320px;text-align:center}
+.winner-title{font-size:1.4rem;color:var(--cor-dourado);margin-bottom:8px}
+#winner-img{max-width:100%;border-radius:8px;margin-top:8px}
+.footer-actions{display:flex;gap:8px;justify-content:center;margin-top:12px}
+@media(max-width:1100px){.roleta-container{transform:scale(0.85);transform-origin:left top;width:525px;height:525px}canvas{width:500px;height:500px}}
+</style>
+</head>
+<body>
+<header>
+<img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+<h1>Roleta do Mike</h1>
+</header>
+<main>
+<div class="roleta-container">
+  <div class="ponteiro" aria-hidden></div>
+  <canvas id="roleta" width="600" height="600" aria-label="Canvas da roleta"></canvas>
+  <div class="controls">
+    <button class="botao" id="girar">Girar</button>
+    <button class="botao" id="reset">Resetar</button>
+    <label class="small">Velocidade: <input id="speed" type="range" min="0.5" max="3" step="0.1" value="1"></label>
+  </div>
+</div>
+
+<div class="lista">
+  <h2>Itens da Roleta</h2>
+  <table id="tabela">
+    <thead><tr><th>Item</th><th>%</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <button class="add-btn" id="add">+ Adicionar Recompensa</button>
+  <button class="bulk-btn" id="toggle-bulk">📥 Bulk Add</button>
+  <div class="bulk-panel" id="bulk-panel">
+    <textarea id="bulk-text" placeholder="Um item por linha. Opcionalmente: Nome; 12.5\nSe enviar apenas nomes, será distribuído igualmente"></textarea>
+    <div class="bulk-row">
+      <button class="small" id="bulk-add">Adicionar (auto)</button>
+      <button class="small" id="bulk-add-keep">Adicionar (manter % quando presente)</button>
+      <button class="small" id="bulk-equal">Adicionar (igualdadede %) </button>
+    </div>
+  </div>
+
+  <div class="save-row">
+    <button class="save-btn" id="save-list">💾 Salvar Lista</button>
+    <select id="saved-lists" class="select-saves"></select>
+    <div style="display:flex;gap:6px;margin-top:6px">
+      <input id="save-name" placeholder="Nome da lista" class="small" />
+      <button class="small" id="load-save">Carregar</button>
+      <button class="small" id="delete-save">Deletar</button>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- Modal vencedor -->
+<div id="modal-winner" class="modal" style="display:none">
+  <div class="modal-card">
+    <div class="winner-title">Vencedor!</div>
+    <div id="winner-name" style="font-size:1.2rem;font-weight:bold"></div>
+    <img id="winner-img" alt="Imagem da roleta com o vencedor" />
+    <div class="footer-actions">
+      <button class="small" id="download-shot">⬇️ Baixar imagem</button>
+      <button class="small" id="close-winner">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- Dados iniciais e utilitários ---
+const canvas = document.getElementById('roleta');
+const ctx = canvas.getContext('2d');
+const DPR = window.devicePixelRatio || 1;
+canvas.width = 600 * DPR; canvas.height = 600 * DPR; canvas.style.width = '600px'; canvas.style.height = '600px';
+ctx.scale(DPR, DPR);
+
+const state = {
+  items: [], // {nome, perc, color}
+  anguloAtual: 0,
+  spinning: false
+};
+
+// Helpers
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+function corParaIndex(i){ return `hsl(${(i*55)%360} 70% 50%)`.replace(/ /g, ' '); }
+
+function salvarLocal(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+function lerLocal(key){ try{return JSON.parse(localStorage.getItem(key)); }catch(e){return null;} }
+
+// --- UI: tabela ---
+const tbody = $('#tabela tbody');
+function refreshTabela(){ tbody.innerHTML = '';
+  state.items.forEach((it, idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input value="${escapeHtml(it.nome)}" data-idx="${idx}" class="nome"></td>
+      <td><input type="number" value="${(it.perc||0).toFixed(2)}" step="0.01" data-idx="${idx}" class="perc"></td>
+      <td><button class="remover" data-idx="${idx}">❌</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function escapeHtml(s){ return (s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// Inicial: 2 itens
+if(!lerLocal('roleta_items')){
+  state.items = [{nome:'Item 1',perc:50,color:corParaIndex(0)},{nome:'Item 2',perc:50,color:corParaIndex(1)}];
+} else {
+  state.items = lerLocal('roleta_items');
+}
+
+// Atualiza cores e desenha
+function normalizarPercents(keepZero=false){
+  // If total is zero or all perc 0 -> distribute equally
+  const total = state.items.reduce((s,i)=>s+(i.perc||0),0);
+  if(total <= 0){ const eq = 100/state.items.length||0; state.items.forEach(i=>i.perc = eq); return; }
+  // Otherwise scale to 100
+  state.items.forEach(i=>{
+    if(keepZero && (i.perc===0||isNaN(i.perc))) return;
+    i.perc = (i.perc/total)*100;
+  });
+}
+
+function ensureColors(){ state.items.forEach((it,idx)=>{ if(!it.color) it.color = corParaIndex(idx); }); }
+
+function desenharRoleta(){
+  normalizarPercents(); ensureColors();
+  const cx = canvas.width/ (2*DPR), cy = canvas.height/(2*DPR), r = Math.min(cx,cy)-4;
+  ctx.clearRect(0,0,canvas.width/DPR,canvas.height/DPR);
+  ctx.save(); ctx.translate(cx,cy); ctx.rotate(state.anguloAtual);
+  let angIni = -Math.PI/2; // pointer at top
+  state.items.forEach((item, idx)=>{
+    const ang = (item.perc/100)*2*Math.PI;
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,angIni,angIni+ang); ctx.closePath();
+    ctx.fillStyle = item.color; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth=1; ctx.stroke();
+
+    // label
+    ctx.save(); ctx.rotate(angIni+ang/2);
+    ctx.textAlign='right'; ctx.textBaseline='middle';
+    ctx.fillStyle = '#fff'; ctx.font = Math.max(12, Math.round(r/10))+'px Arial';
+    const txt = item.nome;
+    ctx.fillText(txt, r-16, 0);
+    ctx.restore();
+    angIni += ang;
+  });
+  ctx.restore();
+}
+
+// Map angle (global) to item index
+function encontrarVencedorPorAngulo(anguloGlobal){
+  // anguloGlobal is the rotation applied to the wheel. pointer is fixed at -90deg (top)
+  // We want the segment that covers angle (-pointer - angAtual) mod 2pi
+  const angPointer = -Math.PI/2; // top
+  const angNaRoleta = ( (angPointer - anguloGlobal) % (2*Math.PI) + 2*Math.PI ) % (2*Math.PI);
+  // iterate segments
+  let start = 0;
+  for(let i=0;i<state.items.length;i++){
+    const ang = (state.items[i].perc/100)*2*Math.PI;
+    if(angNaRoleta >= start && angNaRoleta < start+ang) return i;
+    start += ang;
+  }
+  return state.items.length-1;
+}
+
+// --- Spin logic ---
+const btnGirar = $('#girar');
+const btnReset = $('#reset');
+const inputSpeed = $('#speed');
+
+btnGirar.addEventListener('click', ()=>{
+  if(state.spinning) return; if(state.items.length===0) return alert('Adicione items antes de girar');
+  state.spinning = true;
+  // Random final angle but weighted by perc.
+  // We'll pick a winner using weighted random for fairness and set angle to land on it.
+
+  // Choose winner index by weight
+  const total = state.items.reduce((s,i)=>s+(i.perc||0),0);
+  const r = Math.random()*total; let acc=0; let winnerIdx=0;
+  for(let i=0;i<state.items.length;i++){ acc+= (state.items[i].perc||0); if(r<=acc){ winnerIdx=i; break; } }
+
+  // Compute angle range for that slice
+  let startAng = -Math.PI/2; // top
+  for(let i=0;i<winnerIdx;i++) startAng += (state.items[i].perc/100)*2*Math.PI;
+  const sliceAng = (state.items[winnerIdx].perc/100)*2*Math.PI;
+  const minTarget = startAng + 0.05*sliceAng; // small margin in
+  const maxTarget = startAng + 0.95*sliceAng;
+  // choose a random angle within that slice (on wheel coordinates)
+  const targetOnWheel = minTarget + Math.random()*(maxTarget-minTarget);
+
+  // We need global angDestino such that pointer (-90deg) points to targetOnWheel => angDestino = -targetOnWheel + (-Math.PI/2)
+  // But considering current rotation, compute delta
+  const baseFullRot = 2*Math.PI*(4 + Math.floor(Math.random()*3)); // 4-6 full turns
+  const desiredAng = -targetOnWheel + baseFullRot; // ensures multiple spins
+  const angInicio = state.anguloAtual;
+  const durBase = 3000; // ms
+  const speedFactor = parseFloat(inputSpeed.value)||1;
+  const dur = durBase / speedFactor;
+  const t0 = performance.now();
+
+  function anim(ts){
+    const p = Math.min(1, (ts-t0)/dur);
+    // ease out
+    const eased = 1 - Math.pow(1-p,3);
+    state.anguloAtual = angInicio + (desiredAng - angInicio)*eased;
+    desenharRoleta();
+    if(p<1) requestAnimationFrame(anim); else {
+      state.anguloAtual = desiredAng % (2*Math.PI);
+      desenharRoleta();
+      state.spinning = false;
+      const winner = encontrarVencedorPorAngulo(state.anguloAtual);
+      mostraVencedor(winner);
+    }
+  }
+  requestAnimationFrame(anim);
+});
+
+btnReset.addEventListener('click', ()=>{
+  state.anguloAtual = 0; desenharRoleta();
+});
+
+// --- Winner modal & "print" ---
+const modal = $('#modal-winner');
+const winnerNameEl = $('#winner-name');
+const winnerImg = $('#winner-img');
+const closeWinner = $('#close-winner');
+const downloadShot = $('#download-shot');
+
+function mostraVencedor(idx){
+  const nome = state.items[idx].nome;
+  winnerNameEl.textContent = nome;
+  // create snapshot: draw wheel to temporary canvas then add pointer and text
+  const shotCanvas = document.createElement('canvas');
+  const W = 600, H=600; shotCanvas.width = W*DPR; shotCanvas.height = H*DPR; shotCanvas.style.width = W+'px'; shotCanvas.style.height = H+'px';
+  const sctx = shotCanvas.getContext('2d'); sctx.scale(DPR,DPR);
+  // copy current wheel
+  sctx.fillStyle = '#111'; sctx.fillRect(0,0,W,H);
+  sctx.drawImage(canvas,0,0,W,H);
+  // overlay pointer icon at top center
+  sctx.fillStyle = 'rgba(255,255,255,0.9)';
+  sctx.beginPath(); sctx.moveTo(W/2-18,12); sctx.lineTo(W/2+18,12); sctx.lineTo(W/2,44); sctx.closePath(); sctx.fill();
+  // Winner label
+  sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.fillRect(12,H-90,W-24,64);
+  sctx.fillStyle = '#fff'; sctx.font = '20px Arial'; sctx.textAlign='center'; sctx.fillText('VENCEDOR: '+nome, W/2, H-45);
+  const data = shotCanvas.toDataURL('image/png');
+  winnerImg.src = data;
+  downloadShot.onclick = ()=>{ const a = document.createElement('a'); a.href=data; a.download = `vencedor_${nome.replace(/\s+/g,'_')}.png`; a.click(); };
+  modal.style.display = 'flex';
+}
+closeWinner.addEventListener('click', ()=>{ modal.style.display='none'; });
+
+// --- Bulk add ---
+$('#toggle-bulk').addEventListener('click', ()=>{ const p = $('#bulk-panel'); p.style.display = p.style.display==='none' || p.style.display==='' ? 'block' : 'none'; });
+
+$('#bulk-add').addEventListener('click', ()=>{ // auto: if percentage present use, others distributed by remaining
+  const txt = $('#bulk-text').value.trim(); if(!txt) return;
+  const lines = txt.split('\n').map(l=>l.trim()).filter(l=>l);
+  // parse lines
+  const parsed = lines.map(l=>{
+    if(l.includes(';')){
+      const [n, p] = l.split(';'); return {nome:n.trim(), perc: parseFloat(p.replace(',','.'))||0};
+    }
+    return {nome:l, perc:null};
+  });
+  // sum known
+  const knownSum = parsed.reduce((s,p)=>s+(p.perc||0),0);
+  const unknownCount = parsed.filter(p=>p.perc==null).length;
+  let remaining = Math.max(0, 100-knownSum);
+  const perUnknown = unknownCount? remaining/unknownCount : 0;
+  parsed.forEach(p=>{
+    const perc = (p.perc==null)? perUnknown : p.perc;
+    state.items.push({nome:p.nome, perc:perc, color:corParaIndex(state.items.length)});
+  });
+  $('#bulk-text').value = '';
+  normalizarPercents(); ensureColors(); refreshTabela(); desenharRoleta();
+});
+
+$('#bulk-add-keep').addEventListener('click', ()=>{ // keep perc if present, otherwise 0
+  const txt = $('#bulk-text').value.trim(); if(!txt) return; const lines = txt.split('\n').map(l=>l.trim()).filter(l=>l);
+  lines.forEach(l=>{
+    if(l.includes(';')){ const [n,p]=l.split(';'); state.items.push({nome:n.trim(),perc:parseFloat(p.replace(',','.'))||0,color:corParaIndex(state.items.length)});
+    } else state.items.push({nome:l,perc:0,color:corParaIndex(state.items.length)});
+  }); $('#bulk-text').value=''; normalizarPercents(true); ensureColors(); refreshTabela(); desenharRoleta();
+});
+
+$('#bulk-equal').addEventListener('click', ()=>{ const txt = $('#bulk-text').value.trim(); if(!txt) return; const lines = txt.split('\n').map(l=>l.trim()).filter(l=>l);
+  const eq = 100/lines.length; lines.forEach(l=> state.items.push({nome:l,perc:eq,color:corParaIndex(state.items.length)})); $('#bulk-text').value=''; normalizarPercents(); ensureColors(); refreshTabela(); desenharRoleta();
+});
+
+// --- Add/remove single ---
+$('#add').addEventListener('click', ()=>{ state.items.push({nome:'Novo Item',perc:0,color:corParaIndex(state.items.length)}); refreshTabela(); desenharRoleta(); });
+
+tbody.addEventListener('click', (e)=>{
+  if(e.target.matches('.remover')){ const i = Number(e.target.dataset.idx); if(!isNaN(i)) state.items.splice(i,1); refreshTabela(); desenharRoleta(); }
+});
+
+tbody.addEventListener('input', (e)=>{
+  if(e.target.matches('.nome')){ const i = Number(e.target.dataset.idx); if(!isNaN(i)) state.items[i].nome = e.target.value; }
+  if(e.target.matches('.perc')){ const i = Number(e.target.dataset.idx); if(!isNaN(i)) state.items[i].perc = parseFloat(e.target.value)||0; }
+  desenharRoleta();
+});
+
+// --- Save / Load lists (localStorage) ---
+const savedSelect = $('#saved-lists');
+function refreshSavedList(){ const saved = lerLocal('roleta_saves') || {}; savedSelect.innerHTML = '<option value="">-- Listas salvas --</option>' + Object.keys(saved).map(k=>`<option value="${k}">${k}</option>`).join(''); }
+
+$('#save-list').addEventListener('click', ()=>{
+  const name = ($('#save-name').value||prompt('Nome para salvar a lista:')).trim(); if(!name) return; const saves = lerLocal('roleta_saves')||{}; saves[name] = state.items; salvarLocal('roleta_saves', saves); refreshSavedList(); alert('Lista salva: '+name);
+});
+
+$('#load-save').addEventListener('click', ()=>{
+  const name = savedSelect.value; if(!name) return alert('Escolha uma lista'); const saves = lerLocal('roleta_saves')||{}; if(!saves[name]) return alert('Lista não encontrada'); state.items = JSON.parse(JSON.stringify(saves[name])); refreshTabela(); desenharRoleta(); });
+
+$('#delete-save').addEventListener('click', ()=>{ const name = savedSelect.value; if(!name) return alert('Escolha uma lista'); const saves = lerLocal('roleta_saves')||{}; if(!saves[name]) return alert('Lista não encontrada'); if(!confirm('Deletar lista '+name+'?')) return; delete saves[name]; salvarLocal('roleta_saves', saves); refreshSavedList(); });
+
+refreshSavedList();
+refreshTabela(); desenharRoleta();
+
+// Auto save current items for quick restore
+window.addEventListener('beforeunload', ()=>{ salvarLocal('roleta_items', state.items); });
+
+</script>
+</body>
+</html>
