@@ -268,26 +268,51 @@ const downloadShot = $('#download-shot');
 
 function mostraVencedor(idx){
   const nome = state.items[idx].nome;
-  winnerNameEl.textContent = nome;
-  // create snapshot: draw wheel to temporary canvas then add pointer and text
+  winnerNameEl.textContent = `🎉 O prêmio foi: ${nome}! 🎉`;
+
+  // cria snapshot: desenha roleta e adiciona texto e ponteiro
   const shotCanvas = document.createElement('canvas');
-  const W = 600, H=600; shotCanvas.width = W*DPR; shotCanvas.height = H*DPR; shotCanvas.style.width = W+'px'; shotCanvas.style.height = H+'px';
-  const sctx = shotCanvas.getContext('2d'); sctx.scale(DPR,DPR);
-  // copy current wheel
-  sctx.fillStyle = '#111'; sctx.fillRect(0,0,W,H);
-  sctx.drawImage(canvas,0,0,W,H);
-  // overlay pointer icon at top center
+  const W = 600, H = 600;
+  shotCanvas.width = W * DPR;
+  shotCanvas.height = H * DPR;
+  shotCanvas.style.width = W + 'px';
+  shotCanvas.style.height = H + 'px';
+  const sctx = shotCanvas.getContext('2d');
+  sctx.scale(DPR, DPR);
+
+  // fundo
+  sctx.fillStyle = '#111';
+  sctx.fillRect(0, 0, W, H);
+  // copia a roleta atual
+  sctx.drawImage(canvas, 0, 0, W, H);
+  // adiciona ponteiro
   sctx.fillStyle = 'rgba(255,255,255,0.9)';
-  sctx.beginPath(); sctx.moveTo(W/2-18,12); sctx.lineTo(W/2+18,12); sctx.lineTo(W/2,44); sctx.closePath(); sctx.fill();
-  // Winner label
-  sctx.fillStyle = 'rgba(0,0,0,0.6)'; sctx.fillRect(12,H-90,W-24,64);
-  sctx.fillStyle = '#fff'; sctx.font = '20px Arial'; sctx.textAlign='center'; sctx.fillText('VENCEDOR: '+nome, W/2, H-45);
+  sctx.beginPath();
+  sctx.moveTo(W/2 - 18, 12);
+  sctx.lineTo(W/2 + 18, 12);
+  sctx.lineTo(W/2, 44);
+  sctx.closePath();
+  sctx.fill();
+
+  // texto do prêmio no rodapé da imagem
+  sctx.fillStyle = 'rgba(0,0,0,0.6)';
+  sctx.fillRect(12, H - 90, W - 24, 64);
+  sctx.fillStyle = '#fff';
+  sctx.font = '20px Arial';
+  sctx.textAlign = 'center';
+  sctx.fillText(`🎁 PRÊMIO: ${nome}`, W/2, H - 45);
+
+  // gera imagem e mostra modal
   const data = shotCanvas.toDataURL('image/png');
   winnerImg.src = data;
-  downloadShot.onclick = ()=>{ const a = document.createElement('a'); a.href=data; a.download = `vencedor_${nome.replace(/\s+/g,'_')}.png`; a.click(); };
+  downloadShot.onclick = () => {
+    const a = document.createElement('a');
+    a.href = data;
+    a.download = `premio_${nome.replace(/\s+/g,'_')}.png`;
+    a.click();
+  };
   modal.style.display = 'flex';
 }
-closeWinner.addEventListener('click', ()=>{ modal.style.display='none'; });
 
 // --- Bulk add ---
 $('#toggle-bulk').addEventListener('click', ()=>{ const p = $('#bulk-panel'); p.style.display = p.style.display==='none' || p.style.display==='' ? 'block' : 'none'; });
