@@ -264,6 +264,17 @@ function adicionarLinha(nome = "Novo Item") {
   <td><button class="remover" onclick="removerLinha(this)">❌</button></td>`;
   tbody.appendChild(nova);
   nova.querySelectorAll('input').forEach(inp => inp.addEventListener('input', desenharRoleta));
+
+  // Recalcular proporções e normalizar após adicionar
+  const linhas = document.querySelectorAll("#tabela tbody tr");
+  const n = linhas.length;
+  if (n > 0) {
+    const novoValor = 100 / n;
+    linhas.forEach(l => {
+      const inputPerc = l.cells[1].querySelector("input");
+      inputPerc.value = novoValor.toFixed(2);
+    });
+  }
   desenharRoleta();
 }
 
