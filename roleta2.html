@@ -233,26 +233,33 @@ function desenharRoleta() {
   ctx.translate(canvas.width / 2, canvas.height / 2);
   ctx.rotate(anguloAtual);
   let angIni = 0;
+
+  const cores = ["#ffd6d6", "#d6f0ff"]; // rosa pastel e azul pastel
+
   itens.forEach((item, i) => {
     const ang = (item.perc / total) * 2 * Math.PI;
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.arc(0, 0, canvas.width / 2, angIni, angIni + ang);
     ctx.closePath();
-    ctx.fillStyle = `hsl(${(i * 70) % 360}, 70%, 50%)`;
+    ctx.fillStyle = cores[i % 2]; // alterna entre as duas cores
     ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.15)";
     ctx.stroke();
+
     ctx.save();
     ctx.rotate(angIni + ang / 2);
     ctx.textAlign = "right";
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#333";
     ctx.font = Math.max(12, Math.round(canvas.width / 30)) + "px Arial";
     ctx.fillText(item.nome, canvas.width / 2 - 16, 10);
     ctx.restore();
+
     angIni += ang;
   });
   ctx.restore();
 }
+
 
 function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
