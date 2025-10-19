@@ -176,25 +176,51 @@ const canvas = document.getElementById("roleta");
 const ctx = canvas.getContext("2d");
 let anguloAtual = 0;
 
+function getAllRows() {
+  return Array.from(document.querySelectorAll("#tabela tbody tr"));
+}
+
 function getItens() {
-  const linhas = document.querySelectorAll("#tabela tbody tr");
-  return Array.from(linhas)
-    .map(l => {
-      const nome = l.cells[0].querySelector("input").value.trim();
-      const perc = parseFloat(l.cells[1].querySelector("input").value) || 0;
-      return nome ? { nome, perc } : null;
+  // Retorna objetos somente das linhas com nome (ignora linhas com nome vazio)
+  return getAllRows()
+    .map(row => {
+      const nome = row.cells[0].querySelector("input").value.trim();
+      const perc = parseFloat(row.cells[1].querySelector("input").value) || 0;
+      return { row, nome, perc, percInput: row.cells[1].querySelector("input") };
     })
-    .filter(Boolean);
+    .filter(r => r.nome !== "");
 }
 
 function normalizarPercentuais() {
-  const itens = getItens();
+  const rows = getAllRows();
+  // Considera só linhas com nome preenchido
+  const itens = rows.map(row => {
+    const nome = row.cells[0].querySelector("input").value.trim();
+    const percInput = row.cells[1].querySelector("input");
+    const perc = parseFloat(percInput.value) || 0;
+    return { row, nome, perc, percInput };
+  }).filter(r => r.nome !== "");
+
   const total = itens.reduce((s, it) => s + it.perc, 0);
-  if (total === 0) return;
-  const linhas = document.querySelectorAll("#tabela tbody tr");
-  linhas.forEach((linha, i) => {
-    const input = linha.cells[1].querySelector("input");
-    if (itens[i]) input.value = ((itens[i].perc / total) * 100).toFixed(2);
+
+  if (itens.length === 0) {
+    // nada a fazer se não há itens com nome
+    return;
+  }
+
+  if (total === 0) {
+    // Se todos os percentuais são zero, distribui igualmente
+    const equal = 100 / itens.length;
+    itens.forEach(it => {
+      it.percInput.value = equal.toFixed(2);
+    });
+    return;
+  }
+
+  // Normaliza mantendo proporção
+  itens.forEach(it => {
+    const normalized = (it.perc / total) * 100;
+    it.percInput.value = normalized.toFixed(2);
   });
 }
 
@@ -253,6 +279,8 @@ function girar() {
 
 function removerLinha(btn) {
   btn.closest("tr").remove();
+  // normaliza após remover
+  normalizarPercentuais();
   desenharRoleta();
 }
 
@@ -263,18 +291,13 @@ function adicionarLinha(nome = "Novo Item") {
   <td><input type="number" value="0" step="0.01"></td>
   <td><button class="remover" onclick="removerLinha(this)">❌</button></td>`;
   tbody.appendChild(nova);
-  nova.querySelectorAll('input').forEach(inp => inp.addEventListener('input', desenharRoleta));
-
-  // Recalcular proporções e normalizar após adicionar
-  const linhas = document.querySelectorAll("#tabela tbody tr");
-  const n = linhas.length;
-  if (n > 0) {
-    const novoValor = 100 / n;
-    linhas.forEach(l => {
-      const inputPerc = l.cells[1].querySelector("input");
-      inputPerc.value = novoValor.toFixed(2);
-    });
-  }
+  // adiciona listeners
+  nova.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    // quando usuário editar manualmente, apenas redesenha (normalizar será chamado ao redesenhar)
+    desenharRoleta();
+  }));
+  // normaliza para incluir o novo item (se outros forem zero, equaliza; se houver proporções, mantém)
+  normalizarPercentuais();
   desenharRoleta();
 }
 
@@ -304,6 +327,8 @@ function confirmarBulk() {
   });
   document.getElementById("bulk-text").value = "";
   document.getElementById("bulk-area").style.display = "none";
+  // normaliza depois do bulk (resolve caso todos sejam 0)
+  normalizarPercentuais();
   desenharRoleta();
 }
 
@@ -319,8 +344,9 @@ function salvarLista() {
   document.body.removeChild(link);
 }
 
+// Inicial: adiciona listeners nas linhas existentes e desenha
 document.querySelectorAll("#tabela tbody input").forEach(inp => inp.addEventListener('input', desenharRoleta));
-
+normalizarPercentuais();
 desenharRoleta();
 </script>
 </body>
