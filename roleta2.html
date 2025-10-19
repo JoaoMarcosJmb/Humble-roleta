@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roleta do Mike</title>
+<link rel="icon" type="image/png" href="https://i.imgur.com/XOEcuO8.png">
+<style>
+:root {
+  --cor-dourado: #d1a720;
+  --cor-fundo: #1a1a1a;
+  --cor-card: rgba(40, 35, 25, 0.95);
+  --cor-texto: #f5f5f5;
+}
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(40,30,20,0.9)),
+              url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+  background-size: cover;
+  color: var(--cor-texto);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+header {
+  position: fixed; top:0; left:0; right:0;
+  padding:12px 20px;
+  display:flex; align-items:center; gap:12px;
+  background: rgba(20,20,20,0.9);
+  border-bottom: 2px solid var(--cor-dourado);
+  box-shadow:0 2px 8px rgba(0,0,0,0.6);
+  z-index:1000;
+}
+header img{height:42px;}
+header h1{font-size:1.6rem;color:var(--cor-dourado);}
+main{
+  margin-top:100px;
+  display:flex;
+  gap:28px;
+  justify-content:flex-start;
+  align-items:flex-start;
+  width:100%;
+  max-width:1200px;
+  padding:20px;
+}
+.roleta-container{
+  position:relative;
+  width:620px;
+  height:620px;
+}
+canvas{
+  width:600px;
+  height:600px;
+  border-radius:50%;
+  box-shadow:0 0 20px rgba(0,0,0,0.7);
+  background:#222;
+  display:block;
+}
+.ponteiro{
+  position:absolute; top:-35px; left:50%;
+  transform:translateX(-50%);
+  width:0; height:0;
+  border-left:18px solid transparent;
+  border-right:18px solid transparent;
+  border-top:35px solid #fff;
+  filter:drop-shadow(0 0 3px black);
+  z-index:10;
+}
+.botao{
+  margin-top:20px; padding:12px 24px;
+  font-size:1rem; font-weight:bold;
+  border:none; border-radius:10px; cursor:pointer;
+  background:var(--cor-dourado); color:#111;
+  transition: transform .2s;
+}
+.botao:hover{transform:scale(1.05);}
+.lista{
+  width:360px;
+  flex-shrink:0;
+  background:var(--cor-card);
+  padding:20px; border-radius:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,0.6);
+}
+.lista h2{
+  margin-bottom:12px; font-size:1.3rem;
+  color:var(--cor-dourado); text-align:center;
+}
+.lista table{width:100%; border-collapse:collapse; table-layout:fixed;}
+.lista th,.lista td{
+  padding:8px; text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.2);
+  vertical-align:middle;
+}
+.lista table th:nth-child(1),.lista td:nth-child(1){ width:62%; text-align:left; padding-left:8px;}
+.lista table th:nth-child(2),.lista td:nth-child(2){ width:28%; }
+.lista table th:nth-child(3),.lista td:nth-child(3){ width:10%; }
+.lista input{
+  width:95%; padding:6px 8px;
+  border-radius:6px; border:none;
+  background: rgba(255,255,255,0.04);
+  color: var(--cor-texto);
+}
+.lista td:nth-child(2) input{width:90px; text-align:center;}
+.remover{
+  cursor:pointer; color:red; font-weight:bold;
+  border:none; background:transparent; font-size:1.1rem;
+}
+.add-btn,.bulk-btn,.save-btn{
+  margin-top:10px; width:100%;
+  font-weight:bold; border:none;
+  padding:10px; border-radius:8px;
+  cursor:pointer;
+}
+.add-btn{background:#28a745; color:white;}
+.add-btn:hover{background:#218838;}
+.bulk-btn{background:#007bff;color:white;}
+.bulk-btn:hover{background:#0069d9;}
+.save-btn{background:#6f42c1;color:white;}
+.save-btn:hover{background:#5a33a8;}
+#bulk-area{display:none;margin-top:10px;width:100%;}
+#bulk-text{
+  width:100%; height:120px;
+  border-radius:8px; padding:10px;
+  border:none; resize:vertical;
+}
+#bulk-confirm{
+  margin-top:5px; width:100%;
+  background:#17a2b8; color:white;
+  font-weight:bold; border:none;
+  padding:8px; border-radius:6px; cursor:pointer;
+}
+#bulk-confirm:hover{background:#138496;}
+@media(max-width:1100px){
+  .roleta-container{transform:scale(0.85); transform-origin:left top; width:525px;height:525px;}
+  canvas{width:500px;height:500px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+  <h1>Roleta do Mike</h1>
+</header>
+
+<main>
+  <div class="roleta-container">
+    <div class="ponteiro"></div>
+    <canvas id="roleta" width="600" height="600"></canvas>
+    <button class="botao" onclick="girar()">Girar</button>
+  </div>
+
+  <div class="lista">
+    <h2>Itens da Roleta</h2>
+    <table id="tabela">
+      <thead><tr><th>Item</th><th>%</th><th></th></tr></thead>
+      <tbody>
+        <tr><td><input value="Item 1"></td><td><input type="number" value="50" step="0.01"></td><td><button class="remover" onclick="removerLinha(this)">❌</button></td></tr>
+        <tr><td><input value="Item 2"></td><td><input type="number" value="50" step="0.01"></td><td><button class="remover" onclick="removerLinha(this)">❌</button></td></tr>
+      </tbody>
+    </table>
+    <button class="add-btn" onclick="adicionarLinha()">+ Adicionar Recompensa</button>
+    <button class="bulk-btn" onclick="abrirBulk()">📥 Bulk Add</button>
+    <button class="save-btn" onclick="salvarLista()">💾 Salvar Lista</button>
+
+    <div id="bulk-area">
+      <textarea id="bulk-text" placeholder="Digite um item por linha... (ex: Item 1; 60,01)"></textarea>
+      <button id="bulk-confirm" onclick="confirmarBulk()">Adicionar em Massa</button>
+    </div>
+  </div>
+</main>
+
+<script>
+const canvas = document.getElementById("roleta");
+const ctx = canvas.getContext("2d");
+let anguloAtual = 0;
+
+function getItens() {
+  const linhas = document.querySelectorAll("#tabela tbody tr");
+  return Array.from(linhas)
+    .map(l => {
+      const nome = l.cells[0].querySelector("input").value.trim();
+      const perc = parseFloat(l.cells[1].querySelector("input").value) || 0;
+      return nome ? { nome, perc } : null;
+    })
+    .filter(Boolean);
+}
+
+function normalizarPercentuais() {
+  const itens = getItens();
+  const total = itens.reduce((s, it) => s + it.perc, 0);
+  if (total === 0) return;
+  const linhas = document.querySelectorAll("#tabela tbody tr");
+  linhas.forEach((linha, i) => {
+    const input = linha.cells[1].querySelector("input");
+    if (itens[i]) input.value = ((itens[i].perc / total) * 100).toFixed(2);
+  });
+}
+
+function desenharRoleta() {
+  normalizarPercentuais();
+  const itens = getItens();
+  const total = itens.reduce((s, it) => s + it.perc, 0) || 100;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.save();
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate(anguloAtual);
+  let angIni = 0;
+  itens.forEach((item, i) => {
+    const ang = (item.perc / total) * 2 * Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.arc(0, 0, canvas.width / 2, angIni, angIni + ang);
+    ctx.closePath();
+    ctx.fillStyle = `hsl(${(i * 70) % 360}, 70%, 50%)`;
+    ctx.fill();
+    ctx.stroke();
+    ctx.save();
+    ctx.rotate(angIni + ang / 2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#fff";
+    ctx.font = Math.max(12, Math.round(canvas.width / 30)) + "px Arial";
+    ctx.fillText(item.nome, canvas.width / 2 - 16, 10);
+    ctx.restore();
+    angIni += ang;
+  });
+  ctx.restore();
+}
+
+function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
+
+function girar() {
+  const duracao = 10000;
+  const voltas = 5 + Math.random() * 5;
+  const angDestino = anguloAtual + voltas * 2 * Math.PI;
+  const inicio = performance.now();
+  const inicioAng = anguloAtual;
+
+  function animar(ts) {
+    const progresso = (ts - inicio) / duracao;
+    if (progresso < 1) {
+      anguloAtual = inicioAng + (angDestino - inicioAng) * easeOutCubic(progresso);
+      desenharRoleta();
+      requestAnimationFrame(animar);
+    } else {
+      anguloAtual = angDestino % (2 * Math.PI);
+      desenharRoleta();
+    }
+  }
+  requestAnimationFrame(animar);
+}
+
+function removerLinha(btn) {
+  btn.closest("tr").remove();
+  desenharRoleta();
+}
+
+function adicionarLinha(nome = "Novo Item") {
+  const tbody = document.querySelector("#tabela tbody");
+  const nova = document.createElement("tr");
+  nova.innerHTML = `<td><input value="${nome}"></td>
+  <td><input type="number" value="0" step="0.01"></td>
+  <td><button class="remover" onclick="removerLinha(this)">❌</button></td>`;
+  tbody.appendChild(nova);
+  nova.querySelectorAll('input').forEach(inp => inp.addEventListener('input', desenharRoleta));
+  desenharRoleta();
+}
+
+function abrirBulk() {
+  const area = document.getElementById("bulk-area");
+  area.style.display = area.style.display === "none" ? "block" : "none";
+}
+
+function confirmarBulk() {
+  const texto = document.getElementById("bulk-text").value.trim();
+  if (!texto) return;
+  const linhas = texto.split("\n").map(l => l.trim()).filter(l => l);
+  const tbody = document.querySelector("#tabela tbody");
+  linhas.forEach(item => {
+    let nome = item, perc = 0;
+    if (item.includes(";")) {
+      const partes = item.split(";");
+      nome = partes[0].trim();
+      perc = parseFloat(partes[1].replace(",", ".").trim()) || 0;
+    }
+    const nova = document.createElement("tr");
+    nova.innerHTML = `<td><input value="${nome}"></td>
+    <td><input type="number" value="${perc.toFixed(2)}" step="0.01"></td>
+    <td><button class="remover" onclick="removerLinha(this)">❌</button></td>`;
+    tbody.appendChild(nova);
+    nova.querySelectorAll('input').forEach(inp => inp.addEventListener('input', desenharRoleta));
+  });
+  document.getElementById("bulk-text").value = "";
+  document.getElementById("bulk-area").style.display = "none";
+  desenharRoleta();
+}
+
+function salvarLista() {
+  const itens = getItens();
+  const texto = itens.map(it => `${it.nome}; ${it.perc.toFixed(2)}`).join("\n");
+  const blob = new Blob([texto], { type: "text/plain" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "itens_roleta.txt";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+document.querySelectorAll("#tabela tbody input").forEach(inp => inp.addEventListener('input', desenharRoleta));
+
+desenharRoleta();
+</script>
+</body>
+</html>
