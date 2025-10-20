@@ -274,9 +274,34 @@ function girar() {
     } else {
       anguloAtual = angDestino % (2 * Math.PI);
       desenharRoleta();
+      mostrarResultado();
     }
   }
   requestAnimationFrame(animar);
+}
+
+function mostrarResultado() {
+  const itens = getItens();
+  if (itens.length === 0) return;
+
+  // Calcula o ângulo atual e inverte pois a roleta gira, não o ponteiro
+  const angFinal = (2 * Math.PI - (anguloAtual % (2 * Math.PI))) % (2 * Math.PI);
+
+  // Calcula o ângulo limite de cada setor
+  let angAcumulado = 0;
+  const total = itens.reduce((s, it) => s + it.perc, 0);
+
+  for (let item of itens) {
+    const angItem = (item.perc / total) * 2 * Math.PI;
+    if (angFinal >= angAcumulado && angFinal < angAcumulado + angItem) {
+      alert(`🎉 Resultado: ${item.nome}`);
+      return;
+    }
+    angAcumulado += angItem;
+  }
+
+  // Caso raro (ângulo = 2π)
+  alert(`🎉 Resultado: ${itens[itens.length - 1].nome}`);
 }
 
 function removerLinha(btn) {
