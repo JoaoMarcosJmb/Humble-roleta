@@ -60,15 +60,16 @@ canvas{
 }
 .ponteiro {
   position: absolute;
-  top: -40px; /* fica logo acima da roleta, sem tocar a navbar */
-  left: 50%;
-  transform: translateX(-50%) rotate(90deg);
-  width: 120px; /* tamanho grande e proporcional */
+  top: 50%; /* centraliza verticalmente na roleta */
+  left: 100%; /* move para a borda direita */
+  transform: translateY(-50%) rotate(180deg); /* gira para apontar para o centro */
+  width: 120px; /* tamanho do ponteiro */
   height: auto;
   z-index: 10;
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(0,0,0,0.7));
 }
+
 .botao{
   margin-top:20px; padding:12px 24px;
   font-size:1rem; font-weight:bold;
