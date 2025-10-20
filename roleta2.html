@@ -60,12 +60,12 @@ canvas{
 }
 .ponteiro {
   position: absolute;
-  top: -140px; /* empurra mais pra cima, acima da navbar */
+  top: -40px; /* fica logo acima da roleta, sem tocar a navbar */
   left: 50%;
-  transform: translateX(-50%) rotate(90deg); /* vira pra baixo */
-  width: 200px; /* maior e mais visível */
+  transform: translateX(-50%) rotate(90deg);
+  width: 180px; /* tamanho grande e proporcional */
   height: auto;
-  z-index: 2000; /* garante que fica acima da nav */
+  z-index: 10;
   pointer-events: none;
   filter: drop-shadow(0 0 6px rgba(0,0,0,0.7));
 }
