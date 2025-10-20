@@ -60,10 +60,10 @@ canvas{
 }
 .ponteiro {
   position: absolute;
-  top: -40px; /* sobe o ponteiro acima da roleta */
-  left: 50%; /* centraliza horizontalmente */
-  transform: translateX(-50%) rotate(0deg); /* aponta para baixo */
-  width: 80px; /* tamanho mais proporcional */
+  top: 50%;                  /* centraliza verticalmente */
+  left: 100%;                /* encosta na borda direita da roleta */
+  transform: translate(-50%, -50%) rotate(180deg); /* ajusta ponto de ancoragem e mantém direção */
+  width: 140px;              /* tamanho proporcional */
   height: auto;
   z-index: 20;
   pointer-events: none;
