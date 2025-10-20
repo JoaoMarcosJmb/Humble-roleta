@@ -60,10 +60,10 @@ canvas{
 }
 .ponteiro {
   position: absolute;
-  top: 50%;                  /* centraliza verticalmente */
-  left: 100%;                /* encosta na borda direita da roleta */
-  transform: translate(-50%, -50%) rotate(180deg); /* ajusta ponto de ancoragem e mantém direção */
-  width: 140px;              /* tamanho proporcional */
+  top: 50%;                  
+  left: 100%;                
+  transform: translate(-50%, -50%) rotate(180deg); 
+  width: 140px;              
   height: auto;
   z-index: 20;
   pointer-events: none;
@@ -182,7 +182,6 @@ function getAllRows() {
 }
 
 function getItens() {
-  // Retorna objetos somente das linhas com nome (ignora linhas com nome vazio)
   return getAllRows()
     .map(row => {
       const nome = row.cells[0].querySelector("input").value.trim();
@@ -194,7 +193,6 @@ function getItens() {
 
 function normalizarPercentuais() {
   const rows = getAllRows();
-  // Considera só linhas com nome preenchido
   const itens = rows.map(row => {
     const nome = row.cells[0].querySelector("input").value.trim();
     const percInput = row.cells[1].querySelector("input");
@@ -205,20 +203,16 @@ function normalizarPercentuais() {
   const total = itens.reduce((s, it) => s + it.perc, 0);
 
   if (itens.length === 0) {
-    // nada a fazer se não há itens com nome
     return;
   }
 
   if (total === 0) {
-    // Se todos os percentuais são zero, distribui igualmente
     const equal = 100 / itens.length;
     itens.forEach(it => {
       it.percInput.value = equal.toFixed(2);
     });
     return;
   }
-
-  // Normaliza mantendo proporção
   itens.forEach(it => {
     const normalized = (it.perc / total) * 100;
     it.percInput.value = normalized.toFixed(2);
@@ -243,7 +237,7 @@ function desenharRoleta() {
     ctx.moveTo(0, 0);
     ctx.arc(0, 0, canvas.width / 2, angIni, angIni + ang);
     ctx.closePath();
-    ctx.fillStyle = cores[i % 2]; // alterna entre as duas cores
+    ctx.fillStyle = cores[i % 2]; 
     ctx.fill();
     ctx.strokeStyle = "rgba(0,0,0,0.15)";
     ctx.stroke();
@@ -287,7 +281,6 @@ function girar() {
 
 function removerLinha(btn) {
   btn.closest("tr").remove();
-  // normaliza após remover
   normalizarPercentuais();
   desenharRoleta();
 }
@@ -299,12 +292,9 @@ function adicionarLinha(nome = "Novo Item") {
   <td><input type="number" value="0" step="0.01"></td>
   <td><button class="remover" onclick="removerLinha(this)">❌</button></td>`;
   tbody.appendChild(nova);
-  // adiciona listeners
   nova.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
-    // quando usuário editar manualmente, apenas redesenha (normalizar será chamado ao redesenhar)
     desenharRoleta();
   }));
-  // normaliza para incluir o novo item (se outros forem zero, equaliza; se houver proporções, mantém)
   normalizarPercentuais();
   desenharRoleta();
 }
@@ -335,7 +325,6 @@ function confirmarBulk() {
   });
   document.getElementById("bulk-text").value = "";
   document.getElementById("bulk-area").style.display = "none";
-  // normaliza depois do bulk (resolve caso todos sejam 0)
   normalizarPercentuais();
   desenharRoleta();
 }
@@ -351,8 +340,6 @@ function salvarLista() {
   link.click();
   document.body.removeChild(link);
 }
-
-// Inicial: adiciona listeners nas linhas existentes e desenha
 document.querySelectorAll("#tabela tbody input").forEach(inp => inp.addEventListener('input', desenharRoleta));
 normalizarPercentuais();
 desenharRoleta();
