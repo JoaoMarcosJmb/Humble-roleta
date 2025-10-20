@@ -298,8 +298,10 @@ function mostrarResultado() {
     angAcumulado += angItem;
   }
 
- function mostrarPopup(nomePremio) {
-  // Fundo escurecido
+  mostrarPopup(itens[itens.length - 1].nome);
+}
+function mostrarPopup(nomePremio) {
+  // Cria o fundo escurecido
   const overlay = document.createElement("div");
   overlay.style.position = "fixed";
   overlay.style.top = 0;
@@ -311,60 +313,51 @@ function mostrarResultado() {
   overlay.style.justifyContent = "center";
   overlay.style.alignItems = "center";
   overlay.style.zIndex = 2000;
-  overlay.style.animation = "fadeIn 0.4s ease";
 
-  // Container
+  // Container da imagem
   const popup = document.createElement("div");
   popup.style.position = "relative";
   popup.style.display = "inline-block";
-  popup.style.animation = "zoomIn 0.3s ease";
 
   // Imagem de fundo
   const img = document.createElement("img");
-  img.src = "em breve.png"; // caminho da imagem
-  img.style.maxWidth = "95vw";
+  img.src = "img/banner.png"; // caminho da imagem
+  img.style.maxWidth = "90vw";
   img.style.maxHeight = "90vh";
-  img.style.borderRadius = "16px";
+  img.style.borderRadius = "12px";
   img.style.boxShadow = "0 0 20px rgba(0,0,0,0.8)";
   img.style.display = "block";
 
-  // Texto do prêmio — centralizado no “EM BREVE”
+  // Texto do prêmio
   const texto = document.createElement("div");
   texto.textContent = nomePremio;
   texto.style.position = "absolute";
-  texto.style.bottom = "13%"; // ajustado para a área do 'EM BREVE'
+  texto.style.top = "50%";
   texto.style.left = "50%";
-  texto.style.transform = "translateX(-50%)";
-  texto.style.color = "#FFD02C";
-  texto.style.fontFamily = "'Luckiest Guy', 'Cooper Black', 'Impact', sans-serif";
-  texto.style.fontSize = "5rem";
-  texto.style.letterSpacing = "2px";
-  texto.style.textShadow = `
-    3px 3px 0 #000,
-    -2px 2px 0 #000,
-    2px -2px 0 #000,
-    -2px -2px 0 #000
-  `;
+  texto.style.transform = "translate(-50%, -50%)";
+  texto.style.color = "#f5d742";
+  texto.style.fontFamily = "'Impact', 'Arial Black', sans-serif";
+  texto.style.fontSize = "3rem";
+  texto.style.textShadow = "2px 2px 6px #000";
   texto.style.textAlign = "center";
   texto.style.whiteSpace = "nowrap";
-  texto.style.userSelect = "none";
 
   // Botão OK
   const botao = document.createElement("button");
   botao.textContent = "OK";
   botao.style.position = "absolute";
-  botao.style.bottom = "5%";
+  botao.style.bottom = "20px";
   botao.style.left = "50%";
   botao.style.transform = "translateX(-50%)";
-  botao.style.padding = "10px 28px";
-  botao.style.fontSize = "1.4rem";
+  botao.style.padding = "10px 24px";
+  botao.style.fontSize = "1.2rem";
   botao.style.fontWeight = "bold";
   botao.style.background = "#d1a720";
   botao.style.color = "#111";
   botao.style.border = "none";
-  botao.style.borderRadius = "10px";
+  botao.style.borderRadius = "8px";
   botao.style.cursor = "pointer";
-  botao.style.boxShadow = "0 0 12px rgba(0,0,0,0.6)";
+  botao.style.boxShadow = "0 0 10px rgba(0,0,0,0.5)";
   botao.onclick = () => overlay.remove();
 
   popup.appendChild(img);
@@ -372,20 +365,6 @@ function mostrarResultado() {
   popup.appendChild(botao);
   overlay.appendChild(popup);
   document.body.appendChild(overlay);
-
-  // Animações CSS injetadas
-  const estilo = document.createElement("style");
-  estilo.textContent = `
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes zoomIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-  `;
-  document.head.appendChild(estilo);
 }
 
 function removerLinha(btn) {
