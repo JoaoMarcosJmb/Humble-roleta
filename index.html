@@ -201,7 +201,33 @@ function distribuirPercentuais(){
   const total=entries.reduce((s,e)=>s+e.val,0);
   entries.forEach(e=>e.inp.value=((e.val/total)*100).toFixed(2));
 }
+function normalizarPercentuais() {
+  const rows = getAllRows();
+  const itens = rows.map(row => {
+    const nome = row.cells[0].querySelector("input").value.trim();
+    const percInput = row.cells[1].querySelector("input");
+    const perc = parseFloat(percInput.value) || 0;
+    return { row, nome, perc, percInput };
+  }).filter(r => r.nome !== "");
 
+  const total = itens.reduce((s, it) => s + it.perc, 0);
+
+  if (itens.length === 0) {
+    return;
+  }
+
+  if (total === 0) {
+    const equal = 100 / itens.length;
+    itens.forEach(it => {
+      it.percInput.value = equal.toFixed(2);
+    });
+    return;
+  }
+  itens.forEach(it => {
+    const normalized = (it.perc / total) * 100;
+    it.percInput.value = normalized.toFixed(2);
+  });
+}
 function desenharRoleta(){
   distribuirPercentuais();
   const itens=getItens();
