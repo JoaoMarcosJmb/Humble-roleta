@@ -60,14 +60,14 @@ canvas{
 }
 .ponteiro {
   position: absolute;
-  top: 50%;                   /* centraliza verticalmente em relação à roleta */
-  left: calc(100% - 20px);    /* cola na borda direita da roleta */
-  transform: translateY(-50%) rotate(180deg); /* gira para apontar pro centro */
-  width: 220px;               /* tamanho equilibrado */
+  top: 50%;                    /* centraliza verticalmente com a roleta */
+  left: calc(100% + 10px);     /* coloca o ponteiro fora da roleta, à direita */
+  transform: translateY(-50%) rotate(180deg); /* gira para apontar para o centro */
+  width: 260px;                /* tamanho maior e proporcional */
   height: auto;
-  z-index: 20;
+  z-index: 5;                  /* abaixo da navbar e acima da roleta */
   pointer-events: none;
-  filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
+  filter: drop-shadow(0 0 6px rgba(0,0,0,0.6));
 }
 .botao{
   margin-top:20px; padding:12px 24px;
