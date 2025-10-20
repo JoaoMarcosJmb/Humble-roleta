@@ -298,85 +298,73 @@ function mostrarResultado() {
     angAcumulado += angItem;
   }
 
- function mostrarPopup(nomePremio) {
-  // cria o fundo escuro
+  mostrarPopup(itens[itens.length - 1].nome);
+}
+function mostrarPopup(nomePremio) {
+  // Cria o fundo escurecido
   const overlay = document.createElement("div");
-  overlay.style = `
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2000;
-  `;
+  overlay.style.position = "fixed";
+  overlay.style.top = 0;
+  overlay.style.left = 0;
+  overlay.style.width = "100vw";
+  overlay.style.height = "100vh";
+  overlay.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
+  overlay.style.display = "flex";
+  overlay.style.justifyContent = "center";
+  overlay.style.alignItems = "center";
+  overlay.style.zIndex = 2000;
 
-  // cria o container do popup
+  // Container da imagem
   const popup = document.createElement("div");
-  popup.style = `
-    position: relative;
-    display: inline-block;
-    animation: fadeIn .3s ease;
-  `;
+  popup.style.position = "relative";
+  popup.style.display = "inline-block";
 
-  // imagem de fundo
+  // Imagem de fundo
   const img = document.createElement("img");
-  img.src = "em breve.png"; // caminho da imagem
-  img.style = `
-    width: 90vw;
-    max-width: 1000px;
-    border-radius: 16px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.8);
-    display: block;
-  `;
+  img.src = "img/banner.png"; // caminho da imagem
+  img.style.maxWidth = "90vw";
+  img.style.maxHeight = "90vh";
+  img.style.borderRadius = "12px";
+  img.style.boxShadow = "0 0 20px rgba(0,0,0,0.8)";
+  img.style.display = "block";
 
-  // texto centralizado
+  // Texto do prêmio
   const texto = document.createElement("div");
   texto.textContent = nomePremio;
-  texto.style = `
-    position: absolute;
-    bottom: 14%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-family: 'Impact', sans-serif;
-    font-size: 5rem;
-    color: #FFD02C;
-    text-shadow: 3px 3px 0 #000, -2px 2px 0 #000;
-    white-space: nowrap;
-  `;
+  texto.style.position = "absolute";
+  texto.style.top = "50%";
+  texto.style.left = "50%";
+  texto.style.transform = "translate(-50%, -50%)";
+  texto.style.color = "#f5d742";
+  texto.style.fontFamily = "'Impact', 'Arial Black', sans-serif";
+  texto.style.fontSize = "3rem";
+  texto.style.textShadow = "2px 2px 6px #000";
+  texto.style.textAlign = "center";
+  texto.style.whiteSpace = "nowrap";
 
-  // botão OK
+  // Botão OK
   const botao = document.createElement("button");
   botao.textContent = "OK";
-  botao.style = `
-    position: absolute;
-    bottom: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 28px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    background: #d1a720;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 0 12px rgba(0,0,0,0.6);
-  `;
+  botao.style.position = "absolute";
+  botao.style.bottom = "20px";
+  botao.style.left = "50%";
+  botao.style.transform = "translateX(-50%)";
+  botao.style.padding = "10px 24px";
+  botao.style.fontSize = "1.2rem";
+  botao.style.fontWeight = "bold";
+  botao.style.background = "#d1a720";
+  botao.style.color = "#111";
+  botao.style.border = "none";
+  botao.style.borderRadius = "8px";
+  botao.style.cursor = "pointer";
+  botao.style.boxShadow = "0 0 10px rgba(0,0,0,0.5)";
   botao.onclick = () => overlay.remove();
 
-  // junta tudo
   popup.appendChild(img);
   popup.appendChild(texto);
   popup.appendChild(botao);
   overlay.appendChild(popup);
   document.body.appendChild(overlay);
-
-  // animação leve
-  const style = document.createElement("style");
-  style.textContent = `
-    @keyframes fadeIn { from { opacity: 0; transform: scale(.9);} to {opacity: 1; transform: scale(1);} }
-  `;
-  document.head.appendChild(style);
 }
 
 function removerLinha(btn) {
