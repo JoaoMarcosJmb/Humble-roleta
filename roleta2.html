@@ -60,14 +60,14 @@ canvas{
 }
 .ponteiro {
   position: absolute;
-  top: 50%; /* centraliza verticalmente na roleta */
-  left: 100%; /* move para a borda direita */
+  top: 50%;                 /* centraliza verticalmente */
+  left: calc(100% + 40px);  /* desloca 40px para fora da roleta */
   transform: translateY(-50%) rotate(180deg); /* gira para apontar para o centro */
-  width: 120px; /* tamanho do ponteiro */
+  width: 240px;             /* deixa o ponteiro bem visível */
   height: auto;
   z-index: 10;
   pointer-events: none;
-  filter: drop-shadow(0 0 6px rgba(0,0,0,0.7));
+  filter: drop-shadow(0 0 8px rgba(0,0,0,0.7));
 }
 
 .botao{
