@@ -58,15 +58,16 @@ canvas{
   background:#222;
   display:block;
 }
-.ponteiro{
-  position:absolute; top:-35px; left:50%;
-  transform:translateX(-50%);
-  width:0; height:0;
-  border-left:18px solid transparent;
-  border-right:18px solid transparent;
-  border-top:35px solid #fff;
-  filter:drop-shadow(0 0 3px black);
-  z-index:10;
+.ponteiro {
+  position: absolute;
+  top: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: auto;
+  z-index: 10;
+  pointer-events: none;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
 }
 .botao{
   margin-top:20px; padding:12px 24px;
@@ -146,7 +147,7 @@ canvas{
 
 <main>
   <div class="roleta-container">
-    <div class="ponteiro"></div>
+    <img src="img/ponteiro.png" alt="Ponteiro" class="ponteiro">
     <canvas id="roleta" width="600" height="600"></canvas>
     <button class="botao" onclick="girar()">Girar</button>
   </div>
