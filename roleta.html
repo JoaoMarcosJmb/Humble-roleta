@@ -259,12 +259,25 @@ function desenharRoleta() {
 
 function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
 
+// Áudios da roleta
+const audioRoleta1 = new Audio("audio/roleta1.mp3"); // som de girar
+const audioRoleta2 = new Audio("audio/roleta2.mp3"); // som de anúncio
+
+function pararAudioRoleta1() {
+  audioRoleta1.pause();
+  audioRoleta1.currentTime = 0;
+}
+
 function girar() {
   const duracao = 10000;
   const voltas = 5 + Math.random() * 5;
   const angDestino = anguloAtual + voltas * 2 * Math.PI;
   const inicio = performance.now();
   const inicioAng = anguloAtual;
+
+  // toca o som de rotação
+  pararAudioRoleta1();
+  audioRoleta1.play();
 
   function animar(ts) {
     const progresso = (ts - inicio) / duracao;
@@ -273,6 +286,8 @@ function girar() {
       desenharRoleta();
       requestAnimationFrame(animar);
     } else {
+      // para o som ao terminar
+      pararAudioRoleta1();
       anguloAtual = angDestino % (2 * Math.PI);
       desenharRoleta();
       mostrarResultado();
@@ -292,14 +307,17 @@ function mostrarResultado() {
   for (let item of itens) {
     const angItem = (item.perc / total) * 2 * Math.PI;
     if (angFinal >= angAcumulado && angFinal < angAcumulado + angItem) {
+      audioRoleta2.play(); // toca o som do prêmio
       mostrarPopup(item.nome);
       return;
     }
     angAcumulado += angItem;
   }
 
+  audioRoleta2.play();
   mostrarPopup(itens[itens.length - 1].nome);
 }
+
 function mostrarPopup(nomePremio) {
   // Cria o fundo escurecido
   const overlay = document.createElement("div");
