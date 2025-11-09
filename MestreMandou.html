@@ -98,31 +98,33 @@
       vermelho: [],
     };
 
-    // Pré-carrega as imagens (substitua pelos nomes reais dos arquivos)
+    // Ajuste aqui a quantidade real de imagens em cada pasta
     const totalImagens = {
       verde: 10,
       amarelo: 10,
       vermelho: 10,
     };
 
+    // Carrega os caminhos de imagem
     for (let cor in totalImagens) {
       for (let i = 1; i <= totalImagens[cor]; i++) {
         imagens[cor].push(`img/${cor}/${i}.png`);
       }
     }
 
-    const usadas = { verde: [], amarelo: [], vermelho: [], roxo: [] };
+    const usadas = { verde: [], amarelo: [], vermelho: [] };
 
     function sortear(cor) {
-      let lista = [];
+      let categoriaEscolhida = cor;
 
       if (cor === "roxo") {
-        lista = [...imagens.verde, ...imagens.amarelo, ...imagens.vermelho];
-      } else {
-        lista = imagens[cor];
+        // Escolhe uma cor aleatória
+        const cores = ["verde", "amarelo", "vermelho"];
+        categoriaEscolhida = cores[Math.floor(Math.random() * cores.length)];
       }
 
-      const restantes = lista.filter(img => !usadas[cor].includes(img));
+      const lista = imagens[categoriaEscolhida];
+      const restantes = lista.filter(img => !usadas[categoriaEscolhida].includes(img));
 
       if (restantes.length === 0) {
         alert("Todas as imagens dessa categoria já foram exibidas! Dê F5 para reiniciar.");
@@ -130,7 +132,7 @@
       }
 
       const sorteada = restantes[Math.floor(Math.random() * restantes.length)];
-      usadas[cor].push(sorteada);
+      usadas[categoriaEscolhida].push(sorteada);
 
       const imagem = document.getElementById("imagem");
       const categoria = document.getElementById("categoria");
@@ -145,8 +147,8 @@
         roxo: "#9b59b6"
       };
 
-      categoria.textContent = `Categoria: ${cor.charAt(0).toUpperCase() + cor.slice(1)}`;
-      categoria.style.color = cores[cor];
+      categoria.textContent = `Categoria: ${categoriaEscolhida.charAt(0).toUpperCase() + categoriaEscolhida.slice(1)}`;
+      categoria.style.color = cores[categoriaEscolhida];
     }
   </script>
 </body>
