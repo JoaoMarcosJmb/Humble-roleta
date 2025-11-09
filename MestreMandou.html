@@ -69,12 +69,24 @@
     }
 
     #imagem {
-      margin-top: 20px;
+      display: block;
+      margin: 20px auto;
       max-width: 500px;
       max-height: 500px;
       border-radius: 12px;
-      border: 2px solid var(--dourado);
-      display: none;
+      border: 3px solid var(--dourado);
+      opacity: 0;
+      transition: opacity 0.4s ease, border-color 0.3s ease;
+    }
+
+    #imagem.mostrar {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      #imagem {
+        width: 80%;
+      }
     }
   </style>
 </head>
@@ -100,9 +112,9 @@
 
     // Ajuste aqui a quantidade real de imagens em cada pasta
     const totalImagens = {
-      verde: 1,
-      amarelo: 1,
-      vermelho: 1,
+      verde: 10,
+      amarelo: 10,
+      vermelho: 10,
     };
 
     // Carrega os caminhos de imagem
@@ -137,8 +149,13 @@
       const imagem = document.getElementById("imagem");
       const categoria = document.getElementById("categoria");
 
-      imagem.src = sorteada;
-      imagem.style.display = "block";
+      // Fade suave
+      imagem.classList.remove("mostrar");
+      setTimeout(() => {
+        imagem.src = sorteada;
+        imagem.style.borderColor = cores[categoriaEscolhida];
+        imagem.classList.add("mostrar");
+      }, 50);
 
       const cores = {
         verde: "#2ecc71",
