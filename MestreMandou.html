@@ -20,8 +20,9 @@
       color: var(--texto);
       margin: 0;
       padding: 0;
-      text-align: center;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -31,21 +32,34 @@
       font-size: 1.6rem;
       color: var(--dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      text-align: center;
+    }
+
+    /* ---------- Conteúdo Central ---------- */
+    .conteudo {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      box-sizing: border-box;
+      text-align: center;
     }
 
     .botoes {
-      margin-top: 120px;
       display: flex;
       justify-content: center;
-      gap: 20px;
       flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 30px;
     }
 
     button {
       border: none;
       color: white;
-      font-size: 1.2rem;
-      padding: 15px 30px;
+      font-size: 1.1rem;
+      padding: 14px 26px;
       border-radius: 12px;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -62,7 +76,7 @@
     .roxo { background-color: #9b59b6; }
 
     #categoria {
-      margin-top: 30px;
+      margin-top: 10px;
       font-size: 1.5rem;
       color: var(--dourado);
       transition: color 0.3s;
@@ -70,9 +84,9 @@
 
     #imagem {
       display: block;
-      margin: 20px auto;
-      max-width: 500px;
-      max-height: 500px;
+      margin: 25px auto 0 auto;
+      max-width: 480px;
+      max-height: 480px;
       border-radius: 12px;
       border: 3px solid var(--dourado);
       opacity: 0;
@@ -84,8 +98,14 @@
     }
 
     @media (max-width: 600px) {
+      .botoes {
+        flex-direction: column;
+        align-items: center;
+      }
+
       #imagem {
-        width: 80%;
+        width: 85%;
+        max-width: 360px;
       }
     }
   </style>
@@ -93,15 +113,17 @@
 <body>
   <header>Mestre Mandou</header>
 
-  <div class="botoes">
-    <button class="verde" onclick="sortear('verde')">Verde (Fácil)</button>
-    <button class="amarelo" onclick="sortear('amarelo')">Amarelo (Médio)</button>
-    <button class="vermelho" onclick="sortear('vermelho')">Vermelho (Difícil)</button>
-    <button class="roxo" onclick="sortear('roxo')">Roxo (Aleatório)</button>
-  </div>
+  <main class="conteudo">
+    <div class="botoes">
+      <button class="verde" onclick="sortear('verde')">Verde (Fácil)</button>
+      <button class="amarelo" onclick="sortear('amarelo')">Amarelo (Médio)</button>
+      <button class="vermelho" onclick="sortear('vermelho')">Vermelho (Difícil)</button>
+      <button class="roxo" onclick="sortear('roxo')">Roxo (Aleatório)</button>
+    </div>
 
-  <div id="categoria"></div>
-  <img id="imagem" src="" alt="Imagem sorteada">
+    <div id="categoria"></div>
+    <img id="imagem" src="" alt="Imagem sorteada">
+  </main>
 
   <script>
     const imagens = {
@@ -112,12 +134,12 @@
 
     // Ajuste aqui a quantidade real de imagens em cada pasta
     const totalImagens = {
-      verde: 1,
-      amarelo: 1,
-      vermelho: 1,
+      verde: 10,
+      amarelo: 10,
+      vermelho: 10,
     };
 
-    // Carrega os caminhos de imagem
+    // Carrega os caminhos das imagens
     for (let cor in totalImagens) {
       for (let i = 1; i <= totalImagens[cor]; i++) {
         imagens[cor].push(`img/${cor}/${i}.png`);
@@ -130,7 +152,6 @@
       let categoriaEscolhida = cor;
 
       if (cor === "roxo") {
-        // Escolhe uma cor aleatória
         const cores = ["verde", "amarelo", "vermelho"];
         categoriaEscolhida = cores[Math.floor(Math.random() * cores.length)];
       }
@@ -149,20 +170,20 @@
       const imagem = document.getElementById("imagem");
       const categoria = document.getElementById("categoria");
 
-      // Fade suave
-      imagem.classList.remove("mostrar");
-      setTimeout(() => {
-        imagem.src = sorteada;
-        imagem.style.borderColor = cores[categoriaEscolhida];
-        imagem.classList.add("mostrar");
-      }, 50);
-
       const cores = {
         verde: "#2ecc71",
         amarelo: "#f1c40f",
         vermelho: "#e74c3c",
         roxo: "#9b59b6"
       };
+
+      // Efeito fade-in suave
+      imagem.classList.remove("mostrar");
+      setTimeout(() => {
+        imagem.src = sorteada;
+        imagem.style.borderColor = cores[categoriaEscolhida];
+        imagem.classList.add("mostrar");
+      }, 50);
 
       categoria.textContent = `Categoria: ${categoriaEscolhida.charAt(0).toUpperCase() + categoriaEscolhida.slice(1)}`;
       categoria.style.color = cores[categoriaEscolhida];
