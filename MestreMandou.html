@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mestre Mandou</title>
+  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+
+  <style>
+    :root {
+      --dourado: #d1a720;
+      --fundo: #1a1a1a;
+      --texto: #f5f5f5;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+      color: var(--texto);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(20, 20, 20, 0.9);
+      border-bottom: 2px solid var(--dourado);
+      padding: 15px;
+      font-size: 1.6rem;
+      color: var(--dourado);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    .botoes {
+      margin-top: 120px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    .verde { background-color: #2ecc71; }
+    .amarelo { background-color: #f1c40f; color: #333; }
+    .vermelho { background-color: #e74c3c; }
+    .roxo { background-color: #9b59b6; }
+
+    #categoria {
+      margin-top: 30px;
+      font-size: 1.5rem;
+      color: var(--dourado);
+      transition: color 0.3s;
+    }
+
+    #imagem {
+      margin-top: 20px;
+      max-width: 500px;
+      max-height: 500px;
+      border-radius: 12px;
+      border: 2px solid var(--dourado);
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>Mestre Mandou</header>
+
+  <div class="botoes">
+    <button class="verde" onclick="sortear('verde')">Verde (Fácil)</button>
+    <button class="amarelo" onclick="sortear('amarelo')">Amarelo (Médio)</button>
+    <button class="vermelho" onclick="sortear('vermelho')">Vermelho (Difícil)</button>
+    <button class="roxo" onclick="sortear('roxo')">Roxo (Aleatório)</button>
+  </div>
+
+  <div id="categoria"></div>
+  <img id="imagem" src="" alt="Imagem sorteada">
+
+  <script>
+    const imagens = {
+      verde: [],
+      amarelo: [],
+      vermelho: [],
+    };
+
+    // Pré-carrega as imagens (substitua pelos nomes reais dos arquivos)
+    const totalImagens = {
+      verde: 10,
+      amarelo: 10,
+      vermelho: 10,
+    };
+
+    for (let cor in totalImagens) {
+      for (let i = 1; i <= totalImagens[cor]; i++) {
+        imagens[cor].push(`img/${cor}/${i}.png`);
+      }
+    }
+
+    const usadas = { verde: [], amarelo: [], vermelho: [], roxo: [] };
+
+    function sortear(cor) {
+      let lista = [];
+
+      if (cor === "roxo") {
+        lista = [...imagens.verde, ...imagens.amarelo, ...imagens.vermelho];
+      } else {
+        lista = imagens[cor];
+      }
+
+      const restantes = lista.filter(img => !usadas[cor].includes(img));
+
+      if (restantes.length === 0) {
+        alert("Todas as imagens dessa categoria já foram exibidas! Dê F5 para reiniciar.");
+        return;
+      }
+
+      const sorteada = restantes[Math.floor(Math.random() * restantes.length)];
+      usadas[cor].push(sorteada);
+
+      const imagem = document.getElementById("imagem");
+      const categoria = document.getElementById("categoria");
+
+      imagem.src = sorteada;
+      imagem.style.display = "block";
+
+      const cores = {
+        verde: "#2ecc71",
+        amarelo: "#f1c40f",
+        vermelho: "#e74c3c",
+        roxo: "#9b59b6"
+      };
+
+      categoria.textContent = `Categoria: ${cor.charAt(0).toUpperCase() + cor.slice(1)}`;
+      categoria.style.color = cores[cor];
+    }
+  </script>
+</body>
+</html>
