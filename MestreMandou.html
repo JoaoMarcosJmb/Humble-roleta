@@ -19,7 +19,10 @@
       color: var(--texto);
       margin: 0;
       height: 100vh;
-      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     header {
@@ -29,36 +32,58 @@
       font-size: 1.6rem;
       color: var(--dourado);
       box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      width: 100%;
       text-align: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
     }
 
-    /* ---------- Container Central ---------- */
-    .conteudo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 40px;
-      border-radius: 20px;
+    /* ---------- Card central (imagem + categoria) ---------- */
+    .card {
+      background: rgba(0, 0, 0, 0.55);
       border: 2px solid var(--dourado);
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+      max-width: 600px;
       width: 90%;
-      max-width: 700px;
+      margin-top: 140px;
     }
 
-    /* ---------- Botões ---------- */
+    #categoria {
+      margin-top: 5px;
+      font-size: 1.5rem;
+      color: var(--dourado);
+      text-shadow: 0 0 10px rgba(0,0,0,0.7);
+      transition: color 0.3s;
+    }
+
+    #imagem {
+      display: block;
+      margin: 25px auto 0 auto;
+      max-width: 420px;
+      max-height: 420px;
+      border-radius: 14px;
+      border: 3px solid var(--dourado);
+      opacity: 0;
+      transition: opacity 0.4s ease, border-color 0.3s ease;
+    }
+
+    #imagem.mostrar {
+      opacity: 1;
+    }
+
+    /* ---------- Botões fora do card ---------- */
     .botoes {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 15px;
-      margin-bottom: 25px;
+      margin-top: 25px;
     }
 
     button {
@@ -99,33 +124,9 @@
       box-shadow: 0 0 10px rgba(155,89,182,0.6);
     }
 
-    /* ---------- Categoria + Imagem ---------- */
-    #categoria {
-      margin-top: 5px;
-      font-size: 1.5rem;
-      color: var(--dourado);
-      text-shadow: 0 0 10px rgba(0,0,0,0.7);
-      transition: color 0.3s;
-    }
-
-    #imagem {
-      display: block;
-      margin-top: 25px;
-      max-width: 400px;
-      max-height: 400px;
-      border-radius: 14px;
-      border: 3px solid var(--dourado);
-      opacity: 0;
-      transition: opacity 0.4s ease, border-color 0.3s ease;
-    }
-
-    #imagem.mostrar {
-      opacity: 1;
-    }
-
     @media (max-width: 600px) {
-      .conteudo {
-        padding: 25px;
+      .card {
+        padding: 20px;
       }
 
       button {
@@ -141,17 +142,17 @@
 <body>
   <header>Mestre Mandou</header>
 
-  <main class="conteudo">
-    <div class="botoes">
-      <button class="verde" onclick="sortear('verde')">Verde (Fácil)</button>
-      <button class="amarelo" onclick="sortear('amarelo')">Amarelo (Médio)</button>
-      <button class="vermelho" onclick="sortear('vermelho')">Vermelho (Difícil)</button>
-      <button class="roxo" onclick="sortear('roxo')">Roxo (Aleatório)</button>
-    </div>
-
+  <div class="card">
     <div id="categoria">Selecione uma categoria</div>
     <img id="imagem" src="" alt="Imagem sorteada">
-  </main>
+  </div>
+
+  <div class="botoes">
+    <button class="verde" onclick="sortear('verde')">Verde (Fácil)</button>
+    <button class="amarelo" onclick="sortear('amarelo')">Amarelo (Médio)</button>
+    <button class="vermelho" onclick="sortear('vermelho')">Vermelho (Difícil)</button>
+    <button class="roxo" onclick="sortear('roxo')">Roxo (Aleatório)</button>
+  </div>
 
   <script>
     const imagens = {
@@ -160,14 +161,13 @@
       vermelho: [],
     };
 
-    // Quantidade de imagens em cada pasta
+    // Ajuste a quantidade de imagens por pasta
     const totalImagens = {
       verde: 10,
       amarelo: 10,
       vermelho: 10,
     };
 
-    // Carrega os caminhos das imagens
     for (let cor in totalImagens) {
       for (let i = 1; i <= totalImagens[cor]; i++) {
         imagens[cor].push(`img/${cor}/${i}.png`);
@@ -205,7 +205,6 @@
         roxo: "#9b59b6"
       };
 
-      // Transição suave
       imagem.classList.remove("mostrar");
       setTimeout(() => {
         imagem.src = sorteada;
