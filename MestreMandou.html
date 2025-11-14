@@ -9,65 +9,67 @@
     :root {
       --cor-dourado: #d1a720;
       --cor-texto: #f5f5f5;
-      --cor-card: rgba(40, 35, 25, 0.95);
     }
 
     body {
       margin: 0;
       font-family: "Segoe UI", Arial, sans-serif;
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center / cover fixed;
       color: var(--cor-texto);
+      overflow-x: hidden;
     }
 
-    /* NAVBAR */
+    /* ---------------- NAVBAR ---------------- */
     header {
       position: fixed;
       top: 0;
       left: 0;
-      right: 0;
       width: 100%;
       padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
       background: rgba(20,20,20,0.9);
       border-bottom: 2px solid var(--cor-dourado);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       z-index: 1000;
     }
 
-    header h1 {
-      color: var(--cor-dourado);
-      margin: 0;
-      font-size: 1.6rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    header img {
+      height: 42px;
     }
 
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      color: var(--cor-dourado);
+      font-weight: 700;
+    }
+
+    /* ---------------- ÁREA PRINCIPAL ---------------- */
     .main-wrapper {
       margin-top: 120px;
       display: flex;
+      justify-content: flex-start;
       flex-direction: column;
       align-items: center;
-      min-height: calc(100vh - 120px);
+      padding-bottom: 180px; /* espaço para os botões fixos */
     }
 
-    /* CARD */
+    /* ---------------- CARD ---------------- */
     .card {
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(0,0,0,0.60);
       border: 2px solid var(--cor-dourado);
       border-radius: 18px;
-      padding: 30px;
+      padding: 25px;
       text-align: center;
       max-width: 600px;
       width: 90%;
-      box-shadow: 0 0 15px rgba(209,167,32,0.3);
-      animation: glowCard 2.5s infinite ease-in-out;
+      box-shadow: 0 0 18px rgba(209,167,32,0.35);
+      animation: cardGlow 2.5s infinite ease-in-out;
     }
 
-    @keyframes glowCard {
+    @keyframes cardGlow {
       0% { box-shadow: 0 0 10px rgba(209,167,32,0.25); }
       50% { box-shadow: 0 0 20px rgba(209,167,32,0.45); }
       100% { box-shadow: 0 0 10px rgba(209,167,32,0.25); }
@@ -75,19 +77,18 @@
 
     #categoria {
       font-size: 1.5rem;
-      color: var(--cor-dourado);
       margin-bottom: 10px;
+      color: var(--cor-dourado);
     }
 
-    /* IMAGEM COM ANIMAÇÃO FLIP 3D */
+    /* imagem com flip 3D */
     #imagem {
-      max-width: 420px;
+      max-width: 380px;
       border-radius: 14px;
       border: 3px solid var(--cor-dourado);
       opacity: 0;
       transform: rotateY(90deg);
       transition: opacity .4s ease, transform .5s ease;
-      margin-top: 10px;
     }
 
     #imagem.mostrar {
@@ -95,13 +96,18 @@
       transform: rotateY(0deg);
     }
 
-    /* BOTÕES */
-    .botoes {
+    /* ---------------- BOTÕES FIXOS ---------------- */
+    .botoes-fundo {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
       display: flex;
-      justify-content: center;
-      gap: 15px;
+      gap: 14px;
       flex-wrap: wrap;
-      margin-top: 25px;
+      justify-content: center;
+      width: 90%;
+      z-index: 900;
     }
 
     button {
@@ -116,21 +122,21 @@
       overflow: hidden;
     }
 
-    /* Efeito shimmer */
+    /* shimmer bonito */
     button::after {
       content: "";
       position: absolute;
       top: 0;
-      left: -100%;
-      width: 80%;
+      left: -120%;
+      width: 70%;
       height: 100%;
       background: rgba(255,255,255,0.25);
       transform: skewX(-20deg);
-      transition: 0.4s;
+      transition: .45s;
     }
 
     button:hover::after {
-      left: 120%;
+      left: 130%;
     }
 
     .verde { background: linear-gradient(135deg, #27ae60, #2ecc71); }
@@ -142,8 +148,9 @@
 </head>
 <body>
 
-  <!-- NAV -->
+  <!-- NAVBAR COM MASCOTE -->
   <header>
+    <img src="img/mascote.png">  <!-- ⬅ Substitua pelo mascote clássico -->
     <h1>Mestre Mandou</h1>
   </header>
 
@@ -155,15 +162,17 @@
       <img id="imagem" src="" alt="">
     </div>
 
-    <div class="botoes">
-      <button class="verde" onclick="clicar('verde')">Verde (Fácil)</button>
-      <button class="amarelo" onclick="clicar('amarelo')">Amarelo (Médio)</button>
-      <button class="vermelho" onclick="clicar('vermelho')">Vermelho (Difícil)</button>
-      <button class="roxo" onclick="clicar('roxo')">Roxo (Aleatório)</button>
-    </div>
   </div>
 
-  <!-- SOM DE CLIQUE LEVE -->
+  <!-- BOTÕES FIXOS NO FUNDO -->
+  <div class="botoes-fundo">
+    <button class="verde" onclick="clicar('verde')">Verde (Fácil)</button>
+    <button class="amarelo" onclick="clicar('amarelo')">Amarelo (Médio)</button>
+    <button class="vermelho" onclick="clicar('vermelho')">Vermelho (Difícil)</button>
+    <button class="roxo" onclick="clicar('roxo')">Roxo (Aleatório)</button>
+  </div>
+
+  <!-- SOM UI -->
   <audio id="somClique">
     <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d0521e8b5.mp3?filename=click-124467.mp3" type="audio/mpeg">
   </audio>
@@ -224,7 +233,7 @@
           vermelho:"#e74c3c",
           roxo:"#9b59b6"
         }[categoria];
-      }, 150);
+      }, 120);
 
       document.getElementById("categoria").innerText = `Categoria: ${categoria}`;
     }
