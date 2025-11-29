@@ -186,128 +186,150 @@
     <button onclick="iniciarCronometro()">Iniciar</button>
   </div>
 
-  <script>
-    let pokemons = {};
-    let modificados = ["gengabble.png","mimichu.png","Gaslyng.png","Onixly.png","venosent.png","mitto.png","urshitoad.png"];
-    let usados = [];
-    let currentPokemon = null;
-    let isShiny = false;
-    let isModificado = false;
-    let timer = null;
-    let tempoRestante = 15;
+ <script>
+  let pokemons = {};
+  let modificados = ["gengabble.png","mimichu.png","Gaslyng.png","Onixly.png","venosent.png","mitto.png","urshitoad.png"];
+  let usados = [];
+  let currentPokemon = null;
+  let isShiny = false;
+  let isModificado = false;
+  let timer = null;
+  let tempoRestante = 15;
 
-    const SECRET_KEY = "MikeOMacacoefoda2024";
+  const SECRET_KEY = "MikeOMacacoefoda2024";
 
-    function encrypt(text) {
-      return btoa(unescape(encodeURIComponent(text.split('').map((c,i)=>
-        String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
-      ).join(''))));
-    }
+  function encrypt(text) {
+    return btoa(unescape(encodeURIComponent(text.split('').map((c,i)=>
+      String.fromCharCode(c.charCodeAt(0) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length))
+    ).join(''))));
+  }
 
-    fetch("pokemons/pokemon.json")
-      .then(res => res.json())
-      .then(data => {
-        pokemons = data;
-        trocarPokemon();
-      })
-      .catch(err => alert("Erro ao carregar lista de Pokémons: " + err));
+  // Carrega lista de Pokémon
+  fetch("pokemons/pokemon.json")
+    .then(res => res.json())
+    .then(data => {
+      pokemons = data;
+      trocarPokemon();
+    })
+    .catch(err => alert("Erro ao carregar lista de Pokémons: " + err));
 
-    function iniciarCronometro() {
-      clearInterval(timer);
-      tempoRestante = 15;
+  function iniciarCronometro() {
+    clearInterval(timer);
+    tempoRestante = 15;
+    document.getElementById("cronometro").innerText = tempoRestante;
+
+    timer = setInterval(() => {
+      tempoRestante--;
       document.getElementById("cronometro").innerText = tempoRestante;
+      if (tempoRestante <= 0) {
+        clearInterval(timer);
+        document.getElementById("cronometro").innerText = "Tempo esgotado!";
+      }
+    }, 1000);
+  }
 
-      timer = setInterval(() => {
-        tempoRestante--;
-        document.getElementById("cronometro").innerText = tempoRestante;
-        if (tempoRestante <= 0) {
-          clearInterval(timer);
-          document.getElementById("cronometro").innerText = "Tempo esgotado!";
-        }
-      }, 1000);
+  function trocarPokemon() {
+    const keys = Object.keys(pokemons);
+    let tipo, escolhido;
+
+    if (usados.length >= keys.length + modificados.length) {
+      usados = [];
     }
 
-    function trocarPokemon() {
-      const keys = Object.keys(pokemons);
-      let tipo, escolhido;
-
-      // 🔹 Impede repetição
-      if (usados.length >= keys.length + modificados.length) {
-        usados = []; // se já usou todos, reseta a lista
-      }
-
-      do {
-        const chance = Math.random();
-        if (chance < 0.10) {
-          tipo = "modificado";
-          escolhido = modificados[Math.floor(Math.random() * modificados.length)];
-        } else {
-          tipo = "normal";
-          escolhido = keys[Math.floor(Math.random() * keys.length)];
-        }
-      } while (usados.includes(escolhido));
-
-      usados.push(escolhido);
-
-      if (tipo === "modificado") {
-        currentPokemon = { name: escolhido.replace(".png",""), id: null };
-        isModificado = true;
-        isShiny = false;
+    do {
+      const chance = Math.random();
+      if (chance < 0.10) {
+        tipo = "modificado";
+        escolhido = modificados[Math.floor(Math.random() * modificados.length)];
       } else {
-        currentPokemon = { name: escolhido, id: pokemons[escolhido].id };
-        isModificado = false;
-        isShiny = Math.random() < 0.15;
+        tipo = "normal";
+        escolhido = keys[Math.floor(Math.random() * keys.length)];
       }
+    } while (usados.includes(escolhido));
 
-      atualizarVisual(tipo);
-      enviarRespostaParaAdmin();
+    usados.push(escolhido);
+
+    if (tipo === "modificado") {
+      currentPokemon = { name: escolhido.replace(".png",""), id: null };
+      isModificado = true;
+      isShiny = false;
+    } else {
+      currentPokemon = { name: escolhido, id: pokemons[escolhido].id };
+      isModificado = false;
+      isShiny = Math.random() < 0.15;
     }
 
-    function atualizarVisual(tipo) {
-      const img = document.getElementById("pokemonImg");
-      const fundoCard = document.getElementById("fundoCard");
-      let newSrc;
+    // 🔹 Reseta a exibição do nome
+    document.getElementById("pokemonNome").style.display = "none";
+    document.getElementById("pokemonModNome").style.display = "none";
 
-      if (tipo === "modificado") {
-        fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
-        newSrc = "img/pokemons modificados/" + currentPokemon.name + ".png";
-        img.style.maxWidth = "60%";
-        img.style.maxHeight = "70%";
-      } else {
-        fundoCard.src = "img/quem_e_esse_pokemon.png";
-        newSrc = isShiny
-          ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`
-          : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
-        img.style.maxWidth = "50%";
-        img.style.maxHeight = "65%";
-      }
-
-      const tempImg = new Image();
-      tempImg.onload = function () {
-        img.src = newSrc;
-        img.style.filter = "brightness(0) saturate(100%)";
-      };
-      tempImg.src = newSrc;
+    if (isModificado) {
+      document.getElementById("pokemonModNome").innerText = currentPokemon.name;
+    } else {
+      let nome = currentPokemon.name + (isShiny ? " (Shiny)" : "");
+      document.getElementById("pokemonNome").innerText = nome;
     }
 
-    function enviarRespostaParaAdmin() {
-      const nomePokemon = isModificado
-        ? currentPokemon.name
-        : currentPokemon.name + (isShiny ? " (Shiny)" : "");
-      localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
-      localStorage.setItem("adminAuto", "true");
-      console.log("[JOGO] Enviado ao painel admin:", nomePokemon);
+    atualizarVisual(tipo);
+    enviarRespostaParaAdmin();
+  }
+
+  function atualizarVisual(tipo) {
+    const img = document.getElementById("pokemonImg");
+    const fundoCard = document.getElementById("fundoCard");
+    let newSrc;
+
+    if (tipo === "modificado") {
+      fundoCard.src = "img/quem_e_esse_pokemon_mod.png";
+      newSrc = "img/pokemons modificados/" + currentPokemon.name + ".png";
+      img.style.maxWidth = "60%";
+      img.style.maxHeight = "70%";
+    } else {
+      fundoCard.src = "img/quem_e_esse_pokemon.png";
+      newSrc = isShiny
+        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${currentPokemon.id}.png`
+        : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${currentPokemon.id}.png`;
+      img.style.maxWidth = "50%";
+      img.style.maxHeight = "65%";
     }
 
-    function revelarPokemon() {
-      clearInterval(timer);
-      const img = document.getElementById("pokemonImg");
-      img.style.filter = "none";
-      img.style.opacity = "1";
-      console.log("[JOGO] Pokémon revelado aos jogadores!");
+    const tempImg = new Image();
+    tempImg.onload = function () {
+      img.src = newSrc;
+      img.style.filter = "brightness(0) saturate(100%)";
+    };
+    tempImg.src = newSrc;
+  }
+
+  function enviarRespostaParaAdmin() {
+    const nomePokemon = isModificado
+      ? currentPokemon.name
+      : currentPokemon.name + (isShiny ? " (Shiny)" : "");
+
+    localStorage.setItem("pokemonResposta", encrypt(nomePokemon));
+    localStorage.setItem("adminAuto", "true");
+    console.log("[JOGO] Enviado ao painel admin:", nomePokemon);
+  }
+
+  function revelarPokemon() {
+    clearInterval(timer);
+
+    const img = document.getElementById("pokemonImg");
+    img.style.filter = "none";
+    img.style.opacity = "1";
+
+    // 🔹 Mostra o nome agora
+    if (isModificado) {
+      document.getElementById("pokemonModNome").style.display = "block";
+    } else {
+      document.getElementById("pokemonNome").style.display = "block";
     }
-  </script>
+
+    console.log("[JOGO] Pokémon revelado aos jogadores!");
+  }
+</script>
 </body>
 </html>
+
 
 
