@@ -287,9 +287,11 @@
     enviarRespostaParaAdmin();
   }
 
+  // 🛠 FUNÇÃO CORRIGIDA (SEM BUG DE CACHE / SEM TRAVAR IMAGENS)
   function atualizarVisual(tipo) {
     const img = document.getElementById("pokemonImg");
     const fundoCard = document.getElementById("fundoCard");
+
     let newSrc;
 
     if (tipo === "modificado") {
@@ -306,12 +308,16 @@
       img.style.maxHeight = "65%";
     }
 
-    const tempImg = new Image();
-    tempImg.onload = function () {
-      img.src = newSrc;
-      img.style.filter = "brightness(0) saturate(100%)";
+    // 🔥 TROCA IMEDIATAMENTE (SEM DEPENDER DO onload)
+    img.src = newSrc;
+
+    // Sempre volta para silhueta ao trocar
+    img.style.filter = "brightness(0) saturate(100%)";
+
+    // Log opcional
+    img.onload = () => {
+      console.log("[JOGO] Pokémon carregado:", currentPokemon.name);
     };
-    tempImg.src = newSrc;
   }
 
   function enviarRespostaParaAdmin() {
@@ -331,7 +337,6 @@
     img.style.filter = "none";
     img.style.opacity = "1";
 
-    // Mostra nome ao revelar
     if (isModificado) {
       document.getElementById("pokemonModNome").style.display = "block";
     } else {
@@ -341,8 +346,10 @@
     console.log("[JOGO] Pokémon revelado aos jogadores!");
   }
 </script>
+
 </body>
 </html>
+
 
 
 
