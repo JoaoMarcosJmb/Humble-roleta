@@ -186,7 +186,7 @@
     <button onclick="iniciarCronometro()">Iniciar</button>
   </div>
 
- <script>
+<script>
   let pokemons = {};
   let modificados = ["gengabble.png","mimichu.png","Gaslyng.png","Onixly.png","venosent.png","mitto.png","urshitoad.png"];
   let usados = [];
@@ -204,10 +204,13 @@
     ).join(''))));
   }
 
-  // 🔠 FUNÇÃO PARA DEIXAR PRIMEIRA LETRA MAIÚSCULA
+  // 🔠 Função FINAL para capitalizar inclusive nomes com hífen
   function capitalizar(str) {
     if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str
+      .split("-")
+      .map(parte => parte.charAt(0).toUpperCase() + parte.slice(1))
+      .join("-");
   }
 
   // Carrega lista de Pokémon
@@ -265,11 +268,11 @@
       isShiny = Math.random() < 0.15;
     }
 
-    // 🔹 Oculta nome ao trocar
+    // Oculta nomes ao trocar
     document.getElementById("pokemonNome").style.display = "none";
     document.getElementById("pokemonModNome").style.display = "none";
 
-    // 🔹 Atualiza nomes com CAPITALIZAÇÃO
+    // Aplica capitalização correta
     if (isModificado) {
       document.getElementById("pokemonModNome").innerText =
         capitalizar(currentPokemon.name);
@@ -328,7 +331,7 @@
     img.style.filter = "none";
     img.style.opacity = "1";
 
-    // 🔹 Exibe nome ao revelar
+    // Mostra nome ao revelar
     if (isModificado) {
       document.getElementById("pokemonModNome").style.display = "block";
     } else {
@@ -340,6 +343,7 @@
 </script>
 </body>
 </html>
+
 
 
 
