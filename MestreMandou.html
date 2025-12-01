@@ -193,7 +193,23 @@
         imagens[c].push(`img/${c}/${i}.png`);
       }
     }
-
+const nomes = {
+  verde: {
+    "img/verde/1.png": "NOME DO ITEM 1",
+    "img/verde/2.png": "NOME DO ITEM 2",
+    "img/verde/3.png": "NOME DO ITEM 3"
+  },
+  amarelo: {
+    "img/amarelo/1.png": "NOME DO ITEM 1",
+    "img/amarelo/2.png": "NOME DO ITEM 2",
+    "img/amarelo/3.png": "NOME DO ITEM 3"
+  },
+  vermelho: {
+    "img/vermelho/1.png": "NOME DO ITEM 1",
+    "img/vermelho/2.png": "NOME DO ITEM 2",
+    "img/vermelho/3.png": "NOME DO ITEM 3"
+  }
+};
     const usadas = { verde: [], amarelo: [], vermelho: [] };
 
     function clicar(cor) {
@@ -235,7 +251,7 @@
         }[categoria];
       }, 120);
 
-      document.getElementById("categoria").innerText = `Categoria: ${categoria}`;
+      document.getElementById("categoria").innerText = nomes[categoria][escolha];
     }
   </script>
 
