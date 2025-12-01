@@ -251,7 +251,17 @@ const nomes = {
         }[categoria];
       }, 120);
 
-      document.getElementById("categoria").innerText = nomes[categoria][escolha];
+      // pega só o nome do arquivo sem pasta
+let nomeArquivo = escolha.split("/").pop().split(".")[0];
+
+// transforma underline "_" em espaço (opcional)
+nomeArquivo = nomeArquivo.replace(/_/g, " ");
+
+// coloca a primeira letra maiúscula (opcional)
+nomeArquivo = nomeArquivo.charAt(0).toUpperCase() + nomeArquivo.slice(1);
+
+document.getElementById("categoria").innerText = nomeArquivo;
+
     }
   </script>
 
