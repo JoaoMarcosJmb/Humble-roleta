@@ -180,61 +180,94 @@
   <script>
     const som = document.getElementById("somClique");
 
-    const imagens = {
-      verde: [],
-      amarelo: [],
-      vermelho: []
+    /* Se quiser manter o objeto 'nomes' para mapear nomes customizados mais tarde, deixei ele aqui */
+    const nomes = {
+      verde: {
+        "img/verde/Alga.png": "Alga",
+        "img/verde/bamboo.png": "Bamboo",
+        "img/verde/Bauxita.png": "Bauxita",
+        "img/verde/Cacto.png": "Cacto",
+        "img/verde/Cana_de_Açúcar.png": "Cana de Açúcar",
+        "img/verde/Carvão.png": "Carvão",
+        "img/verde/Cogumelo.png": "Cogumelo",
+        "img/verde/Cristal.png": "Cristal",
+        "img/verde/Ferro.png": "Ferro",
+        "img/verde/Folhas_de_Árvore.png": "Folhas de Árvore",
+        "img/verde/Fóssil.png": "Fóssil",
+        "img/verde/gold_ingot.png": "Ouro",
+        "img/verde/Graveto.png": "Graveto",
+        "img/verde/Madeira.png": "Madeira",
+        "img/verde/Materiais_de_Ferro.png": "Materiais de Ferro",
+        "img/verde/Muda_de_Árvore.png": "Muda de Árvore",
+        "img/verde/Pedra.png": "Pedra",
+        "img/verde/Suplemento_de_Cálcio.png": "Suplemento de Cálcio",
+        "img/verde/Suplemento_de_Carbos.png": "Suplemento de Carbos",
+        "img/verde/Suplemento_de_Ferro.png": "Suplemento de Ferro",
+        "img/verde/Suplemento_de_Proteína.png": "Suplemento de Proteína",
+        "img/verde/Suplemento_de_Zinco.png": "Suplemento de Zinco"
+      },
+      amarelo: {
+        "img/amarelo/1.png": "NOME DO ITEM 1",
+        "img/amarelo/2.png": "NOME DO ITEM 2",
+        "img/amarelo/3.png": "NOME DO ITEM 3"
+      },
+      vermelho: {
+        "img/vermelho/Sino_das_Marés.png": "Sino das Marés",
+        "img/vermelho/Sino_da_Pureza.png": "Sino da Pureza",
+        "img/vermelho/Silver_Bottlecap.png": "Silver Bottlecap",
+        "img/vermelho/Orb_das_Almas_Flamejantes.png": "Orb das Almas Flamejantes",
+        "img/vermelho/Orb_das_Almas_Estáticas.png": "Orb das Almas Estáticas",
+        "img/vermelho/Orb_das_Almas_Congeladas.png": "Orb das Almas Congeladas",
+        "img/vermelho/Núcleo_de_Zygarde.png": "Núcleo de Zygarde",
+        "img/vermelho/Colméia.png": "Colméia",
+        "img/vermelho/Carta_TCG.webp": "Carta TCG"
+      }
     };
 
-    const totalImagens = { verde: 10, amarelo: 10, vermelho: 10 };
+    /* Lista completa de imagens por categoria (corrigida: sem contagem numérica automática) */
+    const imagens = {
+      verde: [
+        "img/verde/Alga.png",
+        "img/verde/bamboo.png",
+        "img/verde/Bauxita.png",
+        "img/verde/Cacto.png",
+        "img/verde/Cana_de_Açúcar.png",
+        "img/verde/Carvão.png",
+        "img/verde/Cogumelo.png",
+        "img/verde/Cristal.png",
+        "img/verde/Ferro.png",
+        "img/verde/Folhas_de_Árvore.png",
+        "img/verde/Fóssil.png",
+        "img/verde/gold_ingot.png",
+        "img/verde/Graveto.png",
+        "img/verde/Madeira.png",
+        "img/verde/Materiais_de_Ferro.png",
+        "img/verde/Muda_de_Árvore.png",
+        "img/verde/Pedra.png",
+        "img/verde/Suplemento_de_Cálcio.png",
+        "img/verde/Suplemento_de_Carbos.png",
+        "img/verde/Suplemento_de_Ferro.png",
+        "img/verde/Suplemento_de_Proteína.png",
+        "img/verde/Suplemento_de_Zinco.png"
+      ],
+      amarelo: [
+        "img/amarelo/1.png",
+        "img/amarelo/2.png",
+        "img/amarelo/3.png"
+      ],
+      vermelho: [
+        "img/vermelho/Sino_das_Marés.png",
+        "img/vermelho/Sino_da_Pureza.png",
+        "img/vermelho/Silver_Bottlecap.png",
+        "img/vermelho/Orb_das_Almas_Flamejantes.png",
+        "img/vermelho/Orb_das_Almas_Estáticas.png",
+        "img/vermelho/Orb_das_Almas_Congeladas.png",
+        "img/vermelho/Núcleo_de_Zygarde.png",
+        "img/vermelho/Colméia.png",
+        "img/vermelho/Carta_TCG.webp"
+      ]
+    };
 
-    for (let c in totalImagens) {
-      for (let i = 1; i <= totalImagens[c]; i++) {
-        imagens[c].push(`img/${c}/${i}.png`);
-      }
-    }
-const nomes = {
-  verde: {
-    "img/verde/Alga.png": "Alga",
-    "img/verde/bamboo.png": "Bamboo",
-    "img/verde/Bauxita.png": "Bauxita",
-    "img/verde/Cacto.png": "Cacto",
-    "img/verde/Cana_de_Açúcar.png": "Cana de Açúcar",
-    "img/verde/Carvão.png": "Carvão",
-    "img/verde/Cogumelo.png": "Cogumelo",
-    "img/verde/Cristal.png": "Cristal",
-    "img/verde/Ferro.png": "Ferro",
-    "img/verde/Folhas_de_Árvore.png": "Folhas de Árvore",
-    "img/verde/Fóssil.png": "Fóssil",
-    "img/verde/gold_ingot.png": "Ouro",
-    "img/verde/Graveto.png": "Graveto",
-    "img/verde/Madeira.png": "Madeira",
-    "img/verde/Materiais_de_Ferro.png": "Materiais de Ferro",
-    "img/verde/Muda_de_Árvore.png": "Muda de Árvore",
-    "img/verde/Pedra.png": "Pedra",
-    "img/verde/Suplemento_de_Cálcio.png": "Suplemento de Cálcio",
-    "img/verde/Suplemento_de_Carbos.png": "Suplemento de Carbos",
-    "img/verde/Suplemento_de_Ferro.png": "Suplemento de Ferro",
-    "img/verde/Suplemento_de_Proteína.png": "Suplemento de Proteína",
-    "img/verde/Suplemento_de_Zinco.png": "Suplemento de Zinco"
-},
-  amarelo: {
-    "img/amarelo/1.png": "NOME DO ITEM 1",
-    "img/amarelo/2.png": "NOME DO ITEM 2",
-    "img/amarelo/3.png": "NOME DO ITEM 3"
-  },
-  vermelho: {
-    "img/vermelho/Sino_das_Marés.png": "Sino das Marés",
-    "img/vermelho/Sino_da_Pureza.png": "Sino da Pureza",
-    "img/vermelho/Silver_Bottlecap.png": "Silver Bottlecap",
-    "img/vermelho/Orb_das_Almas_Flamejantes.png": "Orb das Almas Flamejantes",
-    "img/vermelho/Orb_das_Almas_Estáticas.png": "Orb das Almas Estáticas",
-    "img/vermelho/Orb_das_Almas_Congeladas.png": "Orb das Almas Congeladas",
-    "img/vermelho/Núcle_de_Zygarde.png": "Núcleo de Zygarde",
-    "img/vermelho/Colméia.png": "Colméia",
-    "img/vermelho/Carta_TCG.webp": "Carta_TCG"
-  }
-};
     const usadas = { verde: [], amarelo: [], vermelho: [] };
 
     function clicar(cor) {
@@ -277,16 +310,15 @@ const nomes = {
       }, 120);
 
       // pega só o nome do arquivo sem pasta
-let nomeArquivo = escolha.split("/").pop().split(".")[0];
+      let nomeArquivo = escolha.split("/").pop().split(".")[0];
 
-// transforma underline "_" em espaço (opcional)
-nomeArquivo = nomeArquivo.replace(/_/g, " ");
+      // transforma underline "_" em espaço (opcional)
+      nomeArquivo = nomeArquivo.replace(/_/g, " ");
 
-// coloca a primeira letra maiúscula (opcional)
-nomeArquivo = nomeArquivo.charAt(0).toUpperCase() + nomeArquivo.slice(1);
+      // coloca a primeira letra maiúscula (opcional)
+      nomeArquivo = nomeArquivo.charAt(0).toUpperCase() + nomeArquivo.slice(1);
 
-document.getElementById("categoria").innerText = nomeArquivo;
-
+      document.getElementById("categoria").innerText = nomeArquivo;
     }
   </script>
 
