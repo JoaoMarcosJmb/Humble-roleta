@@ -82,14 +82,22 @@
     }
 
     /* imagem com flip 3D */
-    #imagem {
-      max-width: 380px;
-      border-radius: 14px;
-      border: 3px solid var(--cor-dourado);
-      opacity: 0;
-      transform: rotateY(90deg);
-      transition: opacity .4s ease, transform .5s ease;
-    }
+   #imagem {
+  width: 320px;      /* largura fixa */
+  height: 320px;     /* altura fixa */
+  object-fit: contain; /* mantém proporção sem cortar */
+  display: block;
+  margin: 0 auto;
+
+  border-radius: 14px;
+  border: 3px solid var(--cor-dourado);
+
+  background: rgba(0,0,0,0.4); /* fundo para imagens transparentes ficarem bonitas */
+
+  opacity: 0;
+  transform: rotateY(90deg);
+  transition: opacity .4s ease, transform .5s ease;
+}
 
     #imagem.mostrar {
       opacity: 1;
