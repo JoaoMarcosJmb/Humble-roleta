@@ -1,129 +1,148 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Humble Pixelmon Tool</title>
-    <style>
-        /* Reset básico */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <title>Quiz Interativo - Humble</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  
+  <style>
+    /* --- ESTILOS VISUAIS (TEMA HUMBLE) --- */
+    :root {
+      --cor-dourado: #d1a720; 
+      --cor-fundo: #1a1a1a; 
+      --cor-texto: #f5f5f5;
+      --cor-overlay: rgba(20, 20, 20, 0.95);
+      --cor-erro: #e74c3c;
+      --cor-aviso: #e67e22;
+    }
+    
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0; 
+      padding: 0; 
+      
+      /* CENTRALIZAÇÃO PERFEITA DA TELA */
+      min-height: 100vh;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center;
+      justify-content: center; /* Isso centraliza verticalmente */
+      color: var(--cor-texto);
+    }
 
-        body {
-            background-color: #1a1a1a; /* Fundo escuro */
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Garante que o footer vá para o final */
-        }
+    /* Caixa Principal (Sem margem no topo agora) */
+    .main-content { 
+        width: 95%; 
+        max-width: 600px; 
+        /* Garante que a caixa fique alinhada */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-        /* --- NAVBAR --- */
-        nav {
-            background-color: #2d2d2d;
-            border-bottom: 2px solid #7289da; /* Cor de destaque (ex: Discord blue ou a cor do servidor) */
-            padding: 10px 20px; /* Padding reduzido para ficar menor */
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 50px; /* Altura fixa menor */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
+    .quiz-box {
+        width: 100%; /* Ocupa a largura da main-content */
+        background: rgba(30, 30, 30, 0.95); 
+        border: 2px solid var(--cor-dourado);
+        border-radius: 15px; 
+        padding: 25px; 
+        text-align: center;
+        box-shadow: 0 0 25px rgba(209, 167, 32, 0.3); /* Aumentei um pouco o brilho */
+        box-sizing: border-box; /* Evita que padding quebre o layout */
+    }
 
-        .nav-logo {
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #fff;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    /* Logo dentro da caixa (Opcional, fica bonito) */
+    .quiz-header-logo {
+        height: 60px;
+        margin-bottom: 10px;
+        transition: transform 0.3s;
+    }
+    .quiz-header-logo:hover { transform: scale(1.1); }
 
-        /* Se quiser links na navbar, eles iriam aqui, mas sem o botão de voltar */
-        .nav-links {
-            display: flex;
-            gap: 15px;
-            font-size: 0.9rem;
-        }
+    .hidden { display: none !important; }
 
-        /* --- CONTEÚDO PRINCIPAL --- */
-        main {
-            flex: 1; /* Ocupa o espaço restante entre nav e footer */
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+    /* --- INPUTS CORRIGIDOS (Sem fundo branco) --- */
+    input { 
+        padding: 12px; 
+        width: 70%; 
+        border-radius: 8px; 
+        border: 2px solid var(--cor-dourado); 
+        background-color: #222 !important; 
+        color: var(--cor-texto) !important; 
+        margin-bottom: 15px; 
+        text-align: center; 
+        font-size: 1.2rem; 
+        font-weight: bold;
+        outline: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+    input:focus {
+        border-color: #ffeaa7;
+        box-shadow: 0 0 15px rgba(209, 167, 32, 0.4);
+        background-color: #1a1a1a !important;
+    }
+    input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
-        .container {
-            background-color: #2b2b2b;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-width: 800px;
-            width: 100%;
-            text-align: center;
-        }
+    /* Remove fundo branco do Autocomplete */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active  {
+        -webkit-box-shadow: 0 0 0 30px #222 inset !important;
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
 
-        h1 {
-            margin-bottom: 20px;
-            color: #7289da;
-        }
+    /* Botões */
+    button { 
+        padding: 12px 25px; 
+        background: var(--cor-dourado); 
+        border: none; 
+        font-weight: bold; 
+        cursor: pointer; 
+        border-radius: 5px; 
+        text-transform: uppercase; 
+        margin-top: 10px; 
+        font-size: 1rem; 
+        color: #1a1a1a;
+    }
+    button:hover { background: #e5bd35; transform: scale(1.05); }
+    
+    .option-btn { width: 100%; background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado); margin: 8px 0; }
+    .option-btn:hover { background: var(--cor-dourado); color: #1a1a1a; }
 
-        p {
-            margin-bottom: 20px;
-            color: #cccccc;
-        }
+    .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem; }
+    
+    /* Painel Admin */
+    #admin-panel {
+        margin-top: 20px; padding: 15px; border: 1px dashed var(--cor-erro);
+        background: rgba(50, 0, 0, 0.5); display: none;
+    }
+    .btn-admin { background: var(--cor-erro); color: white; font-size: 0.9rem; margin: 5px; }
+    .btn-stop { background: var(--cor-aviso); }
+    .ban-area { border-top: 1px solid #444; margin-top: 15px; padding-top: 10px; }
 
-        /* --- FOOTER --- */
-        footer {
-            background-color: #0f0f0f;
-            color: #666;
-            text-align: center;
-            padding: 15px;
-            font-size: 0.85rem;
-            border-top: 1px solid #333;
-            margin-top: auto; /* Garante que fique no fundo */
-        }
+    /* Lobby Loader */
+    .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
+    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
-        footer strong {
-            color: #888;
-        }
-    </style>
+    /* Leaderboard */
+    .leaderboard-box {
+        margin-top: 30px; text-align: left; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; width: 100%; box-sizing: border-box;
+    }
+    .leaderboard-box h3 { text-align: center; color: var(--cor-dourado); margin-top: 0; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 10px; border-bottom: 1px solid #444; display: flex; justify-content: space-between;}
+    li:nth-child(1) { color: #ffd700; font-weight: bold; } 
+    li:nth-child(2) { color: #c0c0c0; } 
+    li:nth-child(3) { color: #cd7f32; }
+  </style>
 </head>
 <body>
-
-    <nav>
-        <div class="nav-logo">
-            Humble Pixelmon Tools
-        </div>
-        <div class="nav-links">
-            </div>
-    </nav>
-
-    <main>
-        <div class="container">
-            <h1>Sua Ferramenta Aqui</h1>
-            <p>O conteúdo da sua ferramenta ou gerador vai ficar dentro desta área.</p>
-            
-            <div style="padding: 20px; border: 1px dashed #444; border-radius: 4px;">
-                [Área de Interação / Inputs]
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 <strong>Humble Pixelmon</strong>. Todos os direitos reservados.</p>
-        <p style="font-size: 0.75rem; margin-top: 5px;">Desenvolvido por João Marcos</p>
-    </footer>
-
-</body>
-</html>
 
   <div class="main-content">
     <div class="quiz-box">
