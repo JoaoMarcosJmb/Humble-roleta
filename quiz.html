@@ -57,8 +57,10 @@
         background: rgba(50, 0, 0, 0.5); display: none;
     }
     .btn-admin { background: var(--cor-erro); color: white; font-size: 0.9rem; margin: 5px; }
-    /* Botão Finalizar (Laranja) */
     .btn-stop { background: var(--cor-aviso); }
+    
+    /* Area de Ban */
+    .ban-area { border-top: 1px solid #444; margin-top: 15px; padding-top: 10px; }
 
     /* Lobby */
     .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
@@ -101,9 +103,13 @@
                 <input type="password" id="admin-pass" placeholder="Senha..." style="width: 50%;">
                 <br>
                 <button class="btn-admin" id="btn-admin-start" style="background: #27ae60;">▶️ INICIAR JOGO</button>
-                <button class="btn-admin btn-stop" id="btn-admin-stop">⏹️ FINALIZAR JOGO</button>
-                <br>
-                <button class="btn-admin" id="btn-admin-reset">🔄 RESETAR TUDO</button>
+                <button class="btn-admin btn-stop" id="btn-admin-stop">⏹️ FINALIZAR</button>
+                <button class="btn-admin" id="btn-admin-reset">🔄 RESETAR</button>
+                
+                <div class="ban-area">
+                    <input type="text" id="ban-input" placeholder="Nick para banir..." style="width: 60%; border-color: red;">
+                    <button class="btn-admin" id="btn-admin-ban" style="margin-top:0;">🚫 BANIR</button>
+                </div>
             </div>
         </div>
 
@@ -130,7 +136,7 @@
             <h2>Fim de Jogo!</h2>
             <p id="end-message">Sua pontuação foi salva.</p>
             <h1 id="final-score" style="color: var(--cor-dourado); font-size: 4rem; margin: 10px 0;">0</h1>
-            <button onclick="location.reload()">Sair / Novo Login</button>
+            <button onclick="location.reload()">Sair</button>
         </div>
 
         <div class="leaderboard-box">
@@ -143,26 +149,25 @@
     </div>
   </div>
 
-<script type="module">
+  <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, setDoc, onSnapshot, query, orderBy, limit, getDocs, writeBatch, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, setDoc, getDoc, onSnapshot, query, orderBy, limit, getDocs, writeBatch, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // ⬇️ RECOLOQUE SUAS CHAVES AQUI! ⬇️
     const firebaseConfig = {
-  apiKey: "AIzaSyA2TdsWbqOhYUrezQ3zSG9OeP2ZSIxGpBk",
-  authDomain: "quiz-d1e99.firebaseapp.com",
-  projectId: "quiz-d1e99",
-  storageBucket: "quiz-d1e99.firebasestorage.app",
-  messagingSenderId: "685198946824",
-  appId: "1:685198946824:web:e29547e188de650e39d7bd",
-  measurementId: "G-RX5CN69ZMF"
-};
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      projectId: "SEU_PROJETO_ID",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "NUMEROS",
+      appId: "NUMEROS_LETRAS"
+    };
     // ⬆️ --------------------------- ⬆️
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- VARIÁVEIS ---
+    // --- VARIÁVEIS E FUNÇÕES GLOBAIS ---
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
@@ -173,6 +178,12 @@
     let gameHasStarted = false;
     let isGameEnded = false;
 
+    // Função de Normalização (Usada no Login e no Ban)
+    // Remove acentos, espaços extras e deixa minúsculo
+    const normalize = (str) => {
+        return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
     const loginScreen = document.getElementById('login-screen');
     const lobbyScreen = document.getElementById('lobby-screen');
     const gameScreen = document.getElementById('game-screen');
@@ -180,12 +191,11 @@
     const usernameInput = document.getElementById('username');
 
     // ======================================================
-    // 🛡️ SISTEMA DE BANLIST (LISTA COMPLETA)
+    // 🛡️ BANLIST AUTOMÁTICA (Sua lista)
     // ======================================================
-    
-    // Lista fornecida pelo usuário + proteções de sistema
     const termosProibidos = [
-        "admin", "moderador", "staff", "suporte", "gm", "god", // Falsidade ideológica
+        "admin", "moderador", "staff", "suporte", "gm", "god",
+        "baceta", "b4ceta", "b@ceta", 
         "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha",
         "merda", "m3rda", "bosta", "cagar", "cagado",
         "caralho", "krl", "carai", "caraio", "c4ralho", "pqp",
@@ -208,37 +218,19 @@
 
     function contemTermoProibido(nickOriginal) {
         if(!nickOriginal) return false;
-
-        // Tabela de conversão (Leetspeak -> Letra Normal)
-        // Isso ajuda a pegar variações que não estejam na lista exata
-        const mapaLeet = {
-            '4': 'a', '@': 'a', '3': 'e', '1': 'i', '!': 'i', 
-            '0': 'o', '5': 's', '$': 's', '7': 't', '+': 't',
-            'v': 'u'
-        };
-
-        // 1. Limpeza pesada
-        let nickLimpo = nickOriginal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        
-        // 2. Converte Leetspeak (ex: p4t4 -> pata)
-        nickLimpo = nickLimpo.split('').map(char => mapaLeet[char] || char).join('');
-
-        // 3. Remove caracteres especiais para pegar "p.u.t.a"
-        let nickSemPontos = nickLimpo.replace(/[^a-z]/g, "");
-
-        // Debug (Pode remover depois)
-        // console.log(`Original: ${nickOriginal} | Limpo: ${nickSemPontos}`);
-
+        let nickLower = nickOriginal.toLowerCase();
         for (let termo of termosProibidos) {
-            // Verifica o termo exato na lista limpa
-            if (nickLimpo.includes(termo) || nickSemPontos.includes(termo)) {
-                return true; 
-            }
+            if (nickLower.includes(termo)) return true;
+        }
+        const mapaLeet = {'4': 'a', '@': 'a', '3': 'e', '1': 'i', '!': 'i', '0': 'o', '5': 's', '$': 's', '7': 't', '+': 't', 'v': 'u'};
+        let nickLimpo = normalize(nickOriginal);
+        nickLimpo = nickLimpo.split('').map(char => mapaLeet[char] || char).join('');
+        let nickSemPontos = nickLimpo.replace(/[^a-z]/g, "");
+        for (let termo of termosProibidos) {
+            if (nickLimpo.includes(termo) || nickSemPontos.includes(termo)) return true;
         }
         return false; 
     }
-    // ======================================================
-
 
     // CARREGAR PERGUNTAS
     async function loadQuestions() {
@@ -253,29 +245,37 @@
         let rawName = usernameInput.value.trim();
         if(!rawName) return alert("Digite um nome!");
         
-        // 🛡️ VERIFICAÇÃO DE BANLIST
+        // 1. BANLIST AUTOMÁTICA
         if (contemTermoProibido(rawName)) {
-            alert("⚠️ Nickname não permitido.\nPor favor, escolha um nome apropriado.");
+            alert("⚠️ Nickname inválido.");
             usernameInput.value = ""; 
             return;
         }
 
         username = rawName; 
-
+        
         await loadQuestions();
         if(questions.length === 0) return alert("Erro ao carregar perguntas.");
 
         try {
-            // Verifica duplicidade
+            // 2. VERIFICA SE ESTÁ NA BLACKLIST MANUAL (BANIDO PELO ADMIN)
+            const banDocRef = doc(db, "blacklist_humble", normalize(username));
+            const banDoc = await getDoc(banDocRef);
+            if(banDoc.exists()) {
+                alert("⛔ Este nick foi banido pelo Admin.");
+                return;
+            }
+
+            // 3. VERIFICA DUPLICIDADE
             const qCheck = query(collection(db, "ranking_humble"), where("username", "==", username));
             const querySnapshot = await getDocs(qCheck);
 
             if (!querySnapshot.empty) {
-                alert(`O nick "${username}" já está sendo usado.\nEscolha outro.`);
+                alert(`O nick "${username}" já está sendo usado.`);
                 return;
             }
 
-            // Reserva Nick
+            // 4. RESERVA NICK
             const docRef = await addDoc(collection(db, "ranking_humble"), {
                 username: username,
                 score: 0,
@@ -296,8 +296,7 @@
         }
     });
 
-    // --- RESTANTE DA LÓGICA (IGUAL) ---
-    
+    // --- LOGICA DE JOGO ---
     function listenGameState() {
         onSnapshot(doc(db, "config", "estado_jogo"), (docSnapshot) => {
             if (!docSnapshot.exists()) return;
@@ -372,8 +371,6 @@
     function checkAnswer(userAnswer) {
         if(isGameEnded || !userAnswer) return;
         const q = questions[currentQuestionIndex];
-        // Normalização de resposta (Permite espaços e acentos errados)
-        const normalize = (str) => str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         const isCorrect = normalize(userAnswer) === normalize(q.correct);
         processAnswer(isCorrect);
     }
@@ -412,25 +409,23 @@
             await updateDoc(doc(db, "ranking_humble", userDocId), {
                 score: score, status: "finalizado", date: new Date()
             });
-        } catch (e) {
-            try { await addDoc(collection(db, "ranking_humble"), { username: username, score: score, status: "recuperado", date: new Date() }); } catch(e2){}
-        }
+        } catch (e) { try{await addDoc(collection(db, "ranking_humble"), { username: username, score: score, status: "recuperado", date: new Date() });}catch(e2){} }
     }
 
-    // --- ADMIN ---
+    // --- ADMIN ACTIONS ---
     usernameInput.addEventListener('input', (e) => {
         if(e.target.value.toLowerCase() === 'admin') document.getElementById('admin-panel').style.display = 'block';
     });
 
     document.getElementById('btn-admin-start').addEventListener('click', async () => {
         if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
-        try { await setDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" }); alert("Iniciado!"); } catch(e) { alert("Erro ao iniciar."); }
+        try { await setDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" }); alert("Iniciado!"); } catch(e) { alert("Erro."); }
     });
 
     document.getElementById('btn-admin-stop').addEventListener('click', async () => {
         if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
         if(!confirm("Encerrar?")) return;
-        try { await setDoc(doc(db, "config", "estado_jogo"), { status: "ENCERRADO" }); } catch(e) { alert("Erro ao finalizar."); }
+        try { await setDoc(doc(db, "config", "estado_jogo"), { status: "ENCERRADO" }); } catch(e) { alert("Erro."); }
     });
 
     document.getElementById('btn-admin-reset').addEventListener('click', async () => {
@@ -444,7 +439,43 @@
             await batch.commit();
             await setDoc(doc(db, "config", "estado_jogo"), { status: "ESPERA" });
             location.reload();
-        } catch(e) { alert("Erro reset: " + e.message); }
+        } catch(e) { alert("Erro: " + e.message); }
+    });
+
+    // --- NOVA FUNÇÃO: BANIR MANUALMENTE ---
+    document.getElementById('btn-admin-ban').addEventListener('click', async () => {
+        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Digite a senha do admin!");
+        
+        const nickBan = document.getElementById('ban-input').value.trim();
+        if(!nickBan) return alert("Digite o nick para banir.");
+
+        if(!confirm(`Tem certeza que deseja BANIR PERMANENTEMENTE "${nickBan}"?`)) return;
+
+        try {
+            // 1. Adiciona na Blacklist do Firebase (Usando nome normalizado como ID para fácil busca)
+            await setDoc(doc(db, "blacklist_humble", normalize(nickBan)), {
+                originalName: nickBan,
+                bannedAt: new Date()
+            });
+
+            // 2. Remove o jogador do Ranking se ele estiver lá
+            // Como não sabemos o ID do documento dele, buscamos pelo nome
+            const q = query(collection(db, "ranking_humble"), where("username", "==", nickBan));
+            const querySnapshot = await getDocs(q);
+            
+            const batch = writeBatch(db);
+            querySnapshot.forEach((doc) => {
+                batch.delete(doc.ref); // Deleta o registro dele
+            });
+            await batch.commit();
+
+            alert(`🚫 O nick "${nickBan}" foi banido e removido do ranking.`);
+            document.getElementById('ban-input').value = ""; // Limpa input
+
+        } catch(e) {
+            console.error(e);
+            alert("Erro ao banir: " + e.message);
+        }
     });
 
     // LEADERBOARD
