@@ -14,6 +14,7 @@
       --cor-texto: #f5f5f5;
       --cor-overlay: rgba(20, 20, 20, 0.95);
       --cor-erro: #e74c3c;
+      --cor-aviso: #e67e22;
     }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -56,6 +57,8 @@
         background: rgba(50, 0, 0, 0.5); display: none;
     }
     .btn-admin { background: var(--cor-erro); color: white; font-size: 0.9rem; margin: 5px; }
+    /* Botão Finalizar (Laranja) */
+    .btn-stop { background: var(--cor-aviso); }
 
     /* Lobby */
     .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
@@ -98,8 +101,10 @@
                 <p style="font-size:0.8rem">Senha: humbleadmin</p>
                 <input type="password" id="admin-pass" placeholder="Senha..." style="width: 50%;">
                 <br>
-                <button class="btn-admin" id="btn-admin-start">▶️ INICIAR P/ TODOS</button>
-                <button class="btn-admin" id="btn-admin-reset">🔄 RESETAR RANKING</button>
+                <button class="btn-admin" id="btn-admin-start" style="background: #27ae60;">▶️ INICIAR JOGO</button>
+                <button class="btn-admin btn-stop" id="btn-admin-stop">⏹️ FINALIZAR JOGO</button>
+                <br>
+                <button class="btn-admin" id="btn-admin-reset">🔄 RESETAR TUDO</button>
             </div>
         </div>
 
@@ -124,7 +129,7 @@
 
         <div id="end-screen" class="hidden">
             <h2>Fim de Jogo!</h2>
-            <p>Sua pontuação foi salva.</p>
+            <p id="end-message">Sua pontuação foi salva.</p>
             <h1 id="final-score" style="color: var(--cor-dourado); font-size: 4rem; margin: 10px 0;">0</h1>
             <button onclick="location.reload()">Sair / Novo Login</button>
         </div>
@@ -145,20 +150,19 @@
 
     // --- ⬇️ SUAS CHAVES AQUI ⬇️ ---
     const firebaseConfig = {
-  apiKey: "AIzaSyA2TdsWbqOhYUrezQ3zSG9OeP2ZSIxGpBk",
-  authDomain: "quiz-d1e99.firebaseapp.com",
-  projectId: "quiz-d1e99",
-  storageBucket: "quiz-d1e99.firebasestorage.app",
-  messagingSenderId: "685198946824",
-  appId: "1:685198946824:web:e29547e188de650e39d7bd",
-  measurementId: "G-RX5CN69ZMF"
-};
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      projectId: "SEU_PROJETO_ID",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "NUMEROS",
+      appId: "NUMEROS_LETRAS"
+    };
     // --- ⬆️ FIM DAS CHAVES ⬆️ ---
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- VARIÁVEIS DO JOGO ---
+    // --- VARIÁVEIS ---
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
@@ -166,11 +170,13 @@
     let timerInterval;
     let timeLeft = 0;
     let gameHasStarted = false;
+    let isGameEnded = false;
 
     // --- ELEMENTOS ---
     const loginScreen = document.getElementById('login-screen');
     const lobbyScreen = document.getElementById('lobby-screen');
     const gameScreen = document.getElementById('game-screen');
+    const endScreen = document.getElementById('end-screen');
     const usernameInput = document.getElementById('username');
 
     // 1. CARREGAR PERGUNTAS
@@ -189,27 +195,30 @@
         await loadQuestions();
         if(questions.length === 0) return alert("Erro ao carregar perguntas. Verifique o JSON.");
 
-        // Muda tela
         loginScreen.classList.add('hidden');
         lobbyScreen.classList.remove('hidden');
         document.getElementById('lobby-username').innerText = username;
 
-        // Inicia Listener do Estado do Jogo
         listenGameState();
     });
 
-    // 3. ESCUTAR ESTADO DO JOGO (WAITING vs RUNNING)
+    // 3. ESCUTAR ESTADO DO JOGO (WAITING / RUNNING / ENCERRADO)
     function listenGameState() {
-        // Escuta o documento "config/estado_jogo"
         onSnapshot(doc(db, "config", "estado_jogo"), (doc) => {
             const state = doc.data();
-            if (state && state.status === "ROLANDO" && !gameHasStarted) {
-                // O Mestre iniciou!
+            
+            // INICIOU
+            if (state && state.status === "ROLANDO" && !gameHasStarted && !isGameEnded) {
                 gameHasStarted = true;
                 startGame();
             }
+            // FINALIZOU (Pelo Admin)
+            if (state && state.status === "ENCERRADO" && gameHasStarted && !isGameEnded) {
+                alert("O Mestre encerrou o Quiz!");
+                forceEndGame();
+            }
+            // RESETOU
             if (state && state.status === "ESPERA" && gameHasStarted) {
-                // O Mestre resetou durante o jogo
                 alert("O jogo foi reiniciado pelo Admin.");
                 location.reload();
             }
@@ -222,10 +231,12 @@
         showQuestion();
     }
 
-    // 4. LÓGICA DO QUIZ (PERGUNTAS)
+    // 4. LÓGICA DO QUIZ
     function showQuestion() {
+        if(isGameEnded) return;
+
         if(currentQuestionIndex >= questions.length) {
-            endGame();
+            endGame(); // Acabou normal
             return;
         }
         const q = questions[currentQuestionIndex];
@@ -262,8 +273,6 @@
             textInput.classList.remove('hidden');
             btnSubmit.classList.remove('hidden');
             textInput.focus();
-            
-            // Enter envia
             textInput.onkeypress = (e) => { if(e.key === "Enter") {
                  const val = textInput.value;
                  if(val) checkAnswer(val);
@@ -271,13 +280,13 @@
         }
     }
     
-    // Clique do botão confirmar texto
     document.getElementById('btn-submit-text').addEventListener('click', () => {
         const val = document.getElementById('text-answer').value;
         if(val) checkAnswer(val);
     });
 
     function checkAnswer(userAnswer) {
+        if(isGameEnded) return;
         const q = questions[currentQuestionIndex];
         const isCorrect = userAnswer.toString().toLowerCase() === q.correct.toString().toLowerCase();
         processAnswer(isCorrect);
@@ -292,12 +301,36 @@
         setTimeout(showQuestion, 500);
     }
 
+    // Fim de Jogo NORMAL (Jogador acabou tudo)
     async function endGame() {
+        if(isGameEnded) return;
+        isGameEnded = true;
+
         gameScreen.classList.add('hidden');
-        document.getElementById('end-screen').classList.remove('hidden');
+        endScreen.classList.remove('hidden');
         document.getElementById('final-score').innerText = score;
 
-        // Salvar pontos no Firebase
+        saveScore();
+    }
+
+    // Fim de Jogo FORÇADO (Admin clicou em Finalizar)
+    async function forceEndGame() {
+        if(isGameEnded) return;
+        isGameEnded = true;
+        clearInterval(timerInterval);
+
+        lobbyScreen.classList.add('hidden'); // Caso esteja no lobby
+        gameScreen.classList.add('hidden');
+        endScreen.classList.remove('hidden');
+        
+        document.getElementById('end-message').innerText = "O evento foi encerrado pelo Admin.";
+        document.getElementById('final-score').innerText = score;
+
+        saveScore();
+    }
+
+    async function saveScore() {
+        // Só salva se tiver pontuação > 0 ou se jogou
         try {
             await addDoc(collection(db, "ranking_humble"), {
                 username: username,
@@ -307,54 +340,52 @@
         } catch (e) { console.error("Erro ao salvar pontos", e); }
     }
 
-    // --- LÓGICA DE ADMIN (Start/Reset) ---
-    
-    // Revelar painel se digitar "admin"
+    // --- PAINEL DE ADMIN ---
     usernameInput.addEventListener('input', (e) => {
         if(e.target.value.toLowerCase() === 'admin') {
             document.getElementById('admin-panel').style.display = 'block';
         }
     });
 
+    // 1. INICIAR
     document.getElementById('btn-admin-start').addEventListener('click', async () => {
-        const pass = document.getElementById('admin-pass').value;
-        if(pass !== "humbleadmin") return alert("Senha errada!");
-
-        // Muda estado para ROLANDO
+        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
         try {
             await updateDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" });
-            alert("Jogo iniciado para todos!");
-        } catch(e) { 
-            alert("Erro. Verifique se criou a coleção 'config' no Firebase.");
-        }
+            alert("Status: ROLANDO");
+        } catch(e) { alert("Erro ao iniciar."); }
     });
 
-    document.getElementById('btn-admin-reset').addEventListener('click', async () => {
-        const pass = document.getElementById('admin-pass').value;
-        if(pass !== "humbleadmin") return alert("Senha errada!");
-
-        if(!confirm("Certeza? Isso apaga todo o Ranking e reinicia o jogo.")) return;
+    // 2. FINALIZAR (NOVO)
+    document.getElementById('btn-admin-stop').addEventListener('click', async () => {
+        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
+        if(!confirm("Encerrar o quiz para TODOS agora?")) return;
 
         try {
-            // 1. Apaga todos os scores antigos
+            await updateDoc(doc(db, "config", "estado_jogo"), { status: "ENCERRADO" });
+            alert("Status: ENCERRADO");
+        } catch(e) { alert("Erro ao finalizar."); }
+    });
+
+    // 3. RESETAR
+    document.getElementById('btn-admin-reset').addEventListener('click', async () => {
+        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
+        if(!confirm("Apagar ranking e reiniciar?")) return;
+
+        try {
             const q = query(collection(db, "ranking_humble"));
             const snapshot = await getDocs(q);
             const batch = writeBatch(db);
-            snapshot.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
+            snapshot.forEach((doc) => batch.delete(doc.ref));
             await batch.commit();
 
-            // 2. Reseta estado para ESPERA
             await updateDoc(doc(db, "config", "estado_jogo"), { status: "ESPERA" });
-            
-            alert("Ranking limpo e jogo resetado!");
+            alert("Reset completo.");
             location.reload();
-        } catch(e) { console.error(e); alert("Erro ao resetar."); }
+        } catch(e) { alert("Erro ao resetar."); }
     });
 
-
-    // --- LEADERBOARD AO VIVO ---
+    // LEADERBOARD
     const qRank = query(collection(db, "ranking_humble"), orderBy("score", "desc"), limit(3));
     onSnapshot(qRank, (snapshot) => {
         const list = document.getElementById('leaderboard-list');
@@ -368,7 +399,6 @@
             list.appendChild(li);
             index++;
         });
-        if(index===1) list.innerHTML = "<li>Aguardando pontuações...</li>";
     });
 
   </script>
