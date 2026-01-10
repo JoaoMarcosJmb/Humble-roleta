@@ -42,7 +42,45 @@
 
     .hidden { display: none !important; }
 
-    input { padding: 12px; width: 70%; border-radius: 5px; border: 1px solid var(--cor-dourado); background: #222; color: white; margin-bottom: 10px; text-align: center; font-size: 1.1em; outline: none;}
+    /* --- ESTILO DOS INPUTS (CORRIGIDO) --- */
+    input { 
+        padding: 12px; 
+        width: 70%; 
+        border-radius: 8px; 
+        /* Garante borda dourada e fundo escuro */
+        border: 2px solid var(--cor-dourado); 
+        background-color: #222 !important; 
+        color: var(--cor-texto) !important; 
+        
+        margin-bottom: 15px; 
+        text-align: center; 
+        font-size: 1.2rem; 
+        font-weight: bold;
+        outline: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    input:focus {
+        border-color: #ffeaa7;
+        box-shadow: 0 0 15px rgba(209, 167, 32, 0.4);
+        background-color: #1a1a1a !important;
+    }
+
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* ⚠️ TRUQUE PARA REMOVER FUNDO BRANCO DO AUTOCOMPLETE (Chrome/Edge) */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active  {
+        /* Força a cor do fundo usando sombra interna */
+        -webkit-box-shadow: 0 0 0 30px #222 inset !important;
+        /* Força a cor do texto */
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
     button { padding: 12px 25px; background: var(--cor-dourado); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; font-size: 1rem; }
     button:hover { background: #e5bd35; transform: scale(1.05); }
     
