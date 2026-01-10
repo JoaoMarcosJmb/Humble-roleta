@@ -143,20 +143,22 @@
     </div>
   </div>
 
-  <script type="module">
+<script type="module">
+    // Adicionei 'setDoc' na lista de importações abaixo
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, onSnapshot, query, orderBy, limit, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, setDoc, onSnapshot, query, orderBy, limit, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // --- ⬇️ SUAS CHAVES AQUI ⬇️ ---
+    // --- ⬇️ SUAS CHAVES AQUI (NÃO ESQUEÇA DE COLOCAR AS SUAS!) ⬇️ ---
     const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "SEU_PROJETO.firebaseapp.com",
-      projectId: "SEU_PROJETO_ID",
-      storageBucket: "SEU_PROJETO.appspot.com",
-      messagingSenderId: "NUMEROS",
-      appId: "NUMEROS_LETRAS"
-    };
-    // --- ⬆️ FIM DAS CHAVES ⬆️ ---
+  apiKey: "AIzaSyA2TdsWbqOhYUrezQ3zSG9OeP2ZSIxGpBk",
+  authDomain: "quiz-d1e99.firebaseapp.com",
+  projectId: "quiz-d1e99",
+  storageBucket: "quiz-d1e99.firebasestorage.app",
+  messagingSenderId: "685198946824",
+  appId: "1:685198946824:web:e29547e188de650e39d7bd",
+  measurementId: "G-RX5CN69ZMF"
+};
+    // --- ⬆️ ---
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -198,26 +200,35 @@
         lobbyScreen.classList.remove('hidden');
         document.getElementById('lobby-username').innerText = username;
 
+        console.log("Entrou no lobby, aguardando sinal do Firebase...");
         listenGameState();
     });
 
     // 3. ESCUTAR ESTADO DO JOGO (WAITING / RUNNING / ENCERRADO)
     function listenGameState() {
-        onSnapshot(doc(db, "config", "estado_jogo"), (doc) => {
-            const state = doc.data();
+        // Escuta mudanças no documento "config/estado_jogo"
+        onSnapshot(doc(db, "config", "estado_jogo"), (docSnapshot) => {
+            if (!docSnapshot.exists()) {
+                console.log("Aguardando Admin criar a sessão...");
+                return;
+            }
+            
+            const state = docSnapshot.data();
+            console.log("Status atual do jogo:", state.status);
             
             // INICIOU
-            if (state && state.status === "ROLANDO" && !gameHasStarted && !isGameEnded) {
+            if (state.status === "ROLANDO" && !gameHasStarted && !isGameEnded) {
+                console.log("O jogo começou!");
                 gameHasStarted = true;
                 startGame();
             }
             // FINALIZOU (Pelo Admin)
-            if (state && state.status === "ENCERRADO" && gameHasStarted && !isGameEnded) {
+            if (state.status === "ENCERRADO" && gameHasStarted && !isGameEnded) {
                 alert("O Mestre encerrou o Quiz!");
                 forceEndGame();
             }
             // RESETOU
-            if (state && state.status === "ESPERA" && gameHasStarted) {
+            if (state.status === "ESPERA" && gameHasStarted) {
                 alert("O jogo foi reiniciado pelo Admin.");
                 location.reload();
             }
@@ -235,7 +246,7 @@
         if(isGameEnded) return;
 
         if(currentQuestionIndex >= questions.length) {
-            endGame(); // Acabou normal
+            endGame(); 
             return;
         }
         const q = questions[currentQuestionIndex];
@@ -300,36 +311,28 @@
         setTimeout(showQuestion, 500);
     }
 
-    // Fim de Jogo NORMAL (Jogador acabou tudo)
     async function endGame() {
         if(isGameEnded) return;
         isGameEnded = true;
-
         gameScreen.classList.add('hidden');
         endScreen.classList.remove('hidden');
         document.getElementById('final-score').innerText = score;
-
         saveScore();
     }
 
-    // Fim de Jogo FORÇADO (Admin clicou em Finalizar)
     async function forceEndGame() {
         if(isGameEnded) return;
         isGameEnded = true;
         clearInterval(timerInterval);
-
-        lobbyScreen.classList.add('hidden'); // Caso esteja no lobby
+        lobbyScreen.classList.add('hidden');
         gameScreen.classList.add('hidden');
         endScreen.classList.remove('hidden');
-        
         document.getElementById('end-message').innerText = "O evento foi encerrado pelo Admin.";
         document.getElementById('final-score').innerText = score;
-
         saveScore();
     }
 
     async function saveScore() {
-        // Só salva se tiver pontuação > 0 ou se jogou
         try {
             await addDoc(collection(db, "ranking_humble"), {
                 username: username,
@@ -346,23 +349,28 @@
         }
     });
 
-    // 1. INICIAR
+    // 1. INICIAR (CORRIGIDO COM setDoc)
     document.getElementById('btn-admin-start').addEventListener('click', async () => {
-        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
+        const pass = document.getElementById('admin-pass').value;
+        if(pass !== "humbleadmin") return alert("Senha errada!");
+
         try {
-            await updateDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" });
-            alert("Status: ROLANDO");
-        } catch(e) { alert("Erro ao iniciar."); }
+            // AQUI ESTAVA O ERRO: Mudei de updateDoc para setDoc
+            // Isso cria o documento se ele não existir
+            await setDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" });
+            alert("Sinal de início enviado! Verifique se o jogo começou.");
+        } catch(e) { 
+            console.error("Erro Firebase:", e);
+            alert("Erro ao iniciar. Abra o Console (F12) para ver o detalhe."); 
+        }
     });
 
-    // 2. FINALIZAR (NOVO)
+    // 2. FINALIZAR
     document.getElementById('btn-admin-stop').addEventListener('click', async () => {
         if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
         if(!confirm("Encerrar o quiz para TODOS agora?")) return;
-
         try {
-            await updateDoc(doc(db, "config", "estado_jogo"), { status: "ENCERRADO" });
-            alert("Status: ENCERRADO");
+            await setDoc(doc(db, "config", "estado_jogo"), { status: "ENCERRADO" });
         } catch(e) { alert("Erro ao finalizar."); }
     });
 
@@ -370,7 +378,6 @@
     document.getElementById('btn-admin-reset').addEventListener('click', async () => {
         if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
         if(!confirm("Apagar ranking e reiniciar?")) return;
-
         try {
             const q = query(collection(db, "ranking_humble"));
             const snapshot = await getDocs(q);
@@ -378,7 +385,7 @@
             snapshot.forEach((doc) => batch.delete(doc.ref));
             await batch.commit();
 
-            await updateDoc(doc(db, "config", "estado_jogo"), { status: "ESPERA" });
+            await setDoc(doc(db, "config", "estado_jogo"), { status: "ESPERA" });
             alert("Reset completo.");
             location.reload();
         } catch(e) { alert("Erro ao resetar."); }
@@ -399,7 +406,6 @@
             index++;
         });
     });
-
   </script>
 </body>
 </html>
