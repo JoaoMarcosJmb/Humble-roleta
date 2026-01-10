@@ -145,7 +145,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, doc, updateDoc, setDoc, onSnapshot, query, orderBy, limit, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, setDoc, onSnapshot, query, orderBy, limit, getDocs, writeBatch, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // ⬇️ RECOLOQUE SUAS CHAVES AQUI! ⬇️
     const firebaseConfig = {
@@ -167,6 +167,7 @@
     let currentQuestionIndex = 0;
     let score = 0;
     let username = "";
+    let userDocId = ""; 
     let timerInterval;
     let timeLeft = 0;
     let gameHasStarted = false;
@@ -178,7 +179,68 @@
     const endScreen = document.getElementById('end-screen');
     const usernameInput = document.getElementById('username');
 
-    // 1. CARREGAR PERGUNTAS
+    // ======================================================
+    // 🛡️ SISTEMA DE BANLIST (LISTA COMPLETA)
+    // ======================================================
+    
+    // Lista fornecida pelo usuário + proteções de sistema
+    const termosProibidos = [
+        "admin", "moderador", "staff", "suporte", "gm", "god", // Falsidade ideológica
+        "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha",
+        "merda", "m3rda", "bosta", "cagar", "cagado",
+        "caralho", "krl", "carai", "caraio", "c4ralho", "pqp",
+        "boceta", "buceta", "bct", "buc3ta", "b0ceta", "xereca", "xoxota", "ppk", "pepeca", "xrk",
+        "viado", "v1ado", "viad0", "bixa", "bicha", "boiola", "baitola", "biba", "viadinho", "gayzista",
+        "fuder", "foder", "fudido", "fudida", "fodido", "f0der", "fud3r", "foda", "foda-se",
+        "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra",
+        "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada",
+        "boquete", "boqueteiro", "boqueteira", "chupa", "chupei", "mamada", "mamar",
+        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry",
+        "jack", "estuprador", 
+        "corno", "c0rno", "cornudo", "chifrudo", "chuca", "xuca", "x4ca", "ch4ca", "retardado", "autista", "prostituta",
+        "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala",
+        "hitler", "h1tler", "nazista", "nazi", "ritler", "suastica", "ariano",
+        "judeu", "judiaria", 
+        "nigga", "nigger", 
+        "traveco", "travesti", "tr4veco", "shemale", "femboy", "tomboy",
+        "fuck", "fck", "dick", "pussy", "asshole", "bitch", "shit", "cunt", "whore", "cock", "suck"
+    ];
+
+    function contemTermoProibido(nickOriginal) {
+        if(!nickOriginal) return false;
+
+        // Tabela de conversão (Leetspeak -> Letra Normal)
+        // Isso ajuda a pegar variações que não estejam na lista exata
+        const mapaLeet = {
+            '4': 'a', '@': 'a', '3': 'e', '1': 'i', '!': 'i', 
+            '0': 'o', '5': 's', '$': 's', '7': 't', '+': 't',
+            'v': 'u'
+        };
+
+        // 1. Limpeza pesada
+        let nickLimpo = nickOriginal.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+        // 2. Converte Leetspeak (ex: p4t4 -> pata)
+        nickLimpo = nickLimpo.split('').map(char => mapaLeet[char] || char).join('');
+
+        // 3. Remove caracteres especiais para pegar "p.u.t.a"
+        let nickSemPontos = nickLimpo.replace(/[^a-z]/g, "");
+
+        // Debug (Pode remover depois)
+        // console.log(`Original: ${nickOriginal} | Limpo: ${nickSemPontos}`);
+
+        for (let termo of termosProibidos) {
+            // Verifica o termo exato na lista limpa
+            if (nickLimpo.includes(termo) || nickSemPontos.includes(termo)) {
+                return true; 
+            }
+        }
+        return false; 
+    }
+    // ======================================================
+
+
+    // CARREGAR PERGUNTAS
     async function loadQuestions() {
         try {
             const res = await fetch('perguntas/quiz_data.json');
@@ -186,21 +248,56 @@
         } catch(e) { console.error("Erro JSON", e); }
     }
 
-    // 2. ENTRAR NO LOBBY
+    // ENTRAR NO LOBBY
     document.getElementById('btn-enter').addEventListener('click', async () => {
-        username = usernameInput.value.trim();
-        if(!username) return alert("Digite um nome!");
+        let rawName = usernameInput.value.trim();
+        if(!rawName) return alert("Digite um nome!");
+        
+        // 🛡️ VERIFICAÇÃO DE BANLIST
+        if (contemTermoProibido(rawName)) {
+            alert("⚠️ Nickname não permitido.\nPor favor, escolha um nome apropriado.");
+            usernameInput.value = ""; 
+            return;
+        }
+
+        username = rawName; 
 
         await loadQuestions();
         if(questions.length === 0) return alert("Erro ao carregar perguntas.");
 
-        loginScreen.classList.add('hidden');
-        lobbyScreen.classList.remove('hidden');
-        document.getElementById('lobby-username').innerText = username;
-        listenGameState();
+        try {
+            // Verifica duplicidade
+            const qCheck = query(collection(db, "ranking_humble"), where("username", "==", username));
+            const querySnapshot = await getDocs(qCheck);
+
+            if (!querySnapshot.empty) {
+                alert(`O nick "${username}" já está sendo usado.\nEscolha outro.`);
+                return;
+            }
+
+            // Reserva Nick
+            const docRef = await addDoc(collection(db, "ranking_humble"), {
+                username: username,
+                score: 0,
+                status: "lobby",
+                date: new Date()
+            });
+            userDocId = docRef.id;
+
+            loginScreen.classList.add('hidden');
+            lobbyScreen.classList.remove('hidden');
+            document.getElementById('lobby-username').innerText = username;
+            
+            listenGameState();
+
+        } catch (e) {
+            console.error(e);
+            alert("Erro de conexão.");
+        }
     });
 
-    // 3. ESTADO DO JOGO
+    // --- RESTANTE DA LÓGICA (IGUAL) ---
+    
     function listenGameState() {
         onSnapshot(doc(db, "config", "estado_jogo"), (docSnapshot) => {
             if (!docSnapshot.exists()) return;
@@ -227,7 +324,6 @@
         showQuestion();
     }
 
-    // 4. LÓGICA DO QUIZ
     function showQuestion() {
         if(isGameEnded) return;
         if(currentQuestionIndex >= questions.length) { endGame(); return; }
@@ -237,7 +333,6 @@
         
         const optionsDiv = document.getElementById('options-container');
         const textInput = document.getElementById('text-answer');
-        const btnSubmit = document.getElementById('btn-submit-text');
         
         optionsDiv.innerHTML = "";
         textInput.value = "";
@@ -254,7 +349,7 @@
 
         if(q.type === 'multiple_choice') {
             textInput.classList.add('hidden');
-            btnSubmit.classList.add('hidden');
+            document.getElementById('btn-submit-text').classList.add('hidden');
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.innerText = opt;
@@ -264,7 +359,7 @@
             });
         } else {
             textInput.classList.remove('hidden');
-            btnSubmit.classList.remove('hidden');
+            document.getElementById('btn-submit-text').classList.remove('hidden');
             textInput.focus();
             textInput.onkeypress = (e) => { if(e.key === "Enter") checkAnswer(textInput.value); };
         }
@@ -274,23 +369,12 @@
         checkAnswer(document.getElementById('text-answer').value);
     });
 
-   function checkAnswer(userAnswer) {
+    function checkAnswer(userAnswer) {
         if(isGameEnded || !userAnswer) return;
-
         const q = questions[currentQuestionIndex];
-        
-        // Função para limpar o texto (Tira acento, espaço e põe minúscula)
-        const normalize = (str) => {
-            return str
-                .toString() // Garante que é texto
-                .toLowerCase() // Tudo minúsculo
-                .trim() // Remove espaços em branco nas pontas
-                .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Remove acentos (é -> e)
-        };
-
-        // Compara a resposta do usuário limpa com a resposta correta limpa
+        // Normalização de resposta (Permite espaços e acentos errados)
+        const normalize = (str) => str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         const isCorrect = normalize(userAnswer) === normalize(q.correct);
-        
         processAnswer(isCorrect);
     }
 
@@ -323,13 +407,14 @@
     }
 
     async function saveScore() {
+        if(!userDocId) return;
         try {
-            await addDoc(collection(db, "ranking_humble"), {
-                username: username,
-                score: score,
-                date: new Date()
+            await updateDoc(doc(db, "ranking_humble", userDocId), {
+                score: score, status: "finalizado", date: new Date()
             });
-        } catch (e) { console.error("Erro ao salvar:", e); }
+        } catch (e) {
+            try { await addDoc(collection(db, "ranking_humble"), { username: username, score: score, status: "recuperado", date: new Date() }); } catch(e2){}
+        }
     }
 
     // --- ADMIN ---
@@ -337,64 +422,37 @@
         if(e.target.value.toLowerCase() === 'admin') document.getElementById('admin-panel').style.display = 'block';
     });
 
-    // Iniciar
     document.getElementById('btn-admin-start').addEventListener('click', async () => {
         if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
-        try {
-            await setDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" });
-            alert("Iniciado!");
-        } catch(e) { alert("Erro ao iniciar. Verifique as REGRAS do Firebase."); }
+        try { await setDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" }); alert("Iniciado!"); } catch(e) { alert("Erro ao iniciar."); }
     });
 
-    // Finalizar
     document.getElementById('btn-admin-stop').addEventListener('click', async () => {
         if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
         if(!confirm("Encerrar?")) return;
-        try {
-            await setDoc(doc(db, "config", "estado_jogo"), { status: "ENCERRADO" });
-        } catch(e) { alert("Erro ao finalizar."); }
+        try { await setDoc(doc(db, "config", "estado_jogo"), { status: "ENCERRADO" }); } catch(e) { alert("Erro ao finalizar."); }
     });
 
-    // Resetar (CORRIGIDO E MAIS FORTE)
     document.getElementById('btn-admin-reset').addEventListener('click', async () => {
         if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha errada!");
-        if(!confirm("Certeza? Isso apaga TODO O RANKING.")) return;
-
+        if(!confirm("Resetar ranking?")) return;
         try {
             const q = query(collection(db, "ranking_humble"));
             const snapshot = await getDocs(q);
-            
-            // Log para debug (Aperte F12 para ver)
-            console.log(`Encontrados ${snapshot.size} documentos para apagar.`);
-
             const batch = writeBatch(db);
-            snapshot.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
+            snapshot.forEach((doc) => batch.delete(doc.ref));
             await batch.commit();
-
             await setDoc(doc(db, "config", "estado_jogo"), { status: "ESPERA" });
-            
-            alert("Reset realizado com sucesso! A página irá recarregar.");
             location.reload();
-        } catch(e) { 
-            console.error(e);
-            alert("ERRO AO RESETAR: " + e.message + "\n\nVerifique se as REGRAS do Firebase estão como 'true'."); 
-        }
+        } catch(e) { alert("Erro reset: " + e.message); }
     });
 
-    // LEADERBOARD (CORRIGIDO PARA MOSTRAR QUANDO VAZIO)
+    // LEADERBOARD
     const qRank = query(collection(db, "ranking_humble"), orderBy("score", "desc"), limit(3));
     onSnapshot(qRank, (snapshot) => {
         const list = document.getElementById('leaderboard-list');
         list.innerHTML = "";
-        
-        // Se estiver vazio, mostra mensagem
-        if (snapshot.empty) {
-            list.innerHTML = "<li style='justify-content:center; color: #aaa;'>Nenhum jogador registrado.</li>";
-            return;
-        }
-
+        if (snapshot.empty) { list.innerHTML = "<li style='justify-content:center; color: #aaa;'>Nenhum jogador registrado.</li>"; return; }
         let index = 1;
         snapshot.forEach((doc) => {
             const d = doc.data();
