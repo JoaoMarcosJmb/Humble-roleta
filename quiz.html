@@ -7,249 +7,287 @@
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
-    /* --- ESTILOS VISUAIS (TEMA HUMBLE) --- */
+    /* --- IMPORTANDO FONTE MAIS MODERNA (ROBOTO/POPPINS) --- */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
     :root {
-      --cor-dourado: #d1a720; 
-      --cor-fundo: #1a1a1a; 
-      --cor-texto: #f5f5f5;
-      --cor-overlay: rgba(20, 20, 20, 0.95);
-      --cor-erro: #e74c3c;
-      --cor-aviso: #e67e22;
-      --nav-height: 50px; /* Altura da navbar definida */
+      --cor-dourado: #ffc107; /* Amarelo mais vivo igual da print */
+      --cor-fundo: #121212; 
+      --cor-card: #0a0a0a; /* Fundo do card quase preto */
+      --cor-texto: #ffffff;
+      --nav-height: 60px;
     }
     
     * {
-        box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif; /* Fonte mais bonita */
     }
 
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      /* Mantendo o SEU background original do Quiz */
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
-      margin: 0; 
-      padding: 0; 
-      
-      /* Ajuste para o Footer ficar no rodapé */
-      min-height: 100vh;
+      /* Fundo escuro com gradiente sutil para dar profundidade */
+      background: radial-gradient(circle at center, #2a2a2a 0%, #0f0f0f 100%);
+      color: var(--cor-texto);
       display: flex; 
       flex-direction: column; 
-      color: var(--cor-texto);
+      min-height: 100vh;
     }
 
-    /* --- 1. NAVBAR MENOR (Solicitado) --- */
+    /* --- NAVBAR ESTILO "SELECIONE SUA VERSÃO" --- */
     nav {
-        background-color: #2d2d2d;
-        border-bottom: 2px solid #7289da;
+        background-color: #1a1a1a;
+        border-bottom: 2px solid var(--cor-dourado); /* A linha amarela */
         height: var(--nav-height);
         display: flex;
         align-items: center;
-        padding: 0 20px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        width: 100%;
-        flex-shrink: 0;
+        padding: 0 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
     .nav-logo {
         font-weight: 700;
-        font-size: 1.1rem;
-        color: #fff;
-        letter-spacing: 0.5px;
+        font-size: 1.2rem;
+        color: var(--cor-dourado); /* Texto Amarelo */
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
-    /* Caixa Principal */
-    .main-content { 
-        width: 95%; 
-        max-width: 600px; 
-        flex: 1; /* Ocupa o espaço livre */
+    /* --- ÁREA PRINCIPAL --- */
+    main {
+        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center; /* Centraliza verticalmente */
-        margin: 0 auto; /* Centraliza horizontalmente */
-        padding: 20px 0;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
     }
 
+    /* Imagem do macaco no canto (Opcional, igual na print 2) */
+    .bg-mascot {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 300px; /* Ajuste conforme a imagem */
+        opacity: 0.8;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    /* --- CARD DO QUIZ (ESTILO BOTÕES DO MENU) --- */
     .quiz-box {
-        width: 100%; 
-        background: rgba(30, 30, 30, 0.95); 
-        border: 2px solid var(--cor-dourado);
-        border-radius: 15px; 
-        padding: 25px; 
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 500px;
+        background-color: var(--cor-card); /* Preto fosco */
+        border-radius: 15px; /* Bordas arredondadas */
+        padding: 40px;
         text-align: center;
-        box-shadow: 0 0 25px rgba(209, 167, 32, 0.3);
+        /* Sombra suave para destacar do fundo */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        border: 1px solid #333; /* Borda sutil cinza escuro */
     }
 
     .quiz-header-logo {
-        height: 60px;
-        margin-bottom: 10px;
-        transition: transform 0.3s;
+        height: 50px;
+        margin-bottom: 15px;
     }
-    .quiz-header-logo:hover { transform: scale(1.1); }
 
-    .hidden { display: none !important; }
+    h2 {
+        color: var(--cor-dourado);
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
 
-    /* Inputs */
+    p {
+        color: #aaa;
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+
+    /* --- INPUTS E BOTÕES --- */
     input { 
         padding: 12px; 
-        width: 70%; 
+        width: 100%; 
         border-radius: 8px; 
-        border: 2px solid var(--cor-dourado); 
-        background-color: #222 !important; 
-        color: var(--cor-texto) !important; 
-        margin-bottom: 15px; 
+        border: 1px solid #444; 
+        background-color: #1a1a1a !important; 
+        color: white !important; 
+        margin-bottom: 20px; 
         text-align: center; 
-        font-size: 1.2rem; 
-        font-weight: bold;
-        outline: none;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        font-size: 1rem; 
+        transition: 0.3s;
     }
     input:focus {
-        border-color: #ffeaa7;
-        box-shadow: 0 0 15px rgba(209, 167, 32, 0.4);
-        background-color: #1a1a1a !important;
-    }
-    input::placeholder { color: rgba(255, 255, 255, 0.5); }
-
-    input:-webkit-autofill,
-    input:-webkit-autofill:hover, 
-    input:-webkit-autofill:focus, 
-    input:-webkit-autofill:active  {
-        -webkit-box-shadow: 0 0 0 30px #222 inset !important;
-        -webkit-text-fill-color: white !important;
-        transition: background-color 5000s ease-in-out 0s;
+        border-color: var(--cor-dourado);
+        outline: none;
     }
 
     button { 
-        padding: 12px 25px; 
+        padding: 12px 30px; 
+        width: 100%;
         background: var(--cor-dourado); 
         border: none; 
-        font-weight: bold; 
+        font-weight: 700; 
         cursor: pointer; 
-        border-radius: 5px; 
+        border-radius: 8px; 
         text-transform: uppercase; 
-        margin-top: 10px; 
-        font-size: 1rem; 
-        color: #1a1a1a;
+        font-size: 0.9rem; 
+        color: #000;
+        transition: transform 0.2s, filter 0.2s;
     }
-    button:hover { background: #e5bd35; transform: scale(1.05); }
-    
-    .option-btn { width: 100%; background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado); margin: 8px 0; }
-    .option-btn:hover { background: var(--cor-dourado); color: #1a1a1a; }
-
-    .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem; }
-    
-    #admin-panel {
-        margin-top: 20px; padding: 15px; border: 1px dashed var(--cor-erro);
-        background: rgba(50, 0, 0, 0.5); display: none;
+    button:hover { 
+        filter: brightness(1.1);
+        transform: translateY(-2px); 
     }
-    .btn-admin { background: var(--cor-erro); color: white; font-size: 0.9rem; margin: 5px; }
-    .btn-stop { background: var(--cor-aviso); }
-    .ban-area { border-top: 1px solid #444; margin-top: 15px; padding-top: 10px; }
+    
+    .hidden { display: none !important; }
 
-    .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
-    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+    /* Opções de Resposta */
+    .option-btn { 
+        background: transparent; 
+        border: 1px solid #444; 
+        color: #ccc; 
+        margin: 8px 0; 
+        transition: 0.2s;
+    }
+    .option-btn:hover { 
+        border-color: var(--cor-dourado); 
+        color: var(--cor-dourado); 
+        background: rgba(255, 193, 7, 0.05);
+    }
 
+    /* --- LEADERBOARD DENTRO DO CARD --- */
     .leaderboard-box {
-        margin-top: 30px; text-align: left; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; width: 100%; box-sizing: border-box;
+        margin-top: 30px; 
+        text-align: left; 
+        background: #111; 
+        padding: 15px; 
+        border-radius: 10px; 
+        border: 1px solid #222;
     }
-    .leaderboard-box h3 { text-align: center; color: var(--cor-dourado); margin-top: 0; }
-    ul { list-style: none; padding: 0; }
-    li { padding: 10px; border-bottom: 1px solid #444; display: flex; justify-content: space-between;}
-    li:nth-child(1) { color: #ffd700; font-weight: bold; } 
-    li:nth-child(2) { color: #c0c0c0; } 
-    li:nth-child(3) { color: #cd7f32; }
+    .leaderboard-box h3 { 
+        text-align: center; 
+        color: #fff; 
+        font-size: 1rem;
+        margin-top: 0; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    ul { list-style: none; padding: 0; margin-top: 10px; }
+    li { 
+        padding: 8px; 
+        border-bottom: 1px solid #222; 
+        display: flex; 
+        justify-content: space-between;
+        font-size: 0.9rem;
+    }
+    li:last-child { border-bottom: none; }
+    li:nth-child(1) { color: #ffd700; } 
 
-    /* --- 3. FOOTER HUMBLE PIXELMON (Solicitado) --- */
+    /* --- FOOTER DISCRETO --- */
     footer {
-        background-color: #0f0f0f;
-        color: #666;
+        background-color: transparent; /* Transparente para casar com o fundo */
+        color: #555;
         text-align: center;
-        padding: 15px;
-        font-size: 0.85rem;
-        border-top: 1px solid #333;
-        margin-top: auto; /* Empurra para o fundo */
-        width: 100%;
-        flex-shrink: 0;
+        padding: 20px;
+        font-size: 0.75rem;
     }
-    footer strong { color: #888; }
-    .footer-credits { font-size: 0.75rem; margin-top: 5px; opacity: 0.7; }
+    footer strong { color: #777; }
+
+    /* Admin Panel */
+    #admin-panel {
+        margin-top: 20px; padding: 10px; border: 1px dashed #444;
+        background: rgba(0,0,0,0.2); display: none;
+    }
+    .btn-admin { width: auto; padding: 8px 15px; margin: 2px; font-size: 0.8rem; color: white;}
+    .btn-stop { background: #d32f2f; color: white; }
+    
   </style>
 </head>
 <body>
 
   <nav>
-    <div class="nav-logo">Humble Pixelmon Tools</div>
+    <div class="nav-logo">
+       <img src="img/mike_anotando2.png" alt="" style="height: 30px;"> 
+       Humble Quiz
+    </div>
   </nav>
 
-  <div class="main-content">
+  <main>
+    
     <div class="quiz-box">
         
-        <img src="https://i.imgur.com/XOEcuO8.png" alt="Humble" class="quiz-header-logo">
-
         <div id="login-screen">
-            <h2 style="color: var(--cor-dourado); margin-top: 0;">🏆 Humble Quiz</h2>
-            <p>Digite seu nick para entrar na sala:</p>
-            <input type="text" id="username" placeholder="Seu Nick..." maxlength="15" />
-            <br>
+            <h2>Quem é você?</h2>
+            <p>Digite seu nick para entrar na sala</p>
+            
+            <input type="text" id="username" placeholder="Seu Nick..." maxlength="15" autocomplete="off" />
             <button id="btn-enter">ENTRAR NA SALA</button>
 
             <div id="admin-panel">
-                <h4>⚠️ Área do Admin</h4>
-                <input type="password" id="admin-pass" placeholder="Senha..." style="width: 50%;">
+                <h4 style="color:#d32f2f; margin-bottom:5px;">⚠️ Admin</h4>
+                <input type="password" id="admin-pass" placeholder="Senha..." style="width: 80%;">
                 <br>
-                <button class="btn-admin" id="btn-admin-start" style="background: #27ae60;">▶️ INICIAR JOGO</button>
-                <button class="btn-admin btn-stop" id="btn-admin-stop">⏹️ FINALIZAR</button>
-                <button class="btn-admin" id="btn-admin-reset">🔄 RESETAR</button>
-                
-                <div class="ban-area">
-                    <input type="text" id="ban-input" placeholder="Nick para banir..." style="width: 60%; border-color: red;">
-                    <button class="btn-admin" id="btn-admin-ban" style="margin-top:0;">🚫 BANIR</button>
+                <button class="btn-admin" id="btn-admin-start" style="background: #2ecc71;">Iniciar</button>
+                <button class="btn-admin btn-stop" id="btn-admin-stop">Parar</button>
+                <button class="btn-admin" id="btn-admin-reset" style="background: #3498db;">Reset</button>
+                <div style="margin-top:5px;">
+                    <input type="text" id="ban-input" placeholder="Nick ban..." style="width: 60%; padding:5px;">
+                    <button class="btn-admin" id="btn-admin-ban" style="background:#000;">Ban</button>
                 </div>
+            </div>
+
+            <div class="leaderboard-box">
+                <h3>📊 Top 3 - Ao Vivo</h3>
+                <ul id="leaderboard-list">
+                    <li style="justify-content: center; color: #555;">Nenhum jogador...</li>
+                </ul>
             </div>
         </div>
 
         <div id="lobby-screen" class="hidden">
-            <h2>⏳ Aguardando Início...</h2>
-            <div class="loader">⚡</div>
+            <div style="font-size: 3rem;">⏳</div>
+            <h2 style="margin-top:10px;">Aguardando...</h2>
             <p>O Mestre iniciará a partida em breve.</p>
-            <p style="font-size: 0.9em; color: #aaa;">Logado como: <strong id="lobby-username" style="color: var(--cor-dourado)"></strong></p>
+            <p style="font-size: 0.8rem; border: 1px solid #333; display:inline-block; padding: 5px 15px; border-radius: 20px;">
+                Logado como: <strong id="lobby-username" style="color: var(--cor-dourado)"></strong>
+            </p>
         </div>
 
         <div id="game-screen" class="hidden">
-            <div class="hud">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: var(--cor-dourado);">
                 <span id="timer">⏳ 0s</span>
                 <span id="score-display">💎 0</span>
             </div>
             
-            <h2 id="question-text">Carregando...</h2>
+            <h2 id="question-text" style="color: #fff; font-size: 1.2rem; min-height: 50px;">Carregando...</h2>
             <div id="options-container"></div>
+            
             <input type="text" id="text-answer" class="hidden" placeholder="Sua resposta...">
             <button id="btn-submit-text" class="hidden">Confirmar</button>
         </div>
 
         <div id="end-screen" class="hidden">
             <h2>Fim de Jogo!</h2>
-            <p id="end-message">Sua pontuação foi salva.</p>
+            <p id="end-message">Pontuação Final</p>
             <h1 id="final-score" style="color: var(--cor-dourado); font-size: 4rem; margin: 10px 0;">0</h1>
-            <button onclick="location.reload()">Sair</button>
-        </div>
-
-        <div class="leaderboard-box">
-            <h3>📊 Top 3 - Ao Vivo</h3>
-            <ul id="leaderboard-list">
-                <li style="justify-content: center;">Carregando...</li>
-            </ul>
+            <button onclick="location.reload()" style="background: #333; color: #fff;">Voltar ao Início</button>
         </div>
 
     </div>
-    
-    </div>
+
+    </main>
 
   <footer>
     <p>&copy; 2026 <strong>Humble Pixelmon</strong>. Todos os direitos reservados.</p>
-    <p class="footer-credits">Desenvolvido por João Marcos</p>
   </footer>
 
   <script type="module">
@@ -295,25 +333,25 @@
     // 🛡️ BANLIST
     // ======================================================
     const termosProibidos = [
-        "admin", "moderador", "staff", "suporte", "gm", "god",
-        "baceta", "b4ceta", "b@ceta", 
-        "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha",
+       "admin", "moderador", "staff", "suporte", "gm", "god",
+        "baceta", "b4ceta", "b@ceta", "buceta",
+        "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha", "fdp",
         "merda", "m3rda", "bosta", "cagar", "cagado",
         "caralho", "krl", "carai", "caraio", "c4ralho", "pqp",
-        "boceta", "buceta", "bct", "buc3ta", "b0ceta", "xereca", "xoxota", "ppk", "pepeca", "xrk",
+        "boceta", "buceta", "bct", "buc3ta", "b0ceta", "xereca", "xoxota", "ppk", "pepeca", "xrk", "xana"
         "viado", "v1ado", "viad0", "bixa", "bicha", "boiola", "baitola", "biba", "viadinho", "gayzista",
         "fuder", "foder", "fudido", "fudida", "fodido", "f0der", "fud3r", "foda", "foda-se",
-        "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra",
-        "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada",
+        "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra", "gozadinha", "leitada", "leitei", 
+        "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada", "smt", "bago", 
         "boquete", "boqueteiro", "boqueteira", "chupa", "chupei", "mamada", "mamar",
-        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry",
-        "jack", "estuprador", 
+        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry", "diddy", "molestador",
+        "jack", "estuprador", "abusador", "estudador" 
         "corno", "c0rno", "cornudo", "chifrudo", "chuca", "xuca", "x4ca", "ch4ca", "retardado", "autista", "prostituta",
-        "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala",
-        "hitler", "h1tler", "nazista", "nazi", "ritler", "suastica", "ariano",
+        "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala", "2550c01",
+        "hitler", "h1tler", "nazista", "nazi", "ritler", "suastica", "ariano", "favelado", "favelada", 
         "judeu", "judiaria", 
         "nigga", "nigger", 
-        "traveco", "travesti", "tr4veco", "shemale", "femboy", "tomboy",
+        "traveco", "travesti", "tr4veco", "shemale", "femboy", "tomboy", "veveco"
         "fuck", "fck", "dick", "pussy", "asshole", "bitch", "shit", "cunt", "whore", "cock", "suck"
     ];
 
@@ -552,7 +590,7 @@
     onSnapshot(qRank, (snapshot) => {
         const list = document.getElementById('leaderboard-list');
         list.innerHTML = "";
-        if (snapshot.empty) { list.innerHTML = "<li style='justify-content:center; color: #aaa;'>Nenhum jogador registrado.</li>"; return; }
+        if (snapshot.empty) { list.innerHTML = "<li style='justify-content:center; color: #555;'>Nenhum jogador registrado.</li>"; return; }
         let index = 1;
         snapshot.forEach((doc) => {
             const d = doc.data();
