@@ -517,9 +517,18 @@
         }
     });
 
-    // LEADERBOARD
-    const qRank = query(collection(db, "ranking_humble"), orderBy("score", "desc"), limit(3));
+// LEADERBOARD (COM DESEMPATE POR DATA)
+    // 1º Critério: Maior Pontuação (desc)
+    // 2º Critério: Quem fez primeiro (asc) -> Data mais antiga ganha
+    const qRank = query(
+        collection(db, "ranking_humble"), 
+        orderBy("score", "desc"), 
+        orderBy("date", "asc"), 
+        limit(3)
+    );
+
     onSnapshot(qRank, (snapshot) => {
+        // ... (o resto dentro desta função continua igual)
         const list = document.getElementById('leaderboard-list');
         list.innerHTML = "";
         if (snapshot.empty) { list.innerHTML = "<li style='justify-content:center; color: #aaa;'>Nenhum jogador registrado.</li>"; return; }
