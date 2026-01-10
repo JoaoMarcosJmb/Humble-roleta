@@ -16,42 +16,63 @@
       --cor-erro: #e74c3c;
       --cor-aviso: #e67e22;
     }
+    
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
-      margin: 0; padding: 0; min-height: 100vh;
+      margin: 0; 
+      padding: 0; 
+      
+      /* CENTRALIZAÇÃO PERFEITA DA TELA */
+      min-height: 100vh;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center;
+      justify-content: center; /* Isso centraliza verticalmente */
       color: var(--cor-texto);
-      display: flex; flex-direction: column; align-items: center;
     }
-    header {
-      width: 100%; padding: 15px; background: var(--cor-overlay);
-      border-bottom: 2px solid var(--cor-dourado); text-align: center;
-      position: fixed; top: 0; z-index: 100;
-    }
-    header h1 a { color: var(--cor-dourado); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.5rem; }
-    header img { height: 40px; }
 
-    .main-content { margin-top: 100px; width: 95%; max-width: 600px; }
-    .quiz-box {
-        background: rgba(30, 30, 30, 0.95); border: 2px solid var(--cor-dourado);
-        border-radius: 15px; padding: 25px; text-align: center;
-        box-shadow: 0 0 15px rgba(209, 167, 32, 0.3);
+    /* Caixa Principal (Sem margem no topo agora) */
+    .main-content { 
+        width: 95%; 
+        max-width: 600px; 
+        /* Garante que a caixa fique alinhada */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
+
+    .quiz-box {
+        width: 100%; /* Ocupa a largura da main-content */
+        background: rgba(30, 30, 30, 0.95); 
+        border: 2px solid var(--cor-dourado);
+        border-radius: 15px; 
+        padding: 25px; 
+        text-align: center;
+        box-shadow: 0 0 25px rgba(209, 167, 32, 0.3); /* Aumentei um pouco o brilho */
+        box-sizing: border-box; /* Evita que padding quebre o layout */
+    }
+
+    /* Logo dentro da caixa (Opcional, fica bonito) */
+    .quiz-header-logo {
+        height: 60px;
+        margin-bottom: 10px;
+        transition: transform 0.3s;
+    }
+    .quiz-header-logo:hover { transform: scale(1.1); }
 
     .hidden { display: none !important; }
 
-    /* --- ESTILO DOS INPUTS (CORRIGIDO) --- */
+    /* --- INPUTS CORRIGIDOS (Sem fundo branco) --- */
     input { 
         padding: 12px; 
         width: 70%; 
         border-radius: 8px; 
-        /* Garante borda dourada e fundo escuro */
         border: 2px solid var(--cor-dourado); 
         background-color: #222 !important; 
         color: var(--cor-texto) !important; 
-        
         margin-bottom: 15px; 
         text-align: center; 
         font-size: 1.2rem; 
@@ -59,33 +80,40 @@
         outline: none;
         box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
-
     input:focus {
         border-color: #ffeaa7;
         box-shadow: 0 0 15px rgba(209, 167, 32, 0.4);
         background-color: #1a1a1a !important;
     }
+    input::placeholder { color: rgba(255, 255, 255, 0.5); }
 
-    input::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-    }
-
-    /* ⚠️ TRUQUE PARA REMOVER FUNDO BRANCO DO AUTOCOMPLETE (Chrome/Edge) */
+    /* Remove fundo branco do Autocomplete */
     input:-webkit-autofill,
     input:-webkit-autofill:hover, 
     input:-webkit-autofill:focus, 
     input:-webkit-autofill:active  {
-        /* Força a cor do fundo usando sombra interna */
         -webkit-box-shadow: 0 0 0 30px #222 inset !important;
-        /* Força a cor do texto */
         -webkit-text-fill-color: white !important;
         transition: background-color 5000s ease-in-out 0s;
     }
-    button { padding: 12px 25px; background: var(--cor-dourado); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; font-size: 1rem; }
+
+    /* Botões */
+    button { 
+        padding: 12px 25px; 
+        background: var(--cor-dourado); 
+        border: none; 
+        font-weight: bold; 
+        cursor: pointer; 
+        border-radius: 5px; 
+        text-transform: uppercase; 
+        margin-top: 10px; 
+        font-size: 1rem; 
+        color: #1a1a1a;
+    }
     button:hover { background: #e5bd35; transform: scale(1.05); }
     
     .option-btn { width: 100%; background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado); margin: 8px 0; }
-    .option-btn:hover { background: var(--cor-dourado); color: black; }
+    .option-btn:hover { background: var(--cor-dourado); color: #1a1a1a; }
 
     .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem; }
     
@@ -96,17 +124,15 @@
     }
     .btn-admin { background: var(--cor-erro); color: white; font-size: 0.9rem; margin: 5px; }
     .btn-stop { background: var(--cor-aviso); }
-    
-    /* Area de Ban */
     .ban-area { border-top: 1px solid #444; margin-top: 15px; padding-top: 10px; }
 
-    /* Lobby */
+    /* Lobby Loader */
     .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
     @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
 
     /* Leaderboard */
     .leaderboard-box {
-        margin-top: 30px; text-align: left; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px;
+        margin-top: 30px; text-align: left; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px; width: 100%; box-sizing: border-box;
     }
     .leaderboard-box h3 { text-align: center; color: var(--cor-dourado); margin-top: 0; }
     ul { list-style: none; padding: 0; }
@@ -118,19 +144,15 @@
 </head>
 <body>
 
-  <header>
-    <h1>
-      <a href="index.html">
-        <img src="https://i.imgur.com/XOEcuO8.png" alt="Icone"> Humble Quiz
-      </a>
-    </h1>
-  </header>
-
   <div class="main-content">
     <div class="quiz-box">
         
+        <a href="index.html">
+            <img src="https://i.imgur.com/XOEcuO8.png" alt="Humble" class="quiz-header-logo">
+        </a>
+
         <div id="login-screen">
-            <h2>🏆 Humble Quiz</h2>
+            <h2 style="color: var(--cor-dourado); margin-top: 0;">🏆 Humble Quiz</h2>
             <p>Digite seu nick para entrar na sala:</p>
             <input type="text" id="username" placeholder="Seu Nick..." maxlength="15" />
             <br>
@@ -185,6 +207,9 @@
         </div>
 
     </div>
+    
+    <a href="index.html" style="margin-top: 20px; color: #666; text-decoration: none; font-size: 0.9rem;">← Voltar para o Menu</a>
+
   </div>
 
   <script type="module">
@@ -193,20 +218,19 @@
 
     // ⬇️ RECOLOQUE SUAS CHAVES AQUI! ⬇️
     const firebaseConfig = {
-  apiKey: "AIzaSyA2TdsWbqOhYUrezQ3zSG9OeP2ZSIxGpBk",
-  authDomain: "quiz-d1e99.firebaseapp.com",
-  projectId: "quiz-d1e99",
-  storageBucket: "quiz-d1e99.firebasestorage.app",
-  messagingSenderId: "685198946824",
-  appId: "1:685198946824:web:e29547e188de650e39d7bd",
-  measurementId: "G-RX5CN69ZMF"
-};
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      projectId: "SEU_PROJETO_ID",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "NUMEROS",
+      appId: "NUMEROS_LETRAS"
+    };
     // ⬆️ --------------------------- ⬆️
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- VARIÁVEIS E FUNÇÕES GLOBAIS ---
+    // --- VARIÁVEIS ---
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
@@ -217,11 +241,8 @@
     let gameHasStarted = false;
     let isGameEnded = false;
 
-    // Função de Normalização (Usada no Login e no Ban)
-    // Remove acentos, espaços extras e deixa minúsculo
-    const normalize = (str) => {
-        return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    };
+    // Normaliza strings
+    const normalize = (str) => str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     const loginScreen = document.getElementById('login-screen');
     const lobbyScreen = document.getElementById('lobby-screen');
@@ -230,7 +251,7 @@
     const usernameInput = document.getElementById('username');
 
     // ======================================================
-    // 🛡️ BANLIST AUTOMÁTICA (Sua lista)
+    // 🛡️ BANLIST
     // ======================================================
     const termosProibidos = [
         "admin", "moderador", "staff", "suporte", "gm", "god",
@@ -271,7 +292,7 @@
         return false; 
     }
 
-    // CARREGAR PERGUNTAS
+    // CARREGAR
     async function loadQuestions() {
         try {
             const res = await fetch('perguntas/quiz_data.json');
@@ -279,47 +300,35 @@
         } catch(e) { console.error("Erro JSON", e); }
     }
 
-    // ENTRAR NO LOBBY
+    // ENTRAR
     document.getElementById('btn-enter').addEventListener('click', async () => {
         let rawName = usernameInput.value.trim();
         if(!rawName) return alert("Digite um nome!");
         
-        // 1. BANLIST AUTOMÁTICA
         if (contemTermoProibido(rawName)) {
             alert("⚠️ Nickname inválido.");
             usernameInput.value = ""; 
             return;
         }
-
         username = rawName; 
         
         await loadQuestions();
         if(questions.length === 0) return alert("Erro ao carregar perguntas.");
 
         try {
-            // 2. VERIFICA SE ESTÁ NA BLACKLIST MANUAL (BANIDO PELO ADMIN)
+            // Check Blacklist
             const banDocRef = doc(db, "blacklist_humble", normalize(username));
             const banDoc = await getDoc(banDocRef);
-            if(banDoc.exists()) {
-                alert("⛔ Este nick foi banido pelo Admin.");
-                return;
-            }
+            if(banDoc.exists()) { alert("⛔ Este nick foi banido."); return; }
 
-            // 3. VERIFICA DUPLICIDADE
+            // Check Duplicidade
             const qCheck = query(collection(db, "ranking_humble"), where("username", "==", username));
-            const querySnapshot = await getDocs(qCheck);
+            const snap = await getDocs(qCheck);
+            if (!snap.empty) { alert("Nick já em uso."); return; }
 
-            if (!querySnapshot.empty) {
-                alert(`O nick "${username}" já está sendo usado.`);
-                return;
-            }
-
-            // 4. RESERVA NICK
+            // Reserva
             const docRef = await addDoc(collection(db, "ranking_humble"), {
-                username: username,
-                score: 0,
-                status: "lobby",
-                date: new Date()
+                username: username, score: 0, status: "lobby", date: new Date()
             });
             userDocId = docRef.id;
 
@@ -329,13 +338,10 @@
             
             listenGameState();
 
-        } catch (e) {
-            console.error(e);
-            alert("Erro de conexão.");
-        }
+        } catch (e) { alert("Erro de conexão."); }
     });
 
-    // --- LOGICA DE JOGO ---
+    // LISTENER
     function listenGameState() {
         onSnapshot(doc(db, "config", "estado_jogo"), (docSnapshot) => {
             if (!docSnapshot.exists()) return;
@@ -451,7 +457,7 @@
         } catch (e) { try{await addDoc(collection(db, "ranking_humble"), { username: username, score: score, status: "recuperado", date: new Date() });}catch(e2){} }
     }
 
-    // --- ADMIN ACTIONS ---
+    // --- ADMIN ---
     usernameInput.addEventListener('input', (e) => {
         if(e.target.value.toLowerCase() === 'admin') document.getElementById('admin-panel').style.display = 'block';
     });
@@ -481,54 +487,28 @@
         } catch(e) { alert("Erro: " + e.message); }
     });
 
-    // --- NOVA FUNÇÃO: BANIR MANUALMENTE ---
+    // BAN MANUAL
     document.getElementById('btn-admin-ban').addEventListener('click', async () => {
-        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Digite a senha do admin!");
-        
+        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha admin!");
         const nickBan = document.getElementById('ban-input').value.trim();
-        if(!nickBan) return alert("Digite o nick para banir.");
-
-        if(!confirm(`Tem certeza que deseja BANIR PERMANENTEMENTE "${nickBan}"?`)) return;
+        if(!nickBan) return;
+        if(!confirm(`BANIR "${nickBan}"?`)) return;
 
         try {
-            // 1. Adiciona na Blacklist do Firebase (Usando nome normalizado como ID para fácil busca)
-            await setDoc(doc(db, "blacklist_humble", normalize(nickBan)), {
-                originalName: nickBan,
-                bannedAt: new Date()
-            });
-
-            // 2. Remove o jogador do Ranking se ele estiver lá
-            // Como não sabemos o ID do documento dele, buscamos pelo nome
+            await setDoc(doc(db, "blacklist_humble", normalize(nickBan)), { originalName: nickBan, bannedAt: new Date() });
             const q = query(collection(db, "ranking_humble"), where("username", "==", nickBan));
-            const querySnapshot = await getDocs(q);
-            
+            const snap = await getDocs(q);
             const batch = writeBatch(db);
-            querySnapshot.forEach((doc) => {
-                batch.delete(doc.ref); // Deleta o registro dele
-            });
+            snap.forEach((doc) => batch.delete(doc.ref));
             await batch.commit();
-
-            alert(`🚫 O nick "${nickBan}" foi banido e removido do ranking.`);
-            document.getElementById('ban-input').value = ""; // Limpa input
-
-        } catch(e) {
-            console.error(e);
-            alert("Erro ao banir: " + e.message);
-        }
+            alert(`🚫 "${nickBan}" Banido.`);
+            document.getElementById('ban-input').value = "";
+        } catch(e) { alert("Erro ao banir."); }
     });
 
-// LEADERBOARD (COM DESEMPATE POR DATA)
-    // 1º Critério: Maior Pontuação (desc)
-    // 2º Critério: Quem fez primeiro (asc) -> Data mais antiga ganha
-    const qRank = query(
-        collection(db, "ranking_humble"), 
-        orderBy("score", "desc"), 
-        orderBy("date", "asc"), 
-        limit(3)
-    );
-
+    // LEADERBOARD (Com desempate por data)
+    const qRank = query(collection(db, "ranking_humble"), orderBy("score", "desc"), orderBy("date", "asc"), limit(3));
     onSnapshot(qRank, (snapshot) => {
-        // ... (o resto dentro desta função continua igual)
         const list = document.getElementById('leaderboard-list');
         list.innerHTML = "";
         if (snapshot.empty) { list.innerHTML = "<li style='justify-content:center; color: #aaa;'>Nenhum jogador registrado.</li>"; return; }
