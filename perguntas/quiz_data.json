@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "type": "multiple_choice",
+        "text": "Qual item é necessário para evoluir o Eevee para Jolteon?",
+        "options": [
+            "Water Stone",
+            "Thunder Stone",
+            "Fire Stone",
+            "Leaf Stone"
+        ],
+        "correct": "Thunder Stone",
+        "time_limit": 15
+    },
+    {
+        "id": 2,
+        "type": "text",
+        "text": "Qual é o nome da pré-evolução do Pikachu?",
+        "correct": "Pichu",
+        "time_limit": 10
+    },
+    {
+        "id": 3,
+        "type": "multiple_choice",
+        "text": "Qual destes Pokémon NÃO é do tipo Dragão?",
+        "options": [
+            "Dragonite",
+            "Garchomp",
+            "Charizard",
+            "Salamence"
+        ],
+        "correct": "Charizard",
+        "time_limit": 20
+    }
+]
