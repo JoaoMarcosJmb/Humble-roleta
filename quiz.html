@@ -13,6 +13,7 @@
       --cor-fundo: #1a1a1a; 
       --cor-texto: #f5f5f5;
       --cor-overlay: rgba(20, 20, 20, 0.95);
+      --cor-erro: #e74c3c;
     }
     body {
       font-family: "Segoe UI", Arial, sans-serif;
@@ -40,7 +41,7 @@
 
     .hidden { display: none !important; }
 
-    input { padding: 12px; width: 70%; border-radius: 5px; border: 1px solid var(--cor-dourado); background: #222; color: white; margin-bottom: 10px; text-align: center; font-size: 1.1em;}
+    input { padding: 12px; width: 70%; border-radius: 5px; border: 1px solid var(--cor-dourado); background: #222; color: white; margin-bottom: 10px; text-align: center; font-size: 1.1em; outline: none;}
     button { padding: 12px 25px; background: var(--cor-dourado); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; font-size: 1rem; }
     button:hover { background: #e5bd35; transform: scale(1.05); }
     
@@ -49,6 +50,17 @@
 
     .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem; }
     
+    /* Painel Admin */
+    #admin-panel {
+        margin-top: 20px; padding: 15px; border: 1px dashed var(--cor-erro);
+        background: rgba(50, 0, 0, 0.5); display: none;
+    }
+    .btn-admin { background: var(--cor-erro); color: white; font-size: 0.9rem; margin: 5px; }
+
+    /* Lobby */
+    .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
+    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
     /* Leaderboard */
     .leaderboard-box {
         margin-top: 30px; text-align: left; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px;
@@ -76,10 +88,26 @@
         
         <div id="login-screen">
             <h2>🏆 Humble Quiz</h2>
-            <p>Digite seu nick para entrar no Ranking:</p>
+            <p>Digite seu nick para entrar na sala:</p>
             <input type="text" id="username" placeholder="Seu Nick..." maxlength="15" />
             <br>
-            <button id="btn-start">COMEÇAR</button>
+            <button id="btn-enter">ENTRAR NA SALA</button>
+
+            <div id="admin-panel">
+                <h4>⚠️ Área do Admin</h4>
+                <p style="font-size:0.8rem">Senha: humbleadmin</p>
+                <input type="password" id="admin-pass" placeholder="Senha..." style="width: 50%;">
+                <br>
+                <button class="btn-admin" id="btn-admin-start">▶️ INICIAR P/ TODOS</button>
+                <button class="btn-admin" id="btn-admin-reset">🔄 RESETAR RANKING</button>
+            </div>
+        </div>
+
+        <div id="lobby-screen" class="hidden">
+            <h2>⏳ Aguardando Início...</h2>
+            <div class="loader">⚡</div>
+            <p>O Mestre iniciará a partida em breve.</p>
+            <p style="font-size: 0.9em; color: #aaa;">Logado como: <strong id="lobby-username" style="color: var(--cor-dourado)"></strong></p>
         </div>
 
         <div id="game-screen" class="hidden">
@@ -96,9 +124,9 @@
 
         <div id="end-screen" class="hidden">
             <h2>Fim de Jogo!</h2>
-            <p>Sua pontuação foi salva no ranking.</p>
+            <p>Sua pontuação foi salva.</p>
             <h1 id="final-score" style="color: var(--cor-dourado); font-size: 4rem; margin: 10px 0;">0</h1>
-            <button onclick="location.reload()">Jogar Novamente</button>
+            <button onclick="location.reload()">Sair / Novo Login</button>
         </div>
 
         <div class="leaderboard-box">
@@ -112,11 +140,10 @@
   </div>
 
   <script type="module">
-    // Importa as funções do Firebase direto do Google
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, doc, updateDoc, onSnapshot, query, orderBy, limit, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // --- ⬇️ COLE SUA CONFIGURAÇÃO DO FIREBASE ABAIXO ⬇️ ---
+    // --- ⬇️ SUAS CHAVES AQUI ⬇️ ---
     const firebaseConfig = {
   apiKey: "AIzaSyA2TdsWbqOhYUrezQ3zSG9OeP2ZSIxGpBk",
   authDomain: "quiz-d1e99.firebaseapp.com",
@@ -126,57 +153,87 @@
   appId: "1:685198946824:web:e29547e188de650e39d7bd",
   measurementId: "G-RX5CN69ZMF"
 };
-    // --- ⬆️ FIM DA CONFIGURAÇÃO ⬆️ ---
+    // --- ⬆️ FIM DAS CHAVES ⬆️ ---
 
-    // Inicializa Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- Lógica do Jogo ---
+    // --- VARIÁVEIS DO JOGO ---
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
     let username = "";
     let timerInterval;
     let timeLeft = 0;
+    let gameHasStarted = false;
 
-    // Elementos do DOM (para usar dentro do module)
-    const btnStart = document.getElementById('btn-start');
-    const btnSubmitText = document.getElementById('btn-submit-text');
+    // --- ELEMENTOS ---
+    const loginScreen = document.getElementById('login-screen');
+    const lobbyScreen = document.getElementById('lobby-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const usernameInput = document.getElementById('username');
 
-    // Carregar Perguntas
+    // 1. CARREGAR PERGUNTAS
     async function loadQuestions() {
         try {
             const res = await fetch('perguntas/quiz_data.json');
             questions = await res.json();
-        } catch(e) { alert("Erro ao carregar perguntas."); }
+        } catch(e) { console.error("Erro JSON", e); }
     }
 
-    // Botão Iniciar
-    btnStart.addEventListener('click', async () => {
-        username = document.getElementById('username').value.trim();
+    // 2. ENTRAR NO LOBBY
+    document.getElementById('btn-enter').addEventListener('click', async () => {
+        username = usernameInput.value.trim();
         if(!username) return alert("Digite um nome!");
-        
-        await loadQuestions();
-        if(questions.length === 0) return;
 
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
-        showQuestion();
+        await loadQuestions();
+        if(questions.length === 0) return alert("Erro ao carregar perguntas. Verifique o JSON.");
+
+        // Muda tela
+        loginScreen.classList.add('hidden');
+        lobbyScreen.classList.remove('hidden');
+        document.getElementById('lobby-username').innerText = username;
+
+        // Inicia Listener do Estado do Jogo
+        listenGameState();
     });
 
-    // Função de Exibir Pergunta
+    // 3. ESCUTAR ESTADO DO JOGO (WAITING vs RUNNING)
+    function listenGameState() {
+        // Escuta o documento "config/estado_jogo"
+        onSnapshot(doc(db, "config", "estado_jogo"), (doc) => {
+            const state = doc.data();
+            if (state && state.status === "ROLANDO" && !gameHasStarted) {
+                // O Mestre iniciou!
+                gameHasStarted = true;
+                startGame();
+            }
+            if (state && state.status === "ESPERA" && gameHasStarted) {
+                // O Mestre resetou durante o jogo
+                alert("O jogo foi reiniciado pelo Admin.");
+                location.reload();
+            }
+        });
+    }
+
+    function startGame() {
+        lobbyScreen.classList.add('hidden');
+        gameScreen.classList.remove('hidden');
+        showQuestion();
+    }
+
+    // 4. LÓGICA DO QUIZ (PERGUNTAS)
     function showQuestion() {
         if(currentQuestionIndex >= questions.length) {
             endGame();
             return;
         }
-
         const q = questions[currentQuestionIndex];
         document.getElementById('question-text').innerText = q.text;
         
         const optionsDiv = document.getElementById('options-container');
         const textInput = document.getElementById('text-answer');
+        const btnSubmit = document.getElementById('btn-submit-text');
         
         optionsDiv.innerHTML = "";
         textInput.value = "";
@@ -193,7 +250,7 @@
 
         if(q.type === 'multiple_choice') {
             textInput.classList.add('hidden');
-            btnSubmitText.classList.add('hidden');
+            btnSubmit.classList.add('hidden');
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.innerText = opt;
@@ -203,13 +260,19 @@
             });
         } else {
             textInput.classList.remove('hidden');
-            btnSubmitText.classList.remove('hidden');
+            btnSubmit.classList.remove('hidden');
             textInput.focus();
+            
+            // Enter envia
+            textInput.onkeypress = (e) => { if(e.key === "Enter") {
+                 const val = textInput.value;
+                 if(val) checkAnswer(val);
+            }};
         }
     }
-
-    // Botão de enviar texto
-    btnSubmitText.addEventListener('click', () => {
+    
+    // Clique do botão confirmar texto
+    document.getElementById('btn-submit-text').addEventListener('click', () => {
         const val = document.getElementById('text-answer').value;
         if(val) checkAnswer(val);
     });
@@ -222,52 +285,90 @@
 
     function processAnswer(isCorrect) {
         clearInterval(timerInterval);
-        if (isCorrect) {
-            score += 100 + (timeLeft * 10);
-        }
+        if (isCorrect) score += 100 + (timeLeft * 10);
+        
         document.getElementById('score-display').innerText = `💎 ${score}`;
         currentQuestionIndex++;
         setTimeout(showQuestion, 500);
     }
 
-    // Fim de Jogo: Salva no Firebase
     async function endGame() {
-        document.getElementById('game-screen').classList.add('hidden');
+        gameScreen.classList.add('hidden');
         document.getElementById('end-screen').classList.remove('hidden');
         document.getElementById('final-score').innerText = score;
 
-        // SALVA NO BANCO DE DADOS
+        // Salvar pontos no Firebase
         try {
             await addDoc(collection(db, "ranking_humble"), {
                 username: username,
                 score: score,
-                date: new Date() // Salva a data também
+                date: new Date()
             });
-        } catch (e) {
-            console.error("Erro ao salvar:", e);
-        }
+        } catch (e) { console.error("Erro ao salvar pontos", e); }
     }
 
-    // --- LEADERBOARD EM TEMPO REAL ---
-    // Isso aqui fica "escutando" o banco. Se alguém jogar, atualiza sozinho na sua tela.
-    const q = query(collection(db, "ranking_humble"), orderBy("score", "desc"), limit(3));
+    // --- LÓGICA DE ADMIN (Start/Reset) ---
     
-    onSnapshot(q, (snapshot) => {
+    // Revelar painel se digitar "admin"
+    usernameInput.addEventListener('input', (e) => {
+        if(e.target.value.toLowerCase() === 'admin') {
+            document.getElementById('admin-panel').style.display = 'block';
+        }
+    });
+
+    document.getElementById('btn-admin-start').addEventListener('click', async () => {
+        const pass = document.getElementById('admin-pass').value;
+        if(pass !== "humbleadmin") return alert("Senha errada!");
+
+        // Muda estado para ROLANDO
+        try {
+            await updateDoc(doc(db, "config", "estado_jogo"), { status: "ROLANDO" });
+            alert("Jogo iniciado para todos!");
+        } catch(e) { 
+            alert("Erro. Verifique se criou a coleção 'config' no Firebase.");
+        }
+    });
+
+    document.getElementById('btn-admin-reset').addEventListener('click', async () => {
+        const pass = document.getElementById('admin-pass').value;
+        if(pass !== "humbleadmin") return alert("Senha errada!");
+
+        if(!confirm("Certeza? Isso apaga todo o Ranking e reinicia o jogo.")) return;
+
+        try {
+            // 1. Apaga todos os scores antigos
+            const q = query(collection(db, "ranking_humble"));
+            const snapshot = await getDocs(q);
+            const batch = writeBatch(db);
+            snapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+
+            // 2. Reseta estado para ESPERA
+            await updateDoc(doc(db, "config", "estado_jogo"), { status: "ESPERA" });
+            
+            alert("Ranking limpo e jogo resetado!");
+            location.reload();
+        } catch(e) { console.error(e); alert("Erro ao resetar."); }
+    });
+
+
+    // --- LEADERBOARD AO VIVO ---
+    const qRank = query(collection(db, "ranking_humble"), orderBy("score", "desc"), limit(3));
+    onSnapshot(qRank, (snapshot) => {
         const list = document.getElementById('leaderboard-list');
-        list.innerHTML = ""; // Limpa a lista
-        
+        list.innerHTML = "";
         let index = 1;
         snapshot.forEach((doc) => {
-            const data = doc.data();
+            const d = doc.data();
             const li = document.createElement('li');
             let medal = index===1?"🥇":index===2?"🥈":index===3?"🥉":"";
-            
-            li.innerHTML = `<span>${medal} #${index} ${data.username}</span> <span>${data.score}</span>`;
+            li.innerHTML = `<span>${medal} #${index} ${d.username}</span> <span>${d.score}</span>`;
             list.appendChild(li);
             index++;
         });
-
-        if(index === 1) list.innerHTML = "<li>Sem pontuações ainda...</li>";
+        if(index===1) list.innerHTML = "<li>Aguardando pontuações...</li>";
     });
 
   </script>
