@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
-    /* --- ESTILOS IGUAIS AO ANTERIOR (Resumido para focar na lógica) --- */
+    /* --- ESTILOS VISUAIS (TEMA HUMBLE) --- */
     :root {
       --cor-dourado: #d1a720; 
       --cor-fundo: #1a1a1a; 
@@ -19,15 +19,10 @@
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
+      margin: 0; padding: 0; min-height: 100vh;
       color: var(--cor-texto);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin: 0; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
     }
-    .hidden { display: none !important; }
-    
-    /* Header e Layout */
     header {
       width: 100%; padding: 15px; background: var(--cor-overlay);
       border-bottom: 2px solid var(--cor-dourado); text-align: center;
@@ -43,24 +38,27 @@
         box-shadow: 0 0 15px rgba(209, 167, 32, 0.3);
     }
 
-    /* Inputs e Botões */
-    input { padding: 12px; width: 70%; border-radius: 5px; border: 1px solid var(--cor-dourado); background: #222; color: white; margin-bottom: 10px; }
-    button { padding: 12px 25px; background: var(--cor-dourado); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; }
+    .hidden { display: none !important; }
+
+    input { padding: 12px; width: 70%; border-radius: 5px; border: 1px solid var(--cor-dourado); background: #222; color: white; margin-bottom: 10px; text-align: center; font-size: 1.1em;}
+    button { padding: 12px 25px; background: var(--cor-dourado); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; font-size: 1rem; }
     button:hover { background: #e5bd35; transform: scale(1.05); }
     
     .option-btn { width: 100%; background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado); margin: 8px 0; }
     .option-btn:hover { background: var(--cor-dourado); color: black; }
 
-    /* Admin Panel */
-    #admin-panel {
-        margin-top: 20px; padding: 15px; border: 1px dashed #e74c3c;
-        background: rgba(50, 0, 0, 0.5); display: none; /* Escondido por padrão */
+    .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem; }
+    
+    /* Leaderboard */
+    .leaderboard-box {
+        margin-top: 30px; text-align: left; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px;
     }
-    .btn-admin { background: #e74c3c; color: white; font-size: 0.8rem; margin: 5px; }
-
-    /* Lobby Animation */
-    .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
-    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+    .leaderboard-box h3 { text-align: center; color: var(--cor-dourado); margin-top: 0; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 10px; border-bottom: 1px solid #444; display: flex; justify-content: space-between;}
+    li:nth-child(1) { color: #ffd700; font-weight: bold; } 
+    li:nth-child(2) { color: #c0c0c0; } 
+    li:nth-child(3) { color: #cd7f32; }
   </style>
 </head>
 <body>
@@ -77,157 +75,96 @@
     <div class="quiz-box">
         
         <div id="login-screen">
-            <h2>🏆 Entrar no Desafio</h2>
-            <p>Digite seu nick para participar:</p>
-            <input type="text" id="username" placeholder="Seu Nick..." />
+            <h2>🏆 Humble Quiz</h2>
+            <p>Digite seu nick para entrar no Ranking:</p>
+            <input type="text" id="username" placeholder="Seu Nick..." maxlength="15" />
             <br>
-            <button onclick="joinLobby()">ENTRAR</button>
-            
-            <div id="admin-panel">
-                <h4>⚠️ Área do Mestre</h4>
-                <input type="password" id="admin-pass" placeholder="Senha Admin" style="width: 50%;">
-                <br>
-                <button class="btn-admin" onclick="adminStart()">▶️ INICIAR JOGO P/ TODOS</button>
-                <button class="btn-admin" onclick="adminReset()">🔄 RESETAR TUDO</button>
-            </div>
-        </div>
-
-        <div id="lobby-screen" class="hidden">
-            <h2>⏳ Aguardando Início...</h2>
-            <div class="loader">⚡</div>
-            <p>O Mestre iniciará a partida em breve.</p>
-            <p style="font-size: 0.9em; color: #aaa;">Você está logado como: <strong id="lobby-username" style="color: var(--cor-dourado)"></strong></p>
+            <button id="btn-start">COMEÇAR</button>
         </div>
 
         <div id="game-screen" class="hidden">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold;">
-                <span id="timer">Tempo: 0s</span>
-                <span id="score-display">Pontos: 0</span>
+            <div class="hud">
+                <span id="timer">⏳ 0s</span>
+                <span id="score-display">💎 0</span>
             </div>
+            
             <h2 id="question-text">Carregando...</h2>
             <div id="options-container"></div>
             <input type="text" id="text-answer" class="hidden" placeholder="Sua resposta...">
-            <button id="btn-submit-text" class="hidden" onclick="checkAnswerText()">Enviar</button>
+            <button id="btn-submit-text" class="hidden">Confirmar</button>
         </div>
 
         <div id="end-screen" class="hidden">
             <h2>Fim de Jogo!</h2>
-            <h1 id="final-score" style="color: var(--cor-dourado); font-size: 3rem;">0</h1>
-            <p>Confira o telão para ver o vencedor!</p>
-            <button onclick="location.reload()">Sair</button>
+            <p>Sua pontuação foi salva no ranking.</p>
+            <h1 id="final-score" style="color: var(--cor-dourado); font-size: 4rem; margin: 10px 0;">0</h1>
+            <button onclick="location.reload()">Jogar Novamente</button>
         </div>
 
-        <div style="margin-top: 20px; text-align: left; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px;">
-            <h3 style="text-align: center; color: var(--cor-dourado); margin: 0 0 10px 0;">Top Jogadores</h3>
-            <ul id="leaderboard-list" style="list-style: none; padding: 0;">
-                <li>Carregando...</li>
+        <div class="leaderboard-box">
+            <h3>📊 Top 3 - Ao Vivo</h3>
+            <ul id="leaderboard-list">
+                <li style="justify-content: center;">Carregando...</li>
             </ul>
         </div>
+
     </div>
   </div>
 
-  <script>
-    // --- CONFIGURAÇÃO ---
-    const API_URL = "http://localhost:8000"; // Mude para o link do Render depois
-    
-    // --- VARIÁVEIS ---
+  <script type="module">
+    // Importa as funções do Firebase direto do Google
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // --- ⬇️ COLE SUA CONFIGURAÇÃO DO FIREBASE ABAIXO ⬇️ ---
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY_AQUI",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      projectId: "SEU_PROJETO_ID",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "NUMEROS",
+      appId: "NUMEROS_E_LETRAS"
+    };
+    // --- ⬆️ FIM DA CONFIGURAÇÃO ⬆️ ---
+
+    // Inicializa Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- Lógica do Jogo ---
     let questions = [];
     let currentQuestionIndex = 0;
+    let score = 0;
     let username = "";
-    let lobbyInterval; 
-    let gameRunning = false;
     let timerInterval;
     let timeLeft = 0;
 
-    // --- FUNÇÕES DE ADMIN ---
-    // Se digitar "admin" no campo de nome, mostra o painel
-    document.getElementById('username').addEventListener('input', (e) => {
-        if(e.target.value.toLowerCase() === 'admin') {
-            document.getElementById('admin-panel').style.display = 'block';
-        }
-    });
+    // Elementos do DOM (para usar dentro do module)
+    const btnStart = document.getElementById('btn-start');
+    const btnSubmitText = document.getElementById('btn-submit-text');
 
-    async function adminStart() {
-        const pass = document.getElementById('admin-pass').value;
-        await fetch(`${API_URL}/admin/start`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ password: pass })
-        });
-        alert("Comando de início enviado!");
-    }
-
-    async function adminReset() {
-        const pass = document.getElementById('admin-pass').value;
-        await fetch(`${API_URL}/admin/reset`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ password: pass })
-        });
-        alert("Jogo resetado!");
-        location.reload();
-    }
-
-    // --- FLUXO DO JOGADOR ---
-
+    // Carregar Perguntas
     async function loadQuestions() {
         try {
             const res = await fetch('perguntas/quiz_data.json');
             questions = await res.json();
-        } catch(e) { console.error("Erro ao carregar JSON", e); }
+        } catch(e) { alert("Erro ao carregar perguntas."); }
     }
 
-    async function joinLobby() {
+    // Botão Iniciar
+    btnStart.addEventListener('click', async () => {
         username = document.getElementById('username').value.trim();
         if(!username) return alert("Digite um nome!");
-
-        // Registra entrada
-        try {
-            await fetch(`${API_URL}/join`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ username: username })
-            });
-        } catch(e) { console.log("Backend offline?"); }
-
-        // Carrega perguntas
+        
         await loadQuestions();
+        if(questions.length === 0) return;
 
-        // Muda para tela de lobby
         document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('lobby-screen').classList.remove('hidden');
-        document.getElementById('lobby-username').innerText = username;
-
-        // Inicia verificação de status (Polling)
-        lobbyInterval = setInterval(checkGameStatus, 2000);
-        setInterval(updateLeaderboard, 5000); // Já começa a atualizar o ranking
-    }
-
-    async function checkGameStatus() {
-        try {
-            const res = await fetch(`${API_URL}/status`);
-            const data = await res.json();
-            
-            if (data.status === "RUNNING" && !gameRunning) {
-                // O Mestre iniciou o jogo!
-                startGameFlow();
-            }
-            if (data.status === "WAITING" && gameRunning) {
-                // Jogo foi resetado
-                alert("O jogo foi reiniciado pelo admin.");
-                location.reload();
-            }
-        } catch(e) { console.log("Aguardando conexão..."); }
-    }
-
-    function startGameFlow() {
-        gameRunning = true;
-        clearInterval(lobbyInterval); // Para de perguntar se começou
-        document.getElementById('lobby-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         showQuestion();
-    }
+    });
 
+    // Função de Exibir Pergunta
     function showQuestion() {
         if(currentQuestionIndex >= questions.length) {
             endGame();
@@ -239,25 +176,23 @@
         
         const optionsDiv = document.getElementById('options-container');
         const textInput = document.getElementById('text-answer');
-        const submitBtn = document.getElementById('btn-submit-text');
         
         optionsDiv.innerHTML = "";
         textInput.value = "";
         
-        // Timer
         clearInterval(timerInterval);
         timeLeft = q.time_limit;
-        document.getElementById('timer').innerText = `Tempo: ${timeLeft}s`;
+        document.getElementById('timer').innerText = `⏳ ${timeLeft}s`;
         
         timerInterval = setInterval(() => {
             timeLeft--;
-            document.getElementById('timer').innerText = `Tempo: ${timeLeft}s`;
-            if(timeLeft <= 0) submitAnswer(false);
+            document.getElementById('timer').innerText = `⏳ ${timeLeft}s`;
+            if(timeLeft <= 0) processAnswer(false);
         }, 1000);
 
         if(q.type === 'multiple_choice') {
             textInput.classList.add('hidden');
-            submitBtn.classList.add('hidden');
+            btnSubmitText.classList.add('hidden');
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.innerText = opt;
@@ -267,61 +202,73 @@
             });
         } else {
             textInput.classList.remove('hidden');
-            submitBtn.classList.remove('hidden');
+            btnSubmitText.classList.remove('hidden');
             textInput.focus();
         }
     }
 
-    function checkAnswerText() {
-        checkAnswer(document.getElementById('text-answer').value);
-    }
+    // Botão de enviar texto
+    btnSubmitText.addEventListener('click', () => {
+        const val = document.getElementById('text-answer').value;
+        if(val) checkAnswer(val);
+    });
 
-    async function checkAnswer(answer) {
-        clearInterval(timerInterval);
+    function checkAnswer(userAnswer) {
         const q = questions[currentQuestionIndex];
-        const isCorrect = answer.toString().toLowerCase() === q.correct.toString().toLowerCase();
+        const isCorrect = userAnswer.toString().toLowerCase() === q.correct.toString().toLowerCase();
+        processAnswer(isCorrect);
+    }
 
-        // Envia resposta
-        try {
-            const res = await fetch(`${API_URL}/submit`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    username: username,
-                    question_id: q.id,
-                    is_correct: isCorrect,
-                    time_left: timeLeft
-                })
-            });
-            if(res.ok) {
-                const d = await res.json();
-                document.getElementById('score-display').innerText = `Pontos: ${d.current_score}`;
-            }
-        } catch(e) {}
-
+    function processAnswer(isCorrect) {
+        clearInterval(timerInterval);
+        if (isCorrect) {
+            score += 100 + (timeLeft * 10);
+        }
+        document.getElementById('score-display').innerText = `💎 ${score}`;
         currentQuestionIndex++;
-        showQuestion();
+        setTimeout(showQuestion, 500);
     }
 
-    async function updateLeaderboard() {
-        try {
-            const res = await fetch(`${API_URL}/leaderboard`);
-            const data = await res.json();
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = "";
-            data.forEach((p, i) => {
-                let icon = i===0?"🥇":i===1?"🥈":i===2?"🥉":"";
-                list.innerHTML += `<li><span>${icon} #${i+1} ${p.username}</span> <span>${p.score}</span></li>`;
-            });
-        } catch(e) {}
-    }
-
-    function endGame() {
+    // Fim de Jogo: Salva no Firebase
+    async function endGame() {
         document.getElementById('game-screen').classList.add('hidden');
         document.getElementById('end-screen').classList.remove('hidden');
-        const final = document.getElementById('score-display').innerText.replace("Pontos: ", "");
-        document.getElementById('final-score').innerText = final;
+        document.getElementById('final-score').innerText = score;
+
+        // SALVA NO BANCO DE DADOS
+        try {
+            await addDoc(collection(db, "ranking_humble"), {
+                username: username,
+                score: score,
+                date: new Date() // Salva a data também
+            });
+        } catch (e) {
+            console.error("Erro ao salvar:", e);
+        }
     }
+
+    // --- LEADERBOARD EM TEMPO REAL ---
+    // Isso aqui fica "escutando" o banco. Se alguém jogar, atualiza sozinho na sua tela.
+    const q = query(collection(db, "ranking_humble"), orderBy("score", "desc"), limit(3));
+    
+    onSnapshot(q, (snapshot) => {
+        const list = document.getElementById('leaderboard-list');
+        list.innerHTML = ""; // Limpa a lista
+        
+        let index = 1;
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const li = document.createElement('li');
+            let medal = index===1?"🥇":index===2?"🥈":index===3?"🥉":"";
+            
+            li.innerHTML = `<span>${medal} #${index} ${data.username}</span> <span>${data.score}</span>`;
+            list.appendChild(li);
+            index++;
+        });
+
+        if(index === 1) list.innerHTML = "<li>Sem pontuações ainda...</li>";
+    });
+
   </script>
 </body>
 </html>
