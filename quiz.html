@@ -7,287 +7,237 @@
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
-    /* --- IMPORTANDO FONTE MAIS MODERNA (ROBOTO/POPPINS) --- */
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
+    /* --- ESTILOS VISUAIS (TEMA HUMBLE) --- */
     :root {
-      --cor-dourado: #ffc107; /* Amarelo mais vivo igual da print */
-      --cor-fundo: #121212; 
-      --cor-card: #0a0a0a; /* Fundo do card quase preto */
-      --cor-texto: #ffffff;
+      --cor-dourado: #d1a720; 
+      --cor-fundo: #1a1a1a; 
+      --cor-texto: #f5f5f5;
+      --cor-overlay: rgba(20, 20, 20, 0.95);
+      --cor-erro: #e74c3c;
+      --cor-aviso: #e67e22;
       --nav-height: 60px;
     }
-    
+
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif; /* Fonte mais bonita */
+        box-sizing: border-box;
     }
 
     body {
-      /* Fundo escuro com gradiente sutil para dar profundidade */
-      background: radial-gradient(circle at center, #2a2a2a 0%, #0f0f0f 100%);
-      color: var(--cor-texto);
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0; 
+      padding: 0; 
+      
+      /* Configuração para o Footer ficar no rodapé corretamente */
+      min-height: 100vh;
       display: flex; 
       flex-direction: column; 
-      min-height: 100vh;
+      align-items: center;
+      color: var(--cor-texto);
     }
 
-    /* --- NAVBAR ESTILO "SELECIONE SUA VERSÃO" --- */
+    /* --- NAVBAR CORRIGIDA (Compacta e Elegante) --- */
     nav {
-        background-color: #1a1a1a;
-        border-bottom: 2px solid var(--cor-dourado); /* A linha amarela */
+        background-color: #111; /* Fundo preto */
+        border-bottom: 2px solid var(--cor-dourado);
         height: var(--nav-height);
         display: flex;
         align-items: center;
         padding: 0 30px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        width: 100%;
+        flex-shrink: 0; /* Não encolhe */
+        z-index: 100;
     }
 
     .nav-logo {
         font-weight: 700;
         font-size: 1.2rem;
-        color: var(--cor-dourado); /* Texto Amarelo */
+        color: var(--cor-dourado);
         display: flex;
         align-items: center;
         gap: 10px;
+        text-decoration: none;
     }
+    
+    .nav-logo img { height: 30px; }
 
-    /* --- ÁREA PRINCIPAL --- */
-    main {
-        flex: 1;
+    /* --- CONTEÚDO PRINCIPAL --- */
+    .main-content { 
+        flex: 1; /* Ocupa o espaço disponível empurrando o footer */
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        position: relative;
+        justify-content: center; /* Centraliza verticalmente */
+        width: 95%; 
+        max-width: 600px; 
+        padding: 20px 0;
     }
 
-    /* Imagem do macaco no canto (Opcional, igual na print 2) */
-    .bg-mascot {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 300px; /* Ajuste conforme a imagem */
-        opacity: 0.8;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    /* --- CARD DO QUIZ (ESTILO BOTÕES DO MENU) --- */
     .quiz-box {
-        position: relative;
-        z-index: 1;
-        width: 100%;
-        max-width: 500px;
-        background-color: var(--cor-card); /* Preto fosco */
-        border-radius: 15px; /* Bordas arredondadas */
-        padding: 40px;
+        background: rgba(30, 30, 30, 0.95); 
+        border: 2px solid var(--cor-dourado);
+        border-radius: 15px; 
+        padding: 25px; 
         text-align: center;
-        /* Sombra suave para destacar do fundo */
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        border: 1px solid #333; /* Borda sutil cinza escuro */
+        box-shadow: 0 0 15px rgba(209, 167, 32, 0.3);
     }
 
-    .quiz-header-logo {
-        height: 50px;
-        margin-bottom: 15px;
-    }
-
-    h2 {
-        color: var(--cor-dourado);
-        font-size: 1.5rem;
-        margin-bottom: 10px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    p {
-        color: #aaa;
-        font-size: 0.9rem;
-        margin-bottom: 20px;
-    }
-
-    /* --- INPUTS E BOTÕES --- */
-    input { 
-        padding: 12px; 
-        width: 100%; 
-        border-radius: 8px; 
-        border: 1px solid #444; 
-        background-color: #1a1a1a !important; 
-        color: white !important; 
-        margin-bottom: 20px; 
-        text-align: center; 
-        font-size: 1rem; 
-        transition: 0.3s;
-    }
-    input:focus {
-        border-color: var(--cor-dourado);
-        outline: none;
-    }
-
-    button { 
-        padding: 12px 30px; 
-        width: 100%;
-        background: var(--cor-dourado); 
-        border: none; 
-        font-weight: 700; 
-        cursor: pointer; 
-        border-radius: 8px; 
-        text-transform: uppercase; 
-        font-size: 0.9rem; 
-        color: #000;
-        transition: transform 0.2s, filter 0.2s;
-    }
-    button:hover { 
-        filter: brightness(1.1);
-        transform: translateY(-2px); 
-    }
-    
     .hidden { display: none !important; }
 
-    /* Opções de Resposta */
-    .option-btn { 
-        background: transparent; 
-        border: 1px solid #444; 
-        color: #ccc; 
-        margin: 8px 0; 
-        transition: 0.2s;
-    }
-    .option-btn:hover { 
-        border-color: var(--cor-dourado); 
-        color: var(--cor-dourado); 
-        background: rgba(255, 193, 7, 0.05);
-    }
-
-    /* --- LEADERBOARD DENTRO DO CARD --- */
-    .leaderboard-box {
-        margin-top: 30px; 
-        text-align: left; 
-        background: #111; 
-        padding: 15px; 
-        border-radius: 10px; 
-        border: 1px solid #222;
-    }
-    .leaderboard-box h3 { 
+    /* --- ESTILO DOS INPUTS --- */
+    input { 
+        padding: 12px; 
+        width: 70%; 
+        border-radius: 8px; 
+        border: 2px solid var(--cor-dourado); 
+        background-color: #222 !important; 
+        color: var(--cor-texto) !important; 
+        margin-bottom: 15px; 
         text-align: center; 
-        color: #fff; 
-        font-size: 1rem;
-        margin-top: 0; 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
+        font-size: 1.2rem; 
+        font-weight: bold;
+        outline: none;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     }
-    ul { list-style: none; padding: 0; margin-top: 10px; }
-    li { 
-        padding: 8px; 
-        border-bottom: 1px solid #222; 
-        display: flex; 
-        justify-content: space-between;
-        font-size: 0.9rem;
-    }
-    li:last-child { border-bottom: none; }
-    li:nth-child(1) { color: #ffd700; } 
 
-    /* --- FOOTER DISCRETO --- */
-    footer {
-        background-color: transparent; /* Transparente para casar com o fundo */
-        color: #555;
-        text-align: center;
-        padding: 20px;
-        font-size: 0.75rem;
+    input:focus {
+        border-color: #ffeaa7;
+        box-shadow: 0 0 15px rgba(209, 167, 32, 0.4);
+        background-color: #1a1a1a !important;
     }
-    footer strong { color: #777; }
 
-    /* Admin Panel */
-    #admin-panel {
-        margin-top: 20px; padding: 10px; border: 1px dashed #444;
-        background: rgba(0,0,0,0.2); display: none;
+    input::placeholder { color: rgba(255, 255, 255, 0.5); }
+
+    /* Remove fundo branco do Autocomplete */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active  {
+        -webkit-box-shadow: 0 0 0 30px #222 inset !important;
+        -webkit-text-fill-color: white !important;
+        transition: background-color 5000s ease-in-out 0s;
     }
-    .btn-admin { width: auto; padding: 8px 15px; margin: 2px; font-size: 0.8rem; color: white;}
-    .btn-stop { background: #d32f2f; color: white; }
+
+    button { padding: 12px 25px; background: var(--cor-dourado); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; font-size: 1rem; color: #1a1a1a; }
+    button:hover { background: #e5bd35; transform: scale(1.05); }
     
+    .option-btn { width: 100%; background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado); margin: 8px 0; }
+    .option-btn:hover { background: var(--cor-dourado); color: black; }
+
+    .hud { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; font-size: 1.2rem; }
+    
+    /* Painel Admin */
+    #admin-panel {
+        margin-top: 20px; padding: 15px; border: 1px dashed var(--cor-erro);
+        background: rgba(50, 0, 0, 0.5); display: none;
+    }
+    .btn-admin { background: var(--cor-erro); color: white; font-size: 0.9rem; margin: 5px; }
+    .btn-stop { background: var(--cor-aviso); }
+    
+    .ban-area { border-top: 1px solid #444; margin-top: 15px; padding-top: 10px; }
+
+    .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
+    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+    .leaderboard-box {
+        margin-top: 30px; text-align: left; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 10px;
+    }
+    .leaderboard-box h3 { text-align: center; color: var(--cor-dourado); margin-top: 0; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 10px; border-bottom: 1px solid #444; display: flex; justify-content: space-between;}
+    li:nth-child(1) { color: #ffd700; font-weight: bold; } 
+    li:nth-child(2) { color: #c0c0c0; } 
+    li:nth-child(3) { color: #cd7f32; }
+
+    /* --- FOOTER (DIREITOS) --- */
+    footer {
+        background-color: transparent; /* Ou #0f0f0f se quiser fundo sólido */
+        color: rgba(255,255,255,0.4);
+        text-align: center;
+        padding: 15px;
+        font-size: 0.75rem;
+        width: 100%;
+        margin-top: auto; /* Garante que fique no fundo */
+    }
+    footer strong { color: rgba(255,255,255,0.6); }
   </style>
 </head>
 <body>
 
   <nav>
     <div class="nav-logo">
-       <img src="img/mike_anotando2.png" alt="" style="height: 30px;"> 
-       Humble Quiz
+        <img src="img/mike_anotando2.png" alt=""> Humble Quiz
     </div>
   </nav>
 
-  <main>
-    
+  <div class="main-content">
     <div class="quiz-box">
         
+        <img src="https://i.imgur.com/XOEcuO8.png" alt="Humble" style="height: 60px; margin-bottom: 10px;">
+
         <div id="login-screen">
-            <h2>Quem é você?</h2>
-            <p>Digite seu nick para entrar na sala</p>
-            
-            <input type="text" id="username" placeholder="Seu Nick..." maxlength="15" autocomplete="off" />
+            <h2 style="color: var(--cor-dourado); margin-top: 0;">🏆 Humble Quiz</h2>
+            <p>Digite seu nick para entrar na sala:</p>
+            <input type="text" id="username" placeholder="Seu Nick..." maxlength="15" />
+            <br>
             <button id="btn-enter">ENTRAR NA SALA</button>
 
             <div id="admin-panel">
-                <h4 style="color:#d32f2f; margin-bottom:5px;">⚠️ Admin</h4>
-                <input type="password" id="admin-pass" placeholder="Senha..." style="width: 80%;">
+                <h4>⚠️ Área do Admin</h4>
+                <input type="password" id="admin-pass" placeholder="Senha..." style="width: 50%;">
                 <br>
-                <button class="btn-admin" id="btn-admin-start" style="background: #2ecc71;">Iniciar</button>
-                <button class="btn-admin btn-stop" id="btn-admin-stop">Parar</button>
-                <button class="btn-admin" id="btn-admin-reset" style="background: #3498db;">Reset</button>
-                <div style="margin-top:5px;">
-                    <input type="text" id="ban-input" placeholder="Nick ban..." style="width: 60%; padding:5px;">
-                    <button class="btn-admin" id="btn-admin-ban" style="background:#000;">Ban</button>
+                <button class="btn-admin" id="btn-admin-start" style="background: #27ae60;">▶️ INICIAR JOGO</button>
+                <button class="btn-admin btn-stop" id="btn-admin-stop">⏹️ FINALIZAR</button>
+                <button class="btn-admin" id="btn-admin-reset">🔄 RESETAR</button>
+                
+                <div class="ban-area">
+                    <input type="text" id="ban-input" placeholder="Nick para banir..." style="width: 60%; border-color: red;">
+                    <button class="btn-admin" id="btn-admin-ban" style="margin-top:0;">🚫 BANIR</button>
                 </div>
-            </div>
-
-            <div class="leaderboard-box">
-                <h3>📊 Top 3 - Ao Vivo</h3>
-                <ul id="leaderboard-list">
-                    <li style="justify-content: center; color: #555;">Nenhum jogador...</li>
-                </ul>
             </div>
         </div>
 
         <div id="lobby-screen" class="hidden">
-            <div style="font-size: 3rem;">⏳</div>
-            <h2 style="margin-top:10px;">Aguardando...</h2>
+            <h2>⏳ Aguardando Início...</h2>
+            <div class="loader">⚡</div>
             <p>O Mestre iniciará a partida em breve.</p>
-            <p style="font-size: 0.8rem; border: 1px solid #333; display:inline-block; padding: 5px 15px; border-radius: 20px;">
-                Logado como: <strong id="lobby-username" style="color: var(--cor-dourado)"></strong>
-            </p>
+            <p style="font-size: 0.9em; color: #aaa;">Logado como: <strong id="lobby-username" style="color: var(--cor-dourado)"></strong></p>
         </div>
 
         <div id="game-screen" class="hidden">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: var(--cor-dourado);">
+            <div class="hud">
                 <span id="timer">⏳ 0s</span>
                 <span id="score-display">💎 0</span>
             </div>
             
-            <h2 id="question-text" style="color: #fff; font-size: 1.2rem; min-height: 50px;">Carregando...</h2>
+            <h2 id="question-text">Carregando...</h2>
             <div id="options-container"></div>
-            
             <input type="text" id="text-answer" class="hidden" placeholder="Sua resposta...">
             <button id="btn-submit-text" class="hidden">Confirmar</button>
         </div>
 
         <div id="end-screen" class="hidden">
             <h2>Fim de Jogo!</h2>
-            <p id="end-message">Pontuação Final</p>
+            <p id="end-message">Sua pontuação foi salva.</p>
             <h1 id="final-score" style="color: var(--cor-dourado); font-size: 4rem; margin: 10px 0;">0</h1>
-            <button onclick="location.reload()" style="background: #333; color: #fff;">Voltar ao Início</button>
+            <button onclick="location.reload()">Sair</button>
+        </div>
+
+        <div class="leaderboard-box">
+            <h3>📊 Top 3 - Ao Vivo</h3>
+            <ul id="leaderboard-list">
+                <li style="justify-content: center;">Carregando...</li>
+            </ul>
         </div>
 
     </div>
-
-    </main>
+  </div>
 
   <footer>
     <p>&copy; 2026 <strong>Humble Pixelmon</strong>. Todos os direitos reservados.</p>
+    <p style="margin-top: 5px;">Desenvolvido por João Marcos</p>
   </footer>
 
   <script type="module">
@@ -309,7 +259,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // --- VARIÁVEIS ---
+    // --- VARIÁVEIS E FUNÇÕES GLOBAIS ---
     let questions = [];
     let currentQuestionIndex = 0;
     let score = 0;
@@ -320,8 +270,10 @@
     let gameHasStarted = false;
     let isGameEnded = false;
 
-    // Normaliza strings
-    const normalize = (str) => str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    // Função de Normalização
+    const normalize = (str) => {
+        return str.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
 
     const loginScreen = document.getElementById('login-screen');
     const lobbyScreen = document.getElementById('lobby-screen');
@@ -333,25 +285,25 @@
     // 🛡️ BANLIST
     // ======================================================
     const termosProibidos = [
-       "admin", "moderador", "staff", "suporte", "gm", "god",
-        "baceta", "b4ceta", "b@ceta", "buceta",
-        "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha", "fdp",
+        "admin", "moderador", "staff", "suporte", "gm", "god",
+        "baceta", "b4ceta", "b@ceta", 
+        "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha",
         "merda", "m3rda", "bosta", "cagar", "cagado",
         "caralho", "krl", "carai", "caraio", "c4ralho", "pqp",
-        "boceta", "buceta", "bct", "buc3ta", "b0ceta", "xereca", "xoxota", "ppk", "pepeca", "xrk", "xana"
+        "boceta", "buceta", "bct", "buc3ta", "b0ceta", "xereca", "xoxota", "ppk", "pepeca", "xrk",
         "viado", "v1ado", "viad0", "bixa", "bicha", "boiola", "baitola", "biba", "viadinho", "gayzista",
         "fuder", "foder", "fudido", "fudida", "fodido", "f0der", "fud3r", "foda", "foda-se",
-        "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra", "gozadinha", "leitada", "leitei", 
-        "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada", "smt", "bago", 
+        "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra",
+        "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada",
         "boquete", "boqueteiro", "boqueteira", "chupa", "chupei", "mamada", "mamar",
-        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry", "diddy", "molestador",
-        "jack", "estuprador", "abusador", "estudador" 
+        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry",
+        "jack", "estuprador", 
         "corno", "c0rno", "cornudo", "chifrudo", "chuca", "xuca", "x4ca", "ch4ca", "retardado", "autista", "prostituta",
-        "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala", "2550c01",
-        "hitler", "h1tler", "nazista", "nazi", "ritler", "suastica", "ariano", "favelado", "favelada", 
+        "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala",
+        "hitler", "h1tler", "nazista", "nazi", "ritler", "suastica", "ariano",
         "judeu", "judiaria", 
         "nigga", "nigger", 
-        "traveco", "travesti", "tr4veco", "shemale", "femboy", "tomboy", "veveco"
+        "traveco", "travesti", "tr4veco", "shemale", "femboy", "tomboy",
         "fuck", "fck", "dick", "pussy", "asshole", "bitch", "shit", "cunt", "whore", "cock", "suck"
     ];
 
@@ -371,7 +323,7 @@
         return false; 
     }
 
-    // CARREGAR
+    // CARREGAR PERGUNTAS
     async function loadQuestions() {
         try {
             const res = await fetch('perguntas/quiz_data.json');
@@ -379,7 +331,7 @@
         } catch(e) { console.error("Erro JSON", e); }
     }
 
-    // ENTRAR
+    // ENTRAR NO LOBBY
     document.getElementById('btn-enter').addEventListener('click', async () => {
         let rawName = usernameInput.value.trim();
         if(!rawName) return alert("Digite um nome!");
@@ -395,19 +347,26 @@
         if(questions.length === 0) return alert("Erro ao carregar perguntas.");
 
         try {
-            // Check Blacklist
             const banDocRef = doc(db, "blacklist_humble", normalize(username));
             const banDoc = await getDoc(banDocRef);
-            if(banDoc.exists()) { alert("⛔ Este nick foi banido."); return; }
+            if(banDoc.exists()) {
+                alert("⛔ Este nick foi banido pelo Admin.");
+                return;
+            }
 
-            // Check Duplicidade
             const qCheck = query(collection(db, "ranking_humble"), where("username", "==", username));
-            const snap = await getDocs(qCheck);
-            if (!snap.empty) { alert("Nick já em uso."); return; }
+            const querySnapshot = await getDocs(qCheck);
 
-            // Reserva
+            if (!querySnapshot.empty) {
+                alert(`O nick "${username}" já está sendo usado.`);
+                return;
+            }
+
             const docRef = await addDoc(collection(db, "ranking_humble"), {
-                username: username, score: 0, status: "lobby", date: new Date()
+                username: username,
+                score: 0,
+                status: "lobby",
+                date: new Date()
             });
             userDocId = docRef.id;
 
@@ -417,10 +376,13 @@
             
             listenGameState();
 
-        } catch (e) { alert("Erro de conexão."); }
+        } catch (e) {
+            console.error(e);
+            alert("Erro de conexão.");
+        }
     });
 
-    // LISTENER
+    // --- LOGICA DE JOGO ---
     function listenGameState() {
         onSnapshot(doc(db, "config", "estado_jogo"), (docSnapshot) => {
             if (!docSnapshot.exists()) return;
@@ -536,7 +498,7 @@
         } catch (e) { try{await addDoc(collection(db, "ranking_humble"), { username: username, score: score, status: "recuperado", date: new Date() });}catch(e2){} }
     }
 
-    // --- ADMIN ---
+    // --- ADMIN ACTIONS ---
     usernameInput.addEventListener('input', (e) => {
         if(e.target.value.toLowerCase() === 'admin') document.getElementById('admin-panel').style.display = 'block';
     });
@@ -566,31 +528,33 @@
         } catch(e) { alert("Erro: " + e.message); }
     });
 
-    // BAN MANUAL
     document.getElementById('btn-admin-ban').addEventListener('click', async () => {
-        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Senha admin!");
+        if(document.getElementById('admin-pass').value !== "humbleadmin") return alert("Digite a senha do admin!");
         const nickBan = document.getElementById('ban-input').value.trim();
-        if(!nickBan) return;
-        if(!confirm(`BANIR "${nickBan}"?`)) return;
+        if(!nickBan) return alert("Digite o nick para banir.");
+        if(!confirm(`Tem certeza que deseja BANIR PERMANENTEMENTE "${nickBan}"?`)) return;
 
         try {
             await setDoc(doc(db, "blacklist_humble", normalize(nickBan)), { originalName: nickBan, bannedAt: new Date() });
             const q = query(collection(db, "ranking_humble"), where("username", "==", nickBan));
-            const snap = await getDocs(q);
+            const querySnapshot = await getDocs(q);
             const batch = writeBatch(db);
-            snap.forEach((doc) => batch.delete(doc.ref));
+            querySnapshot.forEach((doc) => { batch.delete(doc.ref); });
             await batch.commit();
-            alert(`🚫 "${nickBan}" Banido.`);
-            document.getElementById('ban-input').value = "";
-        } catch(e) { alert("Erro ao banir."); }
+            alert(`🚫 O nick "${nickBan}" foi banido e removido do ranking.`);
+            document.getElementById('ban-input').value = ""; 
+        } catch(e) {
+            console.error(e);
+            alert("Erro ao banir: " + e.message);
+        }
     });
 
-    // LEADERBOARD (Com desempate por data)
-    const qRank = query(collection(db, "ranking_humble"), orderBy("score", "desc"), orderBy("date", "asc"), limit(3));
+    // LEADERBOARD
+    const qRank = query(collection(db, "ranking_humble"), orderBy("score", "desc"), limit(3));
     onSnapshot(qRank, (snapshot) => {
         const list = document.getElementById('leaderboard-list');
         list.innerHTML = "";
-        if (snapshot.empty) { list.innerHTML = "<li style='justify-content:center; color: #555;'>Nenhum jogador registrado.</li>"; return; }
+        if (snapshot.empty) { list.innerHTML = "<li style='justify-content:center; color: #aaa;'>Nenhum jogador registrado.</li>"; return; }
         let index = 1;
         snapshot.forEach((doc) => {
             const d = doc.data();
