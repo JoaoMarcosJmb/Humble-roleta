@@ -2,34 +2,157 @@
     {
         "id": 1,
         "type": "multiple_choice",
-        "text": "Qual item é necessário para evoluir o Eevee para Jolteon?",
+        "text": "Por que Soluço não consegue matar o Fúria da Noite quando o encontra preso na floresta?",
         "options": [
-            "Water Stone",
-            "Thunder Stone",
-            "Fire Stone",
-            "Leaf Stone"
+            "Porque ele esqueceu sua faca",
+            "Porque ele sentiu empatia ao ver o medo nos olhos do dragão",
+            "Porque o dragão conseguiu fugir antes",
+            "Porque seu pai o impediu"
         ],
-        "correct": "Thunder Stone",
+        "correct": "Porque ele sentiu empatia ao ver o medo nos olhos do dragão",
         "time_limit": 15
     },
     {
         "id": 2,
-        "type": "text",
-        "text": "Qual é o nome da pré-evolução do Pikachu?",
-        "correct": "Pichu",
-        "time_limit": 10
+        "type": "multiple_choice",
+        "text": "Qual parte do corpo de Banguela foi danificada, impedindo-o de voar sozinho?",
+        "options": [
+            "A asa esquerda",
+            "Uma das patas traseiras",
+            "O estabilizador esquerdo da cauda",
+            "Um de seus dentes retráteis"
+        ],
+        "correct": "O estabilizador esquerdo da cauda",
+        "time_limit": 15
     },
     {
         "id": 3,
         "type": "multiple_choice",
-        "text": "Qual destes Pokémon NÃO é do tipo Dragão?",
+        "text": "Qual objeto Soluço usa para ganhar a confiança de Banguela pela primeira vez?",
         "options": [
-            "Dragonite",
-            "Garchomp",
-            "Charizard",
-            "Salamence"
+            "Um escudo",
+            "Um peixe",
+            "Uma maçã",
+            "Um pedaço de carne de ovelha"
         ],
-        "correct": "Charizard",
-        "time_limit": 20
+        "correct": "Um peixe",
+        "time_limit": 15
+    },
+    {
+        "id": 4,
+        "type": "multiple_choice",
+        "text": "Por que Soluço decide dar o nome de 'Banguela' ao seu dragão?",
+        "options": [
+            "Porque ele é um dragão idoso",
+            "Porque ele perdeu os dentes na queda",
+            "Porque seus dentes são retráteis",
+            "Porque ele não consegue mastigar"
+        ],
+        "correct": "Porque seus dentes são retráteis",
+        "time_limit": 15
+    },
+    {
+        "id": 5,
+        "type": "multiple_choice",
+        "text": "Qual planta Soluço descobre que pode acalmar e paralisar temporariamente os dragões?",
+        "options": [
+            "Grama de Dragão (Dragonroot)",
+            "Erva de Gato",
+            "Lavanda Nórdica",
+            "Erva de Dragão (Dragonnip)"
+        ],
+        "correct": "Erva de Dragão (Dragonnip)",
+        "time_limit": 15
+    },
+    {
+        "id": 6,
+        "type": "multiple_choice",
+        "text": "O que Astrid descobre ao seguir Soluço secretamente até a enseada?",
+        "options": [
+            "Que ele está construindo um barco",
+            "Que ele fez amizade com um Fúria da Noite",
+            "Que ele está roubando comida da vila",
+            "Que ele encontrou um tesouro viking"
+        ],
+        "correct": "Que ele fez amizade com um Fúria da Noite",
+        "time_limit": 15
+    },
+    {
+        "id": 7,
+        "type": "multiple_choice",
+        "text": "Para onde Banguela leva Soluço e Astrid involuntariamente durante o voo?",
+        "options": [
+            "Para uma ilha deserta",
+            "Para o fundo do oceano",
+            "Para o Ninho dos Dragões",
+            "Para o Mundo Escondido"
+        ],
+        "correct": "Para o Ninho dos Dragões",
+        "time_limit": 15
+    },
+    {
+        "id": 8,
+        "type": "multiple_choice",
+        "text": "Qual é a verdadeira razão pela qual os dragões atacam Berk e roubam gado?",
+        "options": [
+            "Por puro instinto assassino",
+            "Para alimentar uma rainha gigante (Morte Rubra)",
+            "Porque gostam do sabor da carne de ovelha",
+            "Para treinar seus filhotes"
+        ],
+        "correct": "Para alimentar uma rainha gigante (Morte Rubra)",
+        "time_limit": 15
+    },
+    {
+        "id": 9,
+        "type": "multiple_choice",
+        "text": "O que Soluço faz no seu exame final na arena para tentar mudar a mente dos vikings?",
+        "options": [
+            "Ele mata o dragão rapidamente",
+            "Ele foge voando em Banguela",
+            "Ele joga suas armas fora e tenta tocar o dragão",
+            "Ele pede para Stoico lutar em seu lugar"
+        ],
+        "correct": "Ele joga suas armas fora e tenta tocar o dragão",
+        "time_limit": 15
+    },
+    {
+        "id": 10,
+        "type": "multiple_choice",
+        "text": "Como Stoico consegue encontrar o caminho para o Ninho dos Dragões?",
+        "options": [
+            "Usando um mapa antigo",
+            "Seguindo as estrelas",
+            "Usando Banguela acorrentado como guia",
+            "Seguindo o rastro de fumaça"
+        ],
+        "correct": "Usando Banguela acorrentado como guia",
+        "time_limit": 15
+    },
+    {
+        "id": 11,
+        "type": "multiple_choice",
+        "text": "Qual é a classe oficial do dragão Fúria da Noite?",
+        "options": [
+            "Classe Rocha",
+            "Classe Marinha",
+            "Classe Relâmpago",
+            "Classe Mistério"
+        ],
+        "correct": "Classe Relâmpago",
+        "time_limit": 15
+    },
+    {
+        "id": 12,
+        "type": "multiple_choice",
+        "text": "Qual ferimento permanente Soluço sofre após a batalha final contra a Morte Rubra?",
+        "options": [
+            "Ele perde o braço direito",
+            "Ele perde parte da perna esquerda",
+            "Ele fica cego de um olho",
+            "Ele perde a audição"
+        ],
+        "correct": "Ele perde parte da perna esquerda",
+        "time_limit": 15
     }
 ]
