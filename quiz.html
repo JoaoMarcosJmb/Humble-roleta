@@ -274,10 +274,23 @@
         checkAnswer(document.getElementById('text-answer').value);
     });
 
-    function checkAnswer(userAnswer) {
+   function checkAnswer(userAnswer) {
         if(isGameEnded || !userAnswer) return;
+
         const q = questions[currentQuestionIndex];
-        const isCorrect = userAnswer.toString().toLowerCase() === q.correct.toString().toLowerCase();
+        
+        // Função para limpar o texto (Tira acento, espaço e põe minúscula)
+        const normalize = (str) => {
+            return str
+                .toString() // Garante que é texto
+                .toLowerCase() // Tudo minúsculo
+                .trim() // Remove espaços em branco nas pontas
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Remove acentos (é -> e)
+        };
+
+        // Compara a resposta do usuário limpa com a resposta correta limpa
+        const isCorrect = normalize(userAnswer) === normalize(q.correct);
+        
         processAnswer(isCorrect);
     }
 
