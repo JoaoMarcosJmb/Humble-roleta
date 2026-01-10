@@ -4,195 +4,63 @@
   <meta charset="UTF-8">
   <title>Quiz Interativo - Humble</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
-    /* --- VARIÁVEIS GLOBAIS (BASE HUMBLE) --- */
+    /* --- ESTILOS IGUAIS AO ANTERIOR (Resumido para focar na lógica) --- */
     :root {
       --cor-dourado: #d1a720; 
       --cor-fundo: #1a1a1a; 
       --cor-texto: #f5f5f5;
-      --cor-overlay: rgba(20, 20, 20, 0.9);
-      --cor-sucesso: #2ecc71;
-      --cor-erro: #e74c3c;
+      --cor-overlay: rgba(20, 20, 20, 0.95);
     }
-
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      /* Fundo original do site */
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size: cover;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
       color: var(--cor-texto);
       display: flex;
       flex-direction: column;
       align-items: center;
+      margin: 0; min-height: 100vh;
     }
-
-    /* ---------- Cabeçalho Simplificado ---------- */
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: center; /* Centraliza o logo já que não tem menu */
-      align-items: center;
-      background: var(--cor-overlay);
-      border-bottom: 2px solid var(--cor-dourado);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      z-index: 1000;
-      box-sizing: border-box;
-    }
-
-    header h1 {
-      font-size: 1.6rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--cor-dourado);
-    }
-
-    header h1 a {
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    header h1 img {
-      height: 40px;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    
-    header h1 img:hover {
-        transform: scale(1.1);
-    }
-
-    /* =========================================
-       ESTILOS DO QUIZ
-       ========================================= */
-    
-    .main-content {
-        margin-top: 100px; /* Espaço para o header fixo */
-        width: 100%;
-        max-width: 700px;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    .quiz-box {
-        background: rgba(30, 30, 30, 0.9);
-        border: 2px solid var(--cor-dourado);
-        border-radius: 15px;
-        padding: 30px;
-        box-shadow: 0 0 20px rgba(209, 167, 32, 0.2);
-        text-align: center;
-    }
-
-    h2 { color: var(--cor-dourado); margin-bottom: 20px; }
-    
     .hidden { display: none !important; }
-
-    /* Inputs estilizados */
-    input[type="text"] {
-        width: 80%;
-        padding: 12px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-        border: 1px solid var(--cor-dourado);
-        background: #222;
-        color: white;
-        font-size: 1rem;
-        outline: none;
-    }
-
-    input[type="text"]:focus {
-        box-shadow: 0 0 8px var(--cor-dourado);
-    }
-
-    /* Botões estilizados */
-    button {
-        background: var(--cor-dourado);
-        color: #1a1a1a;
-        font-weight: bold;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: 0.3s;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    button:hover {
-        background: #e5bd35;
-        transform: scale(1.05);
-        box-shadow: 0 0 10px rgba(209, 167, 32, 0.5);
-    }
-
-    /* Botões de Opção (Quiz) */
-    .option-btn {
-        display: block;
-        width: 100%;
-        margin: 10px 0;
-        background: transparent;
-        border: 1px solid var(--cor-dourado);
-        color: var(--cor-dourado);
-    }
-
-    .option-btn:hover {
-        background: var(--cor-dourado);
-        color: #1a1a1a;
-    }
-
-    /* HUD (Timer e Score) */
-    .hud {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        padding: 10px;
-        background: rgba(0,0,0,0.5);
-        border-radius: 8px;
-        border: 1px solid #444;
-    }
-
-    /* Leaderboard */
-    .leaderboard-container {
-        margin-top: 30px;
-        text-align: left;
-        background: rgba(0,0,0,0.6);
-        padding: 15px;
-        border-radius: 10px;
-    }
-
-    .leaderboard-container h3 {
-        text-align: center;
-        color: var(--cor-dourado);
-        margin-top: 0;
-    }
-
-    ul { list-style: none; padding: 0; }
-    li { padding: 10px; border-bottom: 1px solid #444; display: flex; justify-content: space-between;}
     
-    li:nth-child(1) { color: #ffd700; font-weight: bold; text-shadow: 0 0 5px #ffd700; } /* Ouro */
-    li:nth-child(2) { color: #c0c0c0; } /* Prata */
-    li:nth-child(3) { color: #cd7f32; } /* Bronze */
-
-    @media (max-width: 500px) {
-      header h1 { font-size: 1.3rem; }
-      .quiz-box { padding: 15px; }
+    /* Header e Layout */
+    header {
+      width: 100%; padding: 15px; background: var(--cor-overlay);
+      border-bottom: 2px solid var(--cor-dourado); text-align: center;
+      position: fixed; top: 0; z-index: 100;
     }
+    header h1 a { color: var(--cor-dourado); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 1.5rem; }
+    header img { height: 40px; }
+
+    .main-content { margin-top: 100px; width: 95%; max-width: 600px; }
+    .quiz-box {
+        background: rgba(30, 30, 30, 0.95); border: 2px solid var(--cor-dourado);
+        border-radius: 15px; padding: 25px; text-align: center;
+        box-shadow: 0 0 15px rgba(209, 167, 32, 0.3);
+    }
+
+    /* Inputs e Botões */
+    input { padding: 12px; width: 70%; border-radius: 5px; border: 1px solid var(--cor-dourado); background: #222; color: white; margin-bottom: 10px; }
+    button { padding: 12px 25px; background: var(--cor-dourado); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; text-transform: uppercase; margin-top: 10px; }
+    button:hover { background: #e5bd35; transform: scale(1.05); }
+    
+    .option-btn { width: 100%; background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado); margin: 8px 0; }
+    .option-btn:hover { background: var(--cor-dourado); color: black; }
+
+    /* Admin Panel */
+    #admin-panel {
+        margin-top: 20px; padding: 15px; border: 1px dashed #e74c3c;
+        background: rgba(50, 0, 0, 0.5); display: none; /* Escondido por padrão */
+    }
+    .btn-admin { background: #e74c3c; color: white; font-size: 0.8rem; margin: 5px; }
+
+    /* Lobby Animation */
+    .loader { font-size: 2rem; animation: pulse 1.5s infinite; margin: 20px 0; }
+    @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
   </style>
 </head>
 <body>
@@ -200,8 +68,7 @@
   <header>
     <h1>
       <a href="index.html">
-        <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
-        Humble Quiz
+        <img src="https://i.imgur.com/XOEcuO8.png" alt="Icone"> Humble Quiz
       </a>
     </h1>
   </header>
@@ -210,96 +77,159 @@
     <div class="quiz-box">
         
         <div id="login-screen">
-            <h2>🏆 Humble Quiz</h2>
-            <p>Insira seu nick para competir no ranking:</p>
-            <input type="text" id="username" placeholder="Seu Nick aqui..." maxlength="15" />
+            <h2>🏆 Entrar no Desafio</h2>
+            <p>Digite seu nick para participar:</p>
+            <input type="text" id="username" placeholder="Seu Nick..." />
             <br>
-            <button onclick="startGame()">Começar Desafio</button>
+            <button onclick="joinLobby()">ENTRAR</button>
+            
+            <div id="admin-panel">
+                <h4>⚠️ Área do Mestre</h4>
+                <input type="password" id="admin-pass" placeholder="Senha Admin" style="width: 50%;">
+                <br>
+                <button class="btn-admin" onclick="adminStart()">▶️ INICIAR JOGO P/ TODOS</button>
+                <button class="btn-admin" onclick="adminReset()">🔄 RESETAR TUDO</button>
+            </div>
+        </div>
+
+        <div id="lobby-screen" class="hidden">
+            <h2>⏳ Aguardando Início...</h2>
+            <div class="loader">⚡</div>
+            <p>O Mestre iniciará a partida em breve.</p>
+            <p style="font-size: 0.9em; color: #aaa;">Você está logado como: <strong id="lobby-username" style="color: var(--cor-dourado)"></strong></p>
         </div>
 
         <div id="game-screen" class="hidden">
-            <div class="hud">
-                <span id="timer">⏳ Tempo: 0s</span>
-                <span id="score-display">💎 Pontos: 0</span>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold;">
+                <span id="timer">Tempo: 0s</span>
+                <span id="score-display">Pontos: 0</span>
             </div>
-            
-            <div id="question-container">
-                <h2 id="question-text">Carregando...</h2>
-                
-                <div id="options-container"></div>
-                
-                <input type="text" id="text-answer" class="hidden" placeholder="Digite a resposta...">
-                <button id="btn-submit-text" class="hidden" onclick="checkAnswerText()">Enviar</button>
-            </div>
+            <h2 id="question-text">Carregando...</h2>
+            <div id="options-container"></div>
+            <input type="text" id="text-answer" class="hidden" placeholder="Sua resposta...">
+            <button id="btn-submit-text" class="hidden" onclick="checkAnswerText()">Enviar</button>
         </div>
 
         <div id="end-screen" class="hidden">
             <h2>Fim de Jogo!</h2>
-            <p>Sua pontuação final:</p>
-            <h1 id="final-score" style="color: var(--cor-dourado); font-size: 3rem; margin: 10px 0;">0</h1>
-            <button onclick="location.reload()">Jogar Novamente</button>
+            <h1 id="final-score" style="color: var(--cor-dourado); font-size: 3rem;">0</h1>
+            <p>Confira o telão para ver o vencedor!</p>
+            <button onclick="location.reload()">Sair</button>
         </div>
 
-        <div class="leaderboard-container">
-            <h3>📊 Top 3 Jogadores</h3>
-            <ul id="leaderboard-list">
-                <li style="justify-content: center;">Carregando ranking...</li>
+        <div style="margin-top: 20px; text-align: left; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px;">
+            <h3 style="text-align: center; color: var(--cor-dourado); margin: 0 0 10px 0;">Top Jogadores</h3>
+            <ul id="leaderboard-list" style="list-style: none; padding: 0;">
+                <li>Carregando...</li>
             </ul>
         </div>
-
     </div>
   </div>
 
   <script>
-    // --- LÓGICA DO QUIZ ---
+    // --- CONFIGURAÇÃO ---
+    const API_URL = "http://localhost:8000"; // Mude para o link do Render depois
     
-    // Mude isso quando subir o Python no Render
-    const API_URL = "http://localhost:8000"; 
-    
+    // --- VARIÁVEIS ---
     let questions = [];
     let currentQuestionIndex = 0;
     let username = "";
+    let lobbyInterval; 
+    let gameRunning = false;
     let timerInterval;
     let timeLeft = 0;
 
-    async function loadQuestions() {
-        try {
-            const response = await fetch('perguntas/quiz_data.json');
-            if (!response.ok) throw new Error("Arquivo não encontrado");
-            questions = await response.json();
-        } catch (error) {
-            alert("Erro: Não foi possível carregar 'perguntas/quiz_data.json'.");
-            console.error(error);
+    // --- FUNÇÕES DE ADMIN ---
+    // Se digitar "admin" no campo de nome, mostra o painel
+    document.getElementById('username').addEventListener('input', (e) => {
+        if(e.target.value.toLowerCase() === 'admin') {
+            document.getElementById('admin-panel').style.display = 'block';
         }
+    });
+
+    async function adminStart() {
+        const pass = document.getElementById('admin-pass').value;
+        await fetch(`${API_URL}/admin/start`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ password: pass })
+        });
+        alert("Comando de início enviado!");
     }
 
-    async function startGame() {
-        username = document.getElementById('username').value.trim();
-        if (!username) return alert("Por favor, digite um nick válido!");
+    async function adminReset() {
+        const pass = document.getElementById('admin-pass').value;
+        await fetch(`${API_URL}/admin/reset`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ password: pass })
+        });
+        alert("Jogo resetado!");
+        location.reload();
+    }
 
+    // --- FLUXO DO JOGADOR ---
+
+    async function loadQuestions() {
         try {
-            await fetch(`${API_URL}/start`, {
+            const res = await fetch('perguntas/quiz_data.json');
+            questions = await res.json();
+        } catch(e) { console.error("Erro ao carregar JSON", e); }
+    }
+
+    async function joinLobby() {
+        username = document.getElementById('username').value.trim();
+        if(!username) return alert("Digite um nome!");
+
+        // Registra entrada
+        try {
+            await fetch(`${API_URL}/join`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ username: username })
             });
-        } catch (e) {
-            console.warn("Backend offline. Jogando em modo local.");
-        }
+        } catch(e) { console.log("Backend offline?"); }
 
+        // Carrega perguntas
         await loadQuestions();
-        if (questions.length === 0) return;
 
+        // Muda para tela de lobby
         document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('lobby-screen').classList.remove('hidden');
+        document.getElementById('lobby-username').innerText = username;
+
+        // Inicia verificação de status (Polling)
+        lobbyInterval = setInterval(checkGameStatus, 2000);
+        setInterval(updateLeaderboard, 5000); // Já começa a atualizar o ranking
+    }
+
+    async function checkGameStatus() {
+        try {
+            const res = await fetch(`${API_URL}/status`);
+            const data = await res.json();
+            
+            if (data.status === "RUNNING" && !gameRunning) {
+                // O Mestre iniciou o jogo!
+                startGameFlow();
+            }
+            if (data.status === "WAITING" && gameRunning) {
+                // Jogo foi resetado
+                alert("O jogo foi reiniciado pelo admin.");
+                location.reload();
+            }
+        } catch(e) { console.log("Aguardando conexão..."); }
+    }
+
+    function startGameFlow() {
+        gameRunning = true;
+        clearInterval(lobbyInterval); // Para de perguntar se começou
+        document.getElementById('lobby-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
-        
         showQuestion();
-        updateLeaderboard();
-        setInterval(updateLeaderboard, 5000); 
     }
 
     function showQuestion() {
-        if (currentQuestionIndex >= questions.length) {
+        if(currentQuestionIndex >= questions.length) {
             endGame();
             return;
         }
@@ -307,50 +237,43 @@
         const q = questions[currentQuestionIndex];
         document.getElementById('question-text').innerText = q.text;
         
-        const optionsContainer = document.getElementById('options-container');
+        const optionsDiv = document.getElementById('options-container');
         const textInput = document.getElementById('text-answer');
-        const btnSubmit = document.getElementById('btn-submit-text');
-
-        optionsContainer.innerHTML = "";
+        const submitBtn = document.getElementById('btn-submit-text');
+        
+        optionsDiv.innerHTML = "";
         textInput.value = "";
         
+        // Timer
         clearInterval(timerInterval);
         timeLeft = q.time_limit;
-        updateTimerDisplay();
+        document.getElementById('timer').innerText = `Tempo: ${timeLeft}s`;
         
         timerInterval = setInterval(() => {
             timeLeft--;
-            updateTimerDisplay();
-            if (timeLeft <= 0) submitAnswer(false);
+            document.getElementById('timer').innerText = `Tempo: ${timeLeft}s`;
+            if(timeLeft <= 0) submitAnswer(false);
         }, 1000);
 
-        if (q.type === 'multiple_choice') {
+        if(q.type === 'multiple_choice') {
             textInput.classList.add('hidden');
-            btnSubmit.classList.add('hidden');
-            
+            submitBtn.classList.add('hidden');
             q.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.innerText = opt;
                 btn.className = "option-btn";
                 btn.onclick = () => checkAnswer(opt);
-                optionsContainer.appendChild(btn);
+                optionsDiv.appendChild(btn);
             });
         } else {
             textInput.classList.remove('hidden');
-            btnSubmit.classList.remove('hidden');
+            submitBtn.classList.remove('hidden');
             textInput.focus();
         }
     }
 
-    function updateTimerDisplay() {
-        const t = document.getElementById('timer');
-        t.innerText = `⏳ Tempo: ${timeLeft}s`;
-        t.style.color = timeLeft < 5 ? "#e74c3c" : "var(--cor-texto)";
-    }
-
     function checkAnswerText() {
-        const val = document.getElementById('text-answer').value;
-        checkAnswer(val);
+        checkAnswer(document.getElementById('text-answer').value);
     }
 
     async function checkAnswer(answer) {
@@ -358,66 +281,46 @@
         const q = questions[currentQuestionIndex];
         const isCorrect = answer.toString().toLowerCase() === q.correct.toString().toLowerCase();
 
+        // Envia resposta
         try {
             const res = await fetch(`${API_URL}/submit`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
                     username: username,
                     question_id: q.id,
                     is_correct: isCorrect,
-                    time_left: timeLeft,
-                    total_time: q.time_limit
+                    time_left: timeLeft
                 })
             });
-            
             if(res.ok) {
-                const data = await res.json();
-                document.getElementById('score-display').innerText = `💎 Pontos: ${data.current_score}`;
+                const d = await res.json();
+                document.getElementById('score-display').innerText = `Pontos: ${d.current_score}`;
             }
-        } catch (e) {
-            console.log("Erro de conexão ao enviar resposta.");
-        }
+        } catch(e) {}
 
         currentQuestionIndex++;
         showQuestion();
-        updateLeaderboard();
     }
 
     async function updateLeaderboard() {
         try {
             const res = await fetch(`${API_URL}/leaderboard`);
-            if(!res.ok) throw new Error("API erro");
-            
             const data = await res.json();
             const list = document.getElementById('leaderboard-list');
             list.innerHTML = "";
-
-            if(data.length === 0) {
-                list.innerHTML = "<li style='justify-content:center'>Sem registros...</li>";
-                return;
-            }
-
-            data.forEach((p, index) => {
-                const li = document.createElement('li');
-                let medal = "";
-                if(index === 0) medal = "🥇";
-                if(index === 1) medal = "🥈";
-                if(index === 2) medal = "🥉";
-
-                li.innerHTML = `<span>${medal} #${index+1} ${p.username}</span> <span>${p.score} pts</span>`;
-                list.appendChild(li);
+            data.forEach((p, i) => {
+                let icon = i===0?"🥇":i===1?"🥈":i===2?"🥉":"";
+                list.innerHTML += `<li><span>${icon} #${i+1} ${p.username}</span> <span>${p.score}</span></li>`;
             });
-        } catch (e) {
-            // Silencioso
-        }
+        } catch(e) {}
     }
 
     function endGame() {
         document.getElementById('game-screen').classList.add('hidden');
         document.getElementById('end-screen').classList.remove('hidden');
-        const finalScore = document.getElementById('score-display').innerText.replace('💎 Pontos: ', '');
-        document.getElementById('final-score').innerText = finalScore;
+        const final = document.getElementById('score-display').innerText.replace("Pontos: ", "");
+        document.getElementById('final-score').innerText = final;
     }
   </script>
 </body>
