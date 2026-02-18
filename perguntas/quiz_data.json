@@ -2,157 +2,157 @@
     {
         "id": 1,
         "type": "multiple_choice",
-        "text": "Por que Soluço não consegue matar o Fúria da Noite quando o encontra preso na floresta?",
+        "text": "Quem são os principais protagonistas deste filme?",
         "options": [
-            "Porque ele esqueceu sua faca",
-            "Porque ele sentiu empatia ao ver o medo nos olhos do dragão",
-            "Porque o dragão conseguiu fugir antes",
-            "Porque seu pai o impediu"
+            "Broly e Cheelai",
+            "Trunks e Goten",
+            "Pan e Bulma",
+            "Gohan e Piccolo"
         ],
-        "correct": "Porque ele sentiu empatia ao ver o medo nos olhos do dragão",
+        "correct": "Gohan e Piccolo",
         "time_limit": 15
     },
     {
         "id": 2,
         "type": "multiple_choice",
-        "text": "Qual parte do corpo de Banguela foi danificada, impedindo-o de voar sozinho?",
+        "text": "Qual é o nome da organização que retorna do passado que retorna como a principal ameaça no filme?",
         "options": [
-            "A asa esquerda",
-            "Uma das patas traseiras",
-            "O estabilizador esquerdo da cauda",
-            "Um de seus dentes retráteis"
+            "Império do Freeza",
+            "Força Red Ribbon",
+            "Tropa de Orgulho",
+            "Patrulha Galáctica"
         ],
-        "correct": "O estabilizador esquerdo da cauda",
+        "correct": "Força Red Ribbon",
         "time_limit": 15
     },
     {
         "id": 3,
         "type": "multiple_choice",
-        "text": "Qual objeto Soluço usa para ganhar a confiança de Banguela pela primeira vez?",
+        "text": "Como se chamam os dois novos androides criados pelo Dr. Hedo?",
         "options": [
-            "Um escudo",
-            "Um peixe",
-            "Uma maçã",
-            "Um pedaço de carne de ovelha"
+            "Gamma 1 e Gamma 2",
+            "Alpha e Beta",
+            "Androide 19 e Androide 20",
+            "Sigma e Ômega"
         ],
-        "correct": "Um peixe",
+        "correct": "Gamma 1 e Gamma 2",
         "time_limit": 15
     },
     {
         "id": 4,
         "type": "multiple_choice",
-        "text": "Por que Soluço decide dar o nome de 'Banguela' ao seu dragão?",
+        "text": "Qual é o nome da nova transformação alcançada por Piccolo após pedir um desejo a Shenlong?",
         "options": [
-            "Porque ele é um dragão idoso",
-            "Porque ele perdeu os dentes na queda",
-            "Porque seus dentes são retráteis",
-            "Porque ele não consegue mastigar"
+            "Super Namekuseijin",
+            "Orange Piccolo",
+            "Ultimate Piccolo",
+            "God Piccolo"
         ],
-        "correct": "Porque seus dentes são retráteis",
+        "correct": "Orange Piccolo",
         "time_limit": 15
     },
     {
         "id": 5,
         "type": "multiple_choice",
-        "text": "Qual planta Soluço descobre que pode acalmar e paralisar temporariamente os dragões?",
+        "text": "Gohan alcança uma nova e poderosa forma no clímax do filme. Qual é o nome oficial dessa transformação?",
         "options": [
-            "Grama de Dragão (Dragonroot)",
-            "Erva de Gato",
-            "Lavanda Nórdica",
-            "Erva de Dragão (Dragonnip)"
+            "Super Saiyajin Rage",
+            "Gohan White",
+            "Ultimate Gohan 2",
+            "Gohan Beast"
         ],
-        "correct": "Erva de Dragão (Dragonnip)",
+        "correct": "Gohan Beast",
         "time_limit": 15
     },
     {
         "id": 6,
         "type": "multiple_choice",
-        "text": "O que Astrid descobre ao seguir Soluço secretamente até a enseada?",
+        "text": "Quem são os Alienígenas lutando mostrados por Magenta a fim de convencer o Dr.Hedo?",
         "options": [
-            "Que ele está construindo um barco",
-            "Que ele fez amizade com um Fúria da Noite",
-            "Que ele está roubando comida da vila",
-            "Que ele encontrou um tesouro viking"
+            "Gohan e Goku",
+            "Freeza e Trunks",
+            "Piccolo e Gohan",
+            "Goten e Vegetta"
         ],
-        "correct": "Que ele fez amizade com um Fúria da Noite",
+        "correct": "Freeza e Trunks",
         "time_limit": 15
     },
     {
         "id": 7,
         "type": "multiple_choice",
-        "text": "Para onde Banguela leva Soluço e Astrid involuntariamente durante o voo?",
+        "text": "Qual é a versão monstruosa do vilão clássico o inimigo final do filme?",
         "options": [
-            "Para uma ilha deserta",
-            "Para o fundo do oceano",
-            "Para o Ninho dos Dragões",
-            "Para o Mundo Escondido"
+            "Mecha Freeza",
+            "Super buu",
+            "Bio-Broly",
+            "Cell Max"
         ],
-        "correct": "Para o Ninho dos Dragões",
+        "correct": "Cell Max",
         "time_limit": 15
     },
     {
         "id": 8,
         "type": "multiple_choice",
-        "text": "Qual é a verdadeira razão pela qual os dragões atacam Berk e roubam gado?",
+        "text": "Quem é o jovem gênio por trás das novas criações da Red Ribbon e neto do Dr. Gero?",
         "options": [
-            "Por puro instinto assassino",
-            "Para alimentar uma rainha gigante (Morte Rubra)",
-            "Porque gostam do sabor da carne de ovelha",
-            "Para treinar seus filhotes"
+            "Dr. Hedo",
+            "Dr. Myuu",
+            "Dr. Frappe",
+            "Dr. Myuu"
         ],
-        "correct": "Para alimentar uma rainha gigante (Morte Rubra)",
+        "correct": "Dr. Hedo",
         "time_limit": 15
     },
     {
         "id": 9,
         "type": "multiple_choice",
-        "text": "O que Soluço faz no seu exame final na arena para tentar mudar a mente dos vikings?",
+        "text": "Qual técnica clássica que Gohan utiliza para finalizar o inimigo principal do filme?",
         "options": [
-            "Ele mata o dragão rapidamente",
-            "Ele foge voando em Banguela",
-            "Ele joga suas armas fora e tenta tocar o dragão",
-            "Ele pede para Stoico lutar em seu lugar"
+            "Kamehameha",
+            "Masenko",
+            "Makankosappo",
+            "Punho do Dragão"
         ],
-        "correct": "Ele joga suas armas fora e tenta tocar o dragão",
+        "correct": "Makankosappo",
         "time_limit": 15
     },
     {
         "id": 10,
         "type": "multiple_choice",
-        "text": "Como Stoico consegue encontrar o caminho para o Ninho dos Dragões?",
+        "text": "Quantos anos Pan tem?",
         "options": [
-            "Usando um mapa antigo",
-            "Seguindo as estrelas",
-            "Usando Banguela acorrentado como guia",
-            "Seguindo o rastro de fumaça"
+            "2",
+            "5",
+            "3",
+            "4"
         ],
-        "correct": "Usando Banguela acorrentado como guia",
+        "correct": "3",
         "time_limit": 15
     },
     {
         "id": 11,
         "type": "multiple_choice",
-        "text": "Qual é a classe oficial do dragão Fúria da Noite?",
+        "text": "Onde Goku e vegeta estão durante a maior parte dos eventos do filme?",
         "options": [
-            "Classe Rocha",
-            "Classe Marinha",
-            "Classe Relâmpago",
-            "Classe Mistério"
+            "No Planeta de Bills, treinando com Whis",
+            "Na Sala do Tempo",
+            "Passando férias na Corporação Cápsula",
+            "Em um torneio em outro universo"
         ],
-        "correct": "Classe Relâmpago",
+        "correct": "No Planeta de Bills, treinando com Whis",
         "time_limit": 15
     },
     {
         "id": 12,
         "type": "multiple_choice",
-        "text": "Qual ferimento permanente Soluço sofre após a batalha final contra a Morte Rubra?",
+        "text": "Qual personagem foi sequestrada pela Red Ribbon para atrair Gohan para uma armadilha?",
         "options": [
-            "Ele perde o braço direito",
-            "Ele perde parte da perna esquerda",
-            "Ele fica cego de um olho",
-            "Ele perde a audição"
+            "Pan",
+            "Videl",
+            "Mai",
+            "Bulma"
         ],
-        "correct": "Ele perde parte da perna esquerda",
+        "correct": "Pan",
         "time_limit": 15
     }
 ]
