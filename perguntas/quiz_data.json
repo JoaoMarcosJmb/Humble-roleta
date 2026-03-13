@@ -2,157 +2,131 @@
     {
         "id": 1,
         "type": "multiple_choice",
-        "text": "Quem são os principais protagonistas deste filme?",
+        "text": "Qual é o principal objetivo da Equipe Galáxia neste filme?",
         "options": [
-            "Broly e Cheelai",
-            "Trunks e Goten",
-            "Pan e Bulma",
-            "Gohan e Piccolo"
+            "Capturar todos os Pokémon lendários de Sinnoh",
+            "Abrir a porta para seu mestre, Cyrus",
+            "Destruir a região de Hisui",
+            "Roubar o prato de Arceus"
         ],
-        "correct": "Gohan e Piccolo",
+        "correct": "Abrir a porta para seu mestre, Cyrus",
         "time_limit": 15
     },
     {
         "id": 2,
         "type": "multiple_choice",
-        "text": "Qual é o nome da organização que retorna do passado como a principal ameaça no filme?",
+        "text": "Qual Pokémon lendário a Equipe Galáxia tenta controlar para abrir um portal?",
         "options": [
-            "Império do Freeza",
-            "Força Red Ribbon",
-            "Tropa de Orgulho",
-            "Patrulha Galáctica"
+            "Giratina",
+            "Dialga",
+            "Heatran",
+            "Palkia"
         ],
-        "correct": "Força Red Ribbon",
+        "correct": "Heatran",
         "time_limit": 15
     },
     {
         "id": 3,
         "type": "multiple_choice",
-        "text": "Como se chamam os dois novos androides criados pelo Dr. Hedo?",
+        "text": "Quem são os protagonistas que se reúnem em Sinnoh para investigar os acontecimentos?",
         "options": [
-            "Gamma 1 e Gamma 2",
-            "Alpha e Beta",
-            "Androide 19 e Androide 20",
-            "Sigma e Ômega"
+            "Ash, Misty e Brock",
+            "Ash, Dawn e Goh",
+            "Ash, Goh e Chloe",
+            "Ash, Serena e Clemont"
         ],
-        "correct": "Gamma 1 e Gamma 2",
+        "correct": "Ash, Dawn e Goh",
         "time_limit": 15
     },
     {
         "id": 4,
         "type": "multiple_choice",
-        "text": "Qual é o nome da nova transformação alcançada por Piccolo após pedir um desejo a Shenlong?",
+        "text": "Qual Pokémon mítico aparece como principal protagonista no início do filme?",
         "options": [
-            "Super Namekuseijin",
-            "Orange Piccolo",
-            "Ultimate Piccolo",
-            "God Piccolo"
+            "Shaymin",
+            "Arceus",
+            "Mew",
+            "Victini"
         ],
-        "correct": "Orange Piccolo",
+        "correct": "Arceus",
         "time_limit": 15
     },
     {
         "id": 5,
         "type": "multiple_choice",
-        "text": "Gohan alcança uma nova e poderosa forma no clímax do filme. Qual é o nome oficial dessa transformação?",
+        "text": "Como a Equipe Galáxia consegue sobrecarregar o Pokémon lendário que capturaram?",
         "options": [
-            "Super Saiyajin Rage",
-            "Gohan White",
-            "Ultimate Gohan 2",
-            "Gohan Beast"
+            "Usando uma Pedra de Evolução",
+            "Usando um fragmento da Placa de Arceus",
+            "Através de uma máquina de ondas sonoras",
+            "Usando o poder de um Unown"
         ],
-        "correct": "Gohan Beast",
+        "correct": "Usando um fragmento da Placa de Arceus",
         "time_limit": 15
     },
     {
         "id": 6,
         "type": "multiple_choice",
-        "text": "Quem são os Alienígenas lutando mostrados por Magenta a fim de convencer o Dr.Hedo?",
+        "text": "Qual é a forma especial que o Heatran assume após ser exposto a tanta energia",
         "options": [
-            "Gohan e Goku",
-            "Freeza e Trunks",
-            "Piccolo e Gohan",
-            "Goten e Vegetta"
+            "Forma Gigante de Calor",
+            "Forma Primal",
+            "Uma massa de energia instável e enfurecida",
+            "Mega Evolução"
         ],
-        "correct": "Freeza e Trunks",
+        "correct": "Uma massa de energia instável e enfurecida",
         "time_limit": 15
     },
     {
         "id": 7,
-        "type": "multiple_choice",
-        "text": "Qual é a versão monstruosa do vilão clássico o inimigo final do filme?",
+        "type": "Qual grupo de Pokémon lendários aparece para ajudar Ash e seus amigos a conter a ameaça?",
         "options": [
-            "Mecha Freeza",
-            "Super buu",
-            "Bio-Broly",
-            "Cell Max"
+            "As Aves Lendárias (Articuno, Zapdos e Moltres)",
+            "Os Cães Lendários (Raikou, Entei e Suicune)",
+            "Os Guardiões do Lago (Uxie, Mesprit e Azelf)",
+            "Os Regis (Regirock, Regice e Registeel)"
         ],
-        "correct": "Cell Max",
+        "correct": "Os Guardiões do Lago (Uxie, Mesprit e Azelf)",
         "time_limit": 15
     },
     {
         "id": 8,
         "type": "multiple_choice",
-        "text": "Quem é o jovem gênio por trás das novas criações da Red Ribbon e neto do Dr. Gero?",
+        "text": "Cynthia, a campeã de Sinnoh, ajuda na batalha. Qual é o seu Pokémon principal?",
         "options": [
-            "Dr. Hedo",
-            "Dr. Myuu",
-            "Dr. Frappe",
-            "Dr. Myuu"
+            "Milotic",
+            "Lucario",
+            "Garchomp",
+            "Togekiss"
         ],
-        "correct": "Dr. Hedo",
+        "correct": "Garchomp",
         "time_limit": 15
     },
     {
         "id": 9,
         "type": "multiple_choice",
-        "text": "Qual técnica clássica que Gohan utiliza para finalizar o inimigo principal do filme?",
+        "text": "O que Arceus faz quando finalmente aparece no clímax do filme?",
         "options": [
-            "Kamehameha",
-            "Masenko",
-            "Makankosappo",
-            "Punho do Dragão"
+            "Ele ataca os humanos por sua ganância",
+            "Ele purifica a energia negativa e salva Heatran",
+            "Ele reconstrói a cidade de Jubilife",
+            "Ele leva a Equipe Galáxia para outra dimensão"
         ],
-        "correct": "Makankosappo",
+        "correct": "Ele purifica a energia negativa e salva Heatran",
         "time_limit": 15
     },
     {
         "id": 10,
         "type": "multiple_choice",
-        "text": "Quantos anos Pan tem?",
+        "text": "O filme é fortemente inspirado em qual jogo da franquia Pokémon?",
         "options": [
-            "2",
-            "5",
-            "3",
-            "4"
+            "Pokémon Brilliant Diamond & Shining Pearl",
+            "Pokémon Sword & Shield",
+            "Pokémon Legends: Arceus",
+            "Pokémon Scarlet & Violet"
         ],
-        "correct": "3",
+        "correct": "Pokémon Legends: Arceus",
         "time_limit": 15
-    },
-    {
-        "id": 11,
-        "type": "multiple_choice",
-        "text": "Onde Goku e vegeta estão durante a maior parte dos eventos do filme?",
-        "options": [
-            "No Planeta de Bills, treinando com Whis",
-            "Na Sala do Tempo",
-            "Passando férias na Corporação Cápsula",
-            "Em um torneio em outro universo"
-        ],
-        "correct": "No Planeta de Bills, treinando com Whis",
-        "time_limit": 15
-    },
-    {
-        "id": 12,
-        "type": "multiple_choice",
-        "text": "Qual personagem foi sequestrada pela Red Ribbon para atrair Gohan para uma armadilha?",
-        "options": [
-            "Pan",
-            "Videl",
-            "Mai",
-            "Bulma"
-        ],
-        "correct": "Pan",
-        "time_limit": 15
+
     }
 ]
