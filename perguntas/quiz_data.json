@@ -2,131 +2,131 @@
     {
         "id": 1,
         "type": "multiple_choice",
-        "text": "Qual é o principal objetivo da Equipe Galáxia neste filme?",
+        "text": "Quem criou Zaza na Selva desde que ele era um bebê?",
         "options": [
-            "Capturar todos os Pokémon lendários de Sinnoh",
-            "Abrir a porta para seu mestre, Cyrus",
-            "Destruir a região de Hisui",
-            "Roubar o prato de Arceus"
+            "Um grupo de Celebi Brilhantes",
+            "Os seus pais biológicos na floresta",
+            "Um Zarude que deixou o seu bando",
+            "Um Professor Pokémon local"
         ],
-        "correct": "Abrir a porta para seu mestre, Cyrus",
+        "correct": "Um Zarude que deixou o seu bando",
         "time_limit": 15
     },
     {
         "id": 2,
         "type": "multiple_choice",
-        "text": "Qual Pokémon lendário a Equipe Galáxia tenta controlar para abrir um portal?",
+        "text": "Como Zaza se identifica durante a maior parte do filme?",
         "options": [
-            "Giratina",
-            "Dialga",
-            "Heatran",
-            "Palkia"
+            "Como um explorador da Companhia Biotope",
+            "Como um Pokémon da espécie Zarude",
+            "Como um guardião lendário da selva",
+            "Como o rei da Selva de Okoya"
         ],
-        "correct": "Heatran",
+        "correct": "Como um Pokémon da espécie Zarude",
         "time_limit": 15
     },
     {
         "id": 3,
         "type": "multiple_choice",
-        "text": "Quem são os protagonistas que se reúnem em Sinnoh para investigar os acontecimentos?",
+        "text": "Qual é a principal fonte de energia e cura localizada no coração da Selva?",
         "options": [
-            "Ash, Misty e Brock",
-            "Ash, Dawn e Goh",
-            "Ash, Goh e Chloe",
-            "Ash, Serena e Clemont"
+            "A Grande Árvore da Vida",
+            "Uma Pedra Solar gigante",
+            "Um cristal de energia infinita",
+            "Uma fonte termais vulcânica"
         ],
-        "correct": "Ash, Dawn e Goh",
+        "correct": "A Grande Árvore da Vida",
         "time_limit": 15
     },
     {
         "id": 4,
         "type": "multiple_choice",
-        "text": "Qual Pokémon mítico aparece como principal protagonista no início do filme?",
+        "text": "Qual é o nome do cientista que atua como o principal antagonista do filme?",
         "options": [
-            "Shaymin",
-            "Arceus",
-            "Mew",
-            "Victini"
+            "Doutor Zed",
+            "Professor Carvalho",
+            "Giovanni",
+            "Doutor Colress"
         ],
-        "correct": "Arceus",
+        "correct": "Doutor Zed",
         "time_limit": 15
     },
     {
         "id": 5,
         "type": "multiple_choice",
-        "text": "Como a Equipe Galáxia consegue sobrecarregar o Pokémon lendário que capturaram?",
+        "text": "Quem Ash encontra na cidade que o leva a conhecer Zaza?",
         "options": [
-            "Usando uma Pedra de Evolução",
-            "Usando um fragmento da Placa de Arceus",
-            "Através de uma máquina de ondas sonoras",
-            "Usando o poder de um Unown"
+            "Zaza, que estava desacordado perto de um rio",
+            "A Equipe Rocket tentando roubar um Zarude",
+            "Os pais biológicos de Zaza",
+            "Um guia turístico da selva"
         ],
-        "correct": "Usando um fragmento da Placa de Arceus",
+        "correct": "Zaza, que estava desacordado perto de um rio",
         "time_limit": 15
     },
     {
         "id": 6,
         "type": "multiple_choice",
-        "text": "Qual é a forma especial que o Heatran assume após ser exposto a tanta energia",
+        "text": "O que aconteceu com os pais biológicos de Zaza?",
         "options": [
-            "Forma Gigante de Calor",
-            "Forma Primal",
-            "Uma massa de energia instável e enfurecida",
-            "Mega Evolução"
+            "Eles morreram tentando proteger os dados da selva de Zed",
+            "Eles abandonaram Koko por vontade própria",
+            "Eles se mudaram para a região de Alola",
+            "Eles foram capturados pela Equipe Rocket"
         ],
-        "correct": "Uma massa de energia instável e enfurecida",
+        "correct": "Eles morreram tentando proteger os dados da selva de Zed",
         "time_limit": 15
     },
     {
         "id": 7,
-        "type": "Qual grupo de Pokémon lendários aparece para ajudar Ash e seus amigos a conter a ameaça?",
+        "type": "multiple_choice",
+        "text": "Qual Pokémon mítico aparece no final do filme e é associado à restauração da selva?",
         "options": [
-            "As Aves Lendárias (Articuno, Zapdos e Moltres)",
-            "Os Cães Lendários (Raikou, Entei e Suicune)",
-            "Os Guardiões do Lago (Uxie, Mesprit e Azelf)",
-            "Os Regis (Regirock, Regice e Registeel)"
+            "Celebi Rosa",
+            "Mew",
+            "Shaymin",
+            "Zeraora"
         ],
-        "correct": "Os Guardiões do Lago (Uxie, Mesprit e Azelf)",
+        "correct": "Celebi Rosa",
         "time_limit": 15
     },
     {
         "id": 8,
         "type": "multiple_choice",
-        "text": "Cynthia, a campeã de Sinnoh, ajuda na batalha. Qual é o seu Pokémon principal?",
+        "text": "Qual é a função do cachecol que Zaza e o Zarude  usam?",
         "options": [
-            "Milotic",
-            "Lucario",
-            "Garchomp",
-            "Togekiss"
+            "Representa o vínculo familiar entre eles",
+            "É um item que aumenta o poder de ataque",
+            "Serve para esconder a identidade humana de Zaza",
+            "É um presente dado pelo Professor Carvalho"
         ],
-        "correct": "Garchomp",
+        "correct": "Representa o vínculo familiar entre eles",
         "time_limit": 15
     },
     {
         "id": 9,
         "type": "multiple_choice",
-        "text": "O que Arceus faz quando finalmente aparece no clímax do filme?",
+        "text": "Por que o bando de Zarudes expulsou o Zarude que criou o Zaza?",
         "options": [
-            "Ele ataca os humanos por sua ganância",
-            "Ele purifica a energia negativa e salva Heatran",
-            "Ele reconstrói a cidade de Jubilife",
-            "Ele leva a Equipe Galáxia para outra dimensão"
+            "Porque ele insistiu em criar um humano",
+            "Porque ele era muito fraco para lutar",
+            "Porque ele roubou comida da Grande Árvore",
+            "Porque ele queria ser o novo líder"
         ],
-        "correct": "Ele purifica a energia negativa e salva Heatran",
+        "correct": "Porque ele insistiu em criar um humano",
         "time_limit": 15
     },
     {
         "id": 10,
         "type": "multiple_choice",
-        "text": "O filme é fortemente inspirado em qual jogo da franquia Pokémon?",
+        "text": "Como o filme termina em relação à jornada de Zaza?",
         "options": [
-            "Pokémon Brilliant Diamond & Shining Pearl",
-            "Pokémon Sword & Shield",
-            "Pokémon Legends: Arceus",
-            "Pokémon Scarlet & Violet"
+            "Ele decide viajar pelo mundo para aprender sobre humanos e Pokémon",
+            "Ele se torna o novo líder de todos os Zarude",
+            "Ele decide morar na cidade com o Ash",
+            "Ele perde suas memórias da selva"
         ],
-        "correct": "Pokémon Legends: Arceus",
+        "correct": "Ele decide viajar pelo mundo para aprender sobre humanos e Pokémon",
         "time_limit": 15
-
     }
 ]
